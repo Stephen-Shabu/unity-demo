@@ -312,13 +312,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.27655998, y: 0, z: 0, w: 0.9609967}
-  m_LocalPosition: {x: 0, y: 7.85, z: -10}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.54, z: -6.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 32.11, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -500,7 +500,7 @@ GameObject:
   - component: {fileID: 722268594}
   - component: {fileID: 722268601}
   - component: {fileID: 722268600}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SimpleCharacter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -520,13 +520,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attactedRigidBody: {fileID: 722268595}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 1
   topSpeed: 5
   topAngularSpeed: 7.5
-  currentSpeed: 0
   accelerationFactor: 5
   deaccelerationFactor: 20
   angularAccelerationFactor: 0.7
-  stoppingFactor: 5
   inertiaFactor: 5
 --- !u!54 &722268595
 Rigidbody:
@@ -640,7 +641,7 @@ Transform:
   m_GameObject: {fileID: 722268593}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.16170266, y: 1.72, z: -0.39976016}
+  m_LocalPosition: {x: -0.1617027, y: 1.72, z: -0.3997602}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -661,6 +662,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerInput: {fileID: 722268601}
   inputVector: {x: 0, y: 0}
+  hasJumped: 0
   moveComponent: {fileID: 722268594}
 --- !u!114 &722268601
 MonoBehaviour:
@@ -798,7 +800,7 @@ GameObject:
   - component: {fileID: 816713831}
   - component: {fileID: 816713830}
   - component: {fileID: 816713829}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -1,14 +1,15 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class MovementComponent : MonoBehaviour
 {
     [SerializeField] private Rigidbody attactedRigidBody;
+    [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float topSpeed;
-    [SerializeField] private float topAngularSpeed;
+    [SerializeField] private float turnRate;
     [SerializeField] private float accelerationFactor;
     [SerializeField] private float deaccelerationFactor;
-    [SerializeField] private float angularAccelerationFactor;
     [SerializeField] float inertiaFactor = 5f;
 
     private float currentTurnSpeed;
@@ -17,16 +18,50 @@ public class MovementComponent : MonoBehaviour
     private Vector3 currentMoveVector;
     private Vector3 finalMoveVector;
 
+    private int groundedRes;
+    private bool hasJumped;
+    private Vector3 groundCollisionCenter;
+    private Collider characterCollider;
+    private Collider[] groundCollisionResult;
+
     private void Start()
     {
         if (attactedRigidBody == null)
         {
             Debug.LogError("No Rigidbody assigned in the inspector");
         }
+
+        characterCollider = GetComponent<Collider>();
+        groundCollisionResult = new Collider[MovementDefines.Character.FLOOR_COLLIDER_COUNT];
+    }
+
+    public void ApplyJumpVelocity(bool isJumping)
+    {
+        hasJumped = isJumping;
+
+        if (hasJumped && groundedRes > 0)
+        {
+            attactedRigidBody.linearVelocity = Vector3.up * 8f;
+        }
     }
 
     public void UpdateMovement(Vector2 direction)
     {
+        groundCollisionCenter.x = transform.position.x;
+        groundCollisionCenter.z = transform.position.z;
+        groundCollisionCenter.y = transform.position.y - characterCollider.bounds.extents.y;
+
+        groundedRes = Physics.OverlapBoxNonAlloc(groundCollisionCenter, Vector3.one * MovementDefines.Character.GROUNDED_COLLIDER_SIZE_MUTIPLIER, groundCollisionResult, transform.rotation, groundLayer);
+
+        if (attactedRigidBody.linearVelocity.y < 0 && groundedRes == 0)
+        {
+            attactedRigidBody.linearVelocity += Vector3.up * Physics.gravity.y * (2.5f - 1) * Time.smoothDeltaTime;
+        }
+        else if (attactedRigidBody.linearVelocity.y > 0 && !hasJumped)
+        {
+            attactedRigidBody.linearVelocity += Vector3.up * Physics.gravity.y * (2.0f - 1) * Time.smoothDeltaTime;
+        }
+
         var targetVelocity = GetMoveVector(direction);
         targetVelocity.y = attactedRigidBody.linearVelocity.y;
         attactedRigidBody.linearVelocity = Vector3.Lerp(attactedRigidBody.linearVelocity, targetVelocity, inertiaFactor * Time.deltaTime);
@@ -35,7 +70,7 @@ public class MovementComponent : MonoBehaviour
 
     private Vector3 GetMoveVector(Vector2 direction)
     {
-        var canAccelerate = direction.sqrMagnitude > 0.25f;
+        var canAccelerate = direction.sqrMagnitude > MovementDefines.Character.MAGNITUDE_THRESHOLD;
         if (canAccelerate)
         {
             lastMoveVector = currentMoveVector;
@@ -69,7 +104,7 @@ public class MovementComponent : MonoBehaviour
         Vector3 turnDirection = new Vector3(direction.x, 0, direction.z);
         float forwardTiltAmount = Mathf.Abs(transform.InverseTransformDirection(attactedRigidBody.linearVelocity).z) * 2.5f;
         float angularTiltAmount = Vector3.Dot(attactedRigidBody.angularVelocity, Vector3.up) * 5f;
-        currentTurnSpeed = topAngularSpeed * Time.smoothDeltaTime;
+        currentTurnSpeed = turnRate * Time.smoothDeltaTime;
 
         float GetAngleFromDirection(Vector3 direction)
         {
