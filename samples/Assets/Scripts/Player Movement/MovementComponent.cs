@@ -45,7 +45,7 @@ public class MovementComponent : MonoBehaviour
         }
     }
 
-    public void UpdateMovement(Vector2 direction)
+    public void UpdateMovement(Vector3 direction)
     {
         groundCollisionCenter.x = transform.position.x;
         groundCollisionCenter.z = transform.position.z;
@@ -68,13 +68,13 @@ public class MovementComponent : MonoBehaviour
         attactedRigidBody.rotation = GetRotation(currentMoveVector);
     }
 
-    private Vector3 GetMoveVector(Vector2 direction)
+    private Vector3 GetMoveVector(Vector3 direction)
     {
         var canAccelerate = direction.sqrMagnitude > MovementDefines.Character.MAGNITUDE_THRESHOLD;
         if (canAccelerate)
         {
             lastMoveVector = currentMoveVector;
-            currentMoveVector = new Vector3(direction.x, 0, direction.y);
+            currentMoveVector = direction;
         }
         else
         {
@@ -106,28 +106,9 @@ public class MovementComponent : MonoBehaviour
         float angularTiltAmount = Vector3.Dot(attactedRigidBody.angularVelocity, Vector3.up) * 5f;
         currentTurnSpeed = turnRate * Time.smoothDeltaTime;
 
-        float GetAngleFromDirection(Vector3 direction)
-        {
-            return Mathf.Atan2(direction.x, direction.z);
-        }
-
-        float InterpolateAngle(float startAngle, float targetAngle, float t)
-        {
-            var diff = targetAngle - startAngle;
-
-            diff += 2 * Mathf.PI;
-
-            diff = (diff + Mathf.PI) % (2 * Mathf.PI) - Mathf.PI;
-
-            var interpolatedaAngle = startAngle + t * diff;
-
-            return interpolatedaAngle;
-        }
-
-
-        var start = GetAngleFromDirection(transform.forward);
-        var target = GetAngleFromDirection(turnDirection);
-        var angle = InterpolateAngle(start, target, currentTurnSpeed);
+        var start = MathDefines.GetAngleFromDirectionXZ(transform.forward);
+        var target = MathDefines.GetAngleFromDirectionXZ(turnDirection);
+        var angle = MathDefines.InterpolateAngle(start, target, currentTurnSpeed);
 
         var finalRotation = Quaternion.AngleAxis(angle * Mathf.Rad2Deg, Vector3.up);
 
