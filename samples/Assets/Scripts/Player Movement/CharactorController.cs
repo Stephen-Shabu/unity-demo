@@ -7,9 +7,18 @@ public class CharactorController : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private Vector2 inputVector = Vector2.zero;
     [SerializeField] private Vector2 lookVector = Vector2.zero;
-    [SerializeField] private bool hasJumped = false;
     [SerializeField] private MovementComponent moveComponent;
     [SerializeField] private BaseCameraComponent cameraComponent;
+    [SerializeField] private ProjectileComponent projectileComponent;
+
+    private bool hasJumped = false;
+    private bool hasAttacked;
+
+    public void OnAttack(InputValue value)
+    {
+        hasAttacked = value.isPressed;
+        projectileComponent.Fire();
+    }
 
     public void OnMove(InputValue value)
     {
@@ -37,10 +46,5 @@ public class CharactorController : MonoBehaviour
 
         moveComponent.UpdateMovement(movementDirection);
         cameraComponent.TrackPlayer(transform, lookVector);
-    }
-
-    private void LateUpdate()
-    {
-        //cameraComponent.TrackPlayer(transform, lookVector);
     }
 }
