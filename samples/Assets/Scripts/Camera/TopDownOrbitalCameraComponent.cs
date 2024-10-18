@@ -27,7 +27,7 @@ public class TopDownOrbitalCameraComponent : BaseCameraComponent
         }
 
         currentAngle += (cameraPanSpeed * orbitDirection.normalized.x * Time.deltaTime);
-        currentAngle = (currentAngle % FULL_CIRCLE_DEG + FULL_CIRCLE_DEG) % FULL_CIRCLE_DEG;
+        currentAngle = (currentAngle % MathDefines.FULL_CIRCLE_DEG + MathDefines.FULL_CIRCLE_DEG) % MathDefines.FULL_CIRCLE_DEG;
         float radAngle = (currentAngle * Mathf.Deg2Rad);
 
         float xPosition = target.position.x + Mathf.Cos(radAngle) * orbitDistance;
