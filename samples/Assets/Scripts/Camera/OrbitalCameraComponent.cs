@@ -2,6 +2,12 @@ using UnityEngine;
 
 public class OrbitalCameraComponent : BaseCameraComponent
 {
+    [Range(-89, 0)]
+    [SerializeField] float minYAngle = 0;
+
+    [Range(0, 89f)]
+    [SerializeField] float maxYAngle = 0;
+
     private float currentYAngle;
 
     public override void TrackPlayer(Transform target, Vector2 direction)
@@ -28,31 +34,22 @@ public class OrbitalCameraComponent : BaseCameraComponent
             cameraPanSpeed = 0;
         }
 
-        currentAngle += (cameraPanSpeed * orbitDirection.normalized.x * Time.deltaTime);
-        currentAngle = (currentAngle % FULL_CIRCLE_DEG + FULL_CIRCLE_DEG) % FULL_CIRCLE_DEG;
-        float xRadians = (currentAngle * Mathf.Deg2Rad);
+        float targetXAngle = currentAngle + (cameraPanSpeed * orbitDirection.normalized.x * Time.deltaTime);
+        float targetYAngle = currentYAngle + (cameraPanSpeed * orbitDirection.normalized.y * Time.deltaTime);
 
-        currentYAngle += (cameraPanSpeed * orbitDirection.normalized.y * Time.deltaTime);
-        currentYAngle = (currentYAngle % FULL_CIRCLE_DEG + FULL_CIRCLE_DEG) % FULL_CIRCLE_DEG;
-        float yRadians = (currentYAngle * Mathf.Deg2Rad);
+        currentAngle = Mathf.Lerp(currentAngle, targetXAngle, damping * Time.deltaTime);
+        currentYAngle = Mathf.Lerp(currentYAngle, targetYAngle, damping * Time.deltaTime);
+        currentYAngle = Mathf.Clamp(currentYAngle, minYAngle, maxYAngle);
 
-        float x = Mathf.Sin(xRadians) * Mathf.Cos(yRadians);
-        float y = Mathf.Sin(xRadians) * Mathf.Sin(yRadians);
-        float z = Mathf.Cos(xRadians);
+        float xRadians = currentAngle * Mathf.Deg2Rad;
+        float yRadians = currentYAngle * Mathf.Deg2Rad;
 
-        Vector3 pointOnSphere = target.position + new Vector3(x, y, z) * orbitDistance;
+        float xPosition = orbitDistance * Mathf.Sin(xRadians) * Mathf.Cos(yRadians);
+        float yPosition = orbitDistance * Mathf.Sin(yRadians);
+        float zPosition = orbitDistance * Mathf.Cos(xRadians) * Mathf.Cos(yRadians);
 
-        float xPosition = target.position.x + (Mathf.Cos(xRadians) * orbitDistance);
-        float x2Position = target.position.x + (Mathf.Cos(yRadians) * orbitDistance);
-        float yPosition = target.position.y + (Mathf.Sin(yRadians) * orbitDistance);
-        float zPosition = target.position.z + Mathf.Sin(xRadians) * orbitDistance;
-
-        float s = target.position.x + Mathf.Cos(xRadians) * Mathf.Cos(yRadians) * orbitDistance;
-
-        //transform.position = Vector3.Lerp(transform.position, pointOnSphere, damping * Time.deltaTime);
-        //transform.position = Vector3.Lerp(transform.position, new Vector3(xPosition, 0, zPosition), damping * Time.deltaTime);
-        //transform.position = Vector3.Lerp(transform.position, new Vector3(x2Position, yPosition, 0), damping * Time.deltaTime);
-        transform.position = Vector3.Lerp(transform.position, new Vector3(s, yPosition, zPosition), damping * Time.deltaTime);
+        Vector3 orbitPosition = new Vector3(xPosition, yPosition, zPosition) + target.position;
+        transform.position = Vector3.Lerp(transform.position, orbitPosition, damping * Time.deltaTime);
 
         var heading = target.position - transform.position;
         Vector3 directionXZ = new Vector3(heading.x, 0, heading.z);
