@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 
 public class XpMeterController : MonoBehaviour
 {
-    public int[] XpPerLevel = new int[] { 15, 22, 25, 32, 37, 44, 50, 67, 76, 81, 101, 130, 150, 202, 287, 320, 380, 410, 500, 600 };
     public int[] XpAdditions = new int[] { 50, 10, 15, 5, 100, 3, 18};
 
     [SerializeField] private XpMeterView xpMeterView;
@@ -36,7 +35,7 @@ public class XpMeterController : MonoBehaviour
     {
         xpMeterView.XpLevelText.text = $"{currentLevel}";
         xpMeterView.XpGainedTextCanvasGroup.alpha = 0;
-        if (currentLevel < XpPerLevel.Length)
+        if (currentLevel < RewardDefines.XP_PER_LEVEL.Length)
         {
             currentExperience = currentExp;
             expFloor = GetExpFloor(currentLevel);
@@ -97,7 +96,7 @@ public class XpMeterController : MonoBehaviour
             Debug.Log(newXp);
             amount -= newXp - xp;
             var expGained = targetXp - (targetXp - cachedGain) - amount;
-            xpMeterView.XpGained.text = string.Format("+{0}", (int)expGained);
+            xpMeterView.XpGained.text = string.Format(RewardDefines.XP_GAINED_FORMAT, (int)expGained);
             xpMeterView.XpGainedTextCanvasGroup.alpha = animCurve.Evaluate(animTime / timeToReachTarget);
 
             RectTransform xpGainedRect = xpMeterView.XpGained.GetComponent<RectTransform>();
@@ -114,7 +113,7 @@ public class XpMeterController : MonoBehaviour
         currentLevel++;
         xpMeterView.XpLevelText.text = $"{currentLevel}";
 
-        if (currentLevel < XpPerLevel.Length)
+        if (currentLevel < RewardDefines.XP_PER_LEVEL.Length)
         {
             expFloor = GetExpFloor(currentLevel);
             expCeil = GetExpFloor(currentLevel + 1);
@@ -134,7 +133,7 @@ public class XpMeterController : MonoBehaviour
 
         for (int i = 0; i < level; i++)
         {
-            lastXpFloor += XpPerLevel[i];
+            lastXpFloor += RewardDefines.XP_PER_LEVEL[i];
         }
 
         return lastXpFloor;
