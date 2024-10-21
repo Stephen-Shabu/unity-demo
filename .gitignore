@@ -30,6 +30,7 @@
 
 # Ignore Visual Studio Code project files
 .vscode/
+.vs/
 
 # Ignore generated files by Unity
 /Assets/Plugins/*/Generated/
