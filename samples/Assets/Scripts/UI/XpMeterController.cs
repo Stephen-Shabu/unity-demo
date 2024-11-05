@@ -31,6 +31,12 @@ public class XpMeterController : MonoBehaviour
         });
     }
 
+    public void AddExperience(float experienceAmount)
+    {
+        InitializeExperienceBar(currentExperience);
+        UpdateExperienceBarAsync(experienceAmount);
+    }
+
     private void InitializeExperienceBar(float currentExp)
     {
         xpMeterView.XpLevelText.text = $"{currentLevel}";
@@ -43,16 +49,6 @@ public class XpMeterController : MonoBehaviour
             var amount = Mathf.InverseLerp(expFloor, expCeil, currentExperience);
             xpMeterView.XpBarImage.fillAmount = amount;
         }
-        else
-        {
-            Debug.LogError("Experience levels array is too small for the current level!");
-        }
-    }
-
-    public void AddExperience(float experienceAmount)
-    {
-        InitializeExperienceBar(currentExperience);
-        UpdateExperienceBarAsync(experienceAmount);
     }
 
     private async void UpdateExperienceBarAsync(float experienceAmount)
@@ -71,7 +67,6 @@ public class XpMeterController : MonoBehaviour
 
             float newExp = Mathf.MoveTowards(currentExperience, targetExperience, fillSpeed * Time.deltaTime);
             experienceAmount -= newExp - currentExperience;
-            //var expGained = targetExperience - (targetExperience - exp) - experienceAmount;
             var amount = Mathf.InverseLerp(expFloor, expCeil, currentExperience);
             xpMeterView.XpBarImage.fillAmount = amount;
             currentExperience = newExp;
@@ -85,7 +80,6 @@ public class XpMeterController : MonoBehaviour
     {
         float animTime = 0;
         float cachedGain = amount;
-        float distance = Mathf.Abs(targetXp - currentXp);
         float timeToReachTarget = xpGainSpeed;
         float xp = currentXp;
 
@@ -93,7 +87,7 @@ public class XpMeterController : MonoBehaviour
         {
             animTime += Time.deltaTime;
             var newXp = Mathf.Lerp(xp, targetXp, animTime / (timeToReachTarget * .25f));
-            Debug.Log(newXp);
+
             amount -= newXp - xp;
             var expGained = targetXp - (targetXp - cachedGain) - amount;
             xpMeterView.XpGained.text = string.Format(RewardDefines.XP_GAINED_FORMAT, (int)expGained);
