@@ -51,6 +51,7 @@ public class RaycastProjectile : MonoBehaviour
 
             rayStart = rayEnd;
             transform.position = rayStart;
+            transform.forward = rayDirection;
         }
     }
 
