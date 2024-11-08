@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 
 public class RaycastProjectile : MonoBehaviour
 {
     public bool HasFired => hasFired;
+    public Action<RaycastProjectile> ProjectileCollided;
 
     [SerializeField] float projectileSpeed;
     [SerializeField] float projectileEndDistance;
@@ -25,7 +27,10 @@ public class RaycastProjectile : MonoBehaviour
     {
         rayStart = start;
         initialPosition = start;
+        transform.position = rayStart;
+
         rayDirection = direction;
+        transform.forward = rayDirection;
         hasFired = true;
         gameObject.SetActive(true);
     }
@@ -41,6 +46,7 @@ public class RaycastProjectile : MonoBehaviour
 
             if (Physics.Raycast(projectileRay, out hit, projectileSpeed, collionLayer))
             {
+                ProjectileCollided?.Invoke(this);
                 StopProjecticle();
             }
 

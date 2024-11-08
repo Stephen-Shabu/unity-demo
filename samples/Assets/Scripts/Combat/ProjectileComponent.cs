@@ -5,10 +5,12 @@ using UnityEngine;
 public class ProjectileComponent : MonoBehaviour
 {
     [SerializeField] private GameObject raycastProjectilePrefab;
+    [SerializeField] private GameObject hitVfxPrefab;
     [SerializeField] private int projectileCount;
     [SerializeField] private float fireRate;
 
     private List<RaycastProjectile> projectiles = new List<RaycastProjectile>();
+    private List<ParticleSystem> hitMarkers = new List<ParticleSystem>();
     private Stack<RaycastProjectile> raycastProjects;
     private bool isPoolInitialized;
     private float timeSinceLastshot;
@@ -19,8 +21,21 @@ public class ProjectileComponent : MonoBehaviour
         for (int i = 0; i < projectileCount; i++)
         {
             var instance = Instantiate(raycastProjectilePrefab);
+            var hit = Instantiate(hitVfxPrefab);
+            hit.SetActive(false);
+
             var raycastBullet = instance.GetComponent<RaycastProjectile>();
+            var hitVfx = hit.GetComponent<ParticleSystem>();
+            hitMarkers.Add(hitVfx);
+
             raycastBullet.Initialise();
+            var index = i;
+            raycastBullet.ProjectileCollided = (RaycastProjectile rp) => 
+            {
+                hitMarkers[index].gameObject.SetActive(true);
+                hitMarkers[index].transform.position = rp.gameObject.transform.position;
+                hitMarkers[index].Play();
+            };
             projectiles.Add(raycastBullet);
         }
 
@@ -32,7 +47,7 @@ public class ProjectileComponent : MonoBehaviour
         if (Time.time > fireRate + timeSinceLastshot)
         {
             var bullet = projectiles.Find(x => !x.HasFired);
-            var muzzlePosition = transform.position + (transform.forward * 2f);
+            var muzzlePosition = transform.position + (transform.forward * .9f);
             var muzzleForward = muzzlePosition - transform.position;
             muzzleForward.y = 0;
             if (bullet != null)
