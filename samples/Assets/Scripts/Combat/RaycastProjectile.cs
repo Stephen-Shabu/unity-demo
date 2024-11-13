@@ -1,4 +1,6 @@
 using System;
+using Unity.VisualScripting;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 public class RaycastProjectile : MonoBehaviour
@@ -47,12 +49,20 @@ public class RaycastProjectile : MonoBehaviour
             if (Physics.Raycast(projectileRay, out hit, projectileSpeed, collionLayer))
             {
                 ProjectileCollided?.Invoke(this);
-                StopProjecticle();
+
+                if (hit.rigidbody != null && hit.rigidbody.TryGetComponent(out HealthComponent healthComp))
+                {
+                    if (!healthComp.IsHealthZero)
+                    {
+                        healthComp.ReactToHit(rayDirection);
+                        StopProjectile();
+                    }
+                }
             }
 
             if (Vector3.Distance(initialPosition, rayEnd) >= projectileEndDistance)
             {
-                StopProjecticle();
+                StopProjectile();
             }
 
             rayStart = rayEnd;
@@ -61,7 +71,7 @@ public class RaycastProjectile : MonoBehaviour
         }
     }
 
-    private void StopProjecticle()
+    private void StopProjectile()
     {
         hasFired = false;
         Initialise();

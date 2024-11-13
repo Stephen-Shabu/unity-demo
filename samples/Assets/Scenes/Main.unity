@@ -181,7 +181,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 57f477ad78bae4d45b641fd2baba29e8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -383,6 +383,7 @@ GameObject:
   - component: {fileID: 173444232}
   - component: {fileID: 173444231}
   - component: {fileID: 173444230}
+  - component: {fileID: 173444237}
   m_Layer: 0
   m_Name: SimpleMob (10)
   m_TagString: Untagged
@@ -405,9 +406,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 173444231}
+  healthComponent: {fileID: 173444237}
 --- !u!114 &173444231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -502,7 +521,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -541,13 +560,27 @@ Transform:
   m_GameObject: {fileID: 173444229}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.71, y: 1.72, z: 19.6}
+  m_LocalPosition: {x: -15.71, y: 1.72, z: 10.86}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 327285860}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &173444237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173444229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 173444232}
+  mesh: {fileID: 173444234}
 --- !u!1 &179300905
 GameObject:
   m_ObjectHideFlags: 0
@@ -779,6 +812,7 @@ GameObject:
   - component: {fileID: 258128628}
   - component: {fileID: 258128627}
   - component: {fileID: 258128626}
+  - component: {fileID: 258128633}
   m_Layer: 0
   m_Name: SimpleMob (9)
   m_TagString: Untagged
@@ -801,9 +835,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 258128627}
+  healthComponent: {fileID: 258128633}
 --- !u!114 &258128627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -898,7 +950,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -944,6 +996,20 @@ Transform:
   - {fileID: 1457269508}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &258128633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 258128625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 258128628}
+  mesh: {fileID: 258128630}
 --- !u!1 &263462080
 GameObject:
   m_ObjectHideFlags: 0
@@ -1067,6 +1133,7 @@ GameObject:
   - component: {fileID: 302327100}
   - component: {fileID: 302327099}
   - component: {fileID: 302327098}
+  - component: {fileID: 302327105}
   m_Layer: 0
   m_Name: SimpleMob (13)
   m_TagString: Untagged
@@ -1089,9 +1156,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 302327099}
+  healthComponent: {fileID: 302327105}
 --- !u!114 &302327099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1186,7 +1271,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1225,13 +1310,27 @@ Transform:
   m_GameObject: {fileID: 302327097}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.71, y: 1.72, z: 33}
+  m_LocalPosition: {x: -15.71, y: 1.72, z: 7.19}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 263462081}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &302327105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 302327097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 302327100}
+  mesh: {fileID: 302327102}
 --- !u!1 &327285859
 GameObject:
   m_ObjectHideFlags: 0
@@ -1355,6 +1454,7 @@ GameObject:
   - component: {fileID: 333575132}
   - component: {fileID: 333575131}
   - component: {fileID: 333575130}
+  - component: {fileID: 333575137}
   m_Layer: 0
   m_Name: SimpleMob (11)
   m_TagString: Untagged
@@ -1377,9 +1477,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 333575131}
+  healthComponent: {fileID: 333575137}
 --- !u!114 &333575131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1474,7 +1592,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1520,6 +1638,20 @@ Transform:
   - {fileID: 1016901498}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &333575137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 333575129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 333575132}
+  mesh: {fileID: 333575134}
 --- !u!1 &347656750
 GameObject:
   m_ObjectHideFlags: 0
@@ -1535,6 +1667,7 @@ GameObject:
   - component: {fileID: 347656753}
   - component: {fileID: 347656752}
   - component: {fileID: 347656751}
+  - component: {fileID: 347656758}
   m_Layer: 0
   m_Name: SimpleMob (3)
   m_TagString: Untagged
@@ -1557,9 +1690,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 347656752}
+  healthComponent: {fileID: 347656758}
 --- !u!114 &347656752
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1654,7 +1805,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1700,6 +1851,20 @@ Transform:
   - {fileID: 1067975424}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &347656758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 347656750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 347656753}
+  mesh: {fileID: 347656755}
 --- !u!1 &369527244
 GameObject:
   m_ObjectHideFlags: 0
@@ -2138,6 +2303,7 @@ GameObject:
   - component: {fileID: 473388235}
   - component: {fileID: 473388234}
   - component: {fileID: 473388233}
+  - component: {fileID: 473388240}
   m_Layer: 0
   m_Name: SimpleMob (2)
   m_TagString: Untagged
@@ -2160,9 +2326,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 473388234}
+  healthComponent: {fileID: 473388240}
 --- !u!114 &473388234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2257,7 +2441,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2303,6 +2487,20 @@ Transform:
   - {fileID: 1983908352}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &473388240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 473388232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 473388235}
+  mesh: {fileID: 473388237}
 --- !u!1 &552528261
 GameObject:
   m_ObjectHideFlags: 0
@@ -2396,6 +2594,7 @@ GameObject:
   - component: {fileID: 607886526}
   - component: {fileID: 607886525}
   - component: {fileID: 607886524}
+  - component: {fileID: 607886531}
   m_Layer: 0
   m_Name: SimpleMob (1)
   m_TagString: Untagged
@@ -2418,9 +2617,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 607886525}
+  healthComponent: {fileID: 607886531}
 --- !u!114 &607886525
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2515,7 +2732,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2554,13 +2771,27 @@ Transform:
   m_GameObject: {fileID: 607886523}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.71, y: 1.72, z: -23.11}
+  m_LocalPosition: {x: -2.76, y: 1.72, z: -27.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1534840122}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &607886531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 607886523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 607886526}
+  mesh: {fileID: 607886528}
 --- !u!1 &687220499
 GameObject:
   m_ObjectHideFlags: 0
@@ -3047,7 +3278,7 @@ MonoBehaviour:
   raycastProjectilePrefab: {fileID: 8903300447151231617, guid: 761176486549d3e499204c104f9edaa6, type: 3}
   hitVfxPrefab: {fileID: 5804425956868286400, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
   projectileCount: 10
-  fireRate: 0.19
+  fireRate: 0.5
 --- !u!1 &789677503
 GameObject:
   m_ObjectHideFlags: 0
@@ -3063,6 +3294,7 @@ GameObject:
   - component: {fileID: 789677506}
   - component: {fileID: 789677505}
   - component: {fileID: 789677504}
+  - component: {fileID: 789677511}
   m_Layer: 0
   m_Name: SimpleMob (4)
   m_TagString: Untagged
@@ -3085,9 +3317,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 789677505}
+  healthComponent: {fileID: 789677511}
 --- !u!114 &789677505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3182,7 +3432,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3221,13 +3471,27 @@ Transform:
   m_GameObject: {fileID: 789677503}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.71, y: 1.72, z: -36.26}
+  m_LocalPosition: {x: -0.67, y: 1.72, z: -27.07}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1476809587}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &789677511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 789677503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 789677506}
+  mesh: {fileID: 789677508}
 --- !u!1 &812408567
 GameObject:
   m_ObjectHideFlags: 0
@@ -3243,6 +3507,7 @@ GameObject:
   - component: {fileID: 812408570}
   - component: {fileID: 812408569}
   - component: {fileID: 812408568}
+  - component: {fileID: 812408575}
   m_Layer: 0
   m_Name: SimpleMob (14)
   m_TagString: Untagged
@@ -3265,9 +3530,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 812408569}
+  healthComponent: {fileID: 812408575}
 --- !u!114 &812408569
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3362,7 +3645,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3408,6 +3691,20 @@ Transform:
   - {fileID: 179300906}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &812408575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812408567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 812408570}
+  mesh: {fileID: 812408572}
 --- !u!1 &816713827
 GameObject:
   m_ObjectHideFlags: 0
@@ -3688,6 +3985,7 @@ GameObject:
   - component: {fileID: 875566181}
   - component: {fileID: 875566180}
   - component: {fileID: 875566179}
+  - component: {fileID: 875566186}
   m_Layer: 0
   m_Name: SimpleMob (6)
   m_TagString: Untagged
@@ -3710,9 +4008,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 875566180}
+  healthComponent: {fileID: 875566186}
 --- !u!114 &875566180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3807,7 +4123,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3846,13 +4162,27 @@ Transform:
   m_GameObject: {fileID: 875566178}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.8, y: 1.72, z: -23.11}
+  m_LocalPosition: {x: -2.6, y: 1.72, z: -30.23}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 830001949}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &875566186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875566178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 875566181}
+  mesh: {fileID: 875566183}
 --- !u!1 &928180257
 GameObject:
   m_ObjectHideFlags: 0
@@ -4894,6 +5224,7 @@ GameObject:
   - component: {fileID: 1300798019}
   - component: {fileID: 1300798018}
   - component: {fileID: 1300798017}
+  - component: {fileID: 1300798024}
   m_Layer: 0
   m_Name: SimpleMob
   m_TagString: Untagged
@@ -4916,9 +5247,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 1300798018}
+  healthComponent: {fileID: 1300798024}
 --- !u!114 &1300798018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5013,7 +5362,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5059,6 +5408,20 @@ Transform:
   - {fileID: 190940193}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1300798024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1300798016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 1300798019}
+  mesh: {fileID: 1300798021}
 --- !u!1 &1329285254
 GameObject:
   m_ObjectHideFlags: 0
@@ -5105,6 +5468,7 @@ GameObject:
   - component: {fileID: 1387513911}
   - component: {fileID: 1387513910}
   - component: {fileID: 1387513909}
+  - component: {fileID: 1387513916}
   m_Layer: 0
   m_Name: SimpleMob (5)
   m_TagString: Untagged
@@ -5127,9 +5491,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 1387513910}
+  healthComponent: {fileID: 1387513916}
 --- !u!114 &1387513910
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5224,7 +5606,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5270,6 +5652,20 @@ Transform:
   - {fileID: 456524224}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1387513916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387513908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 1387513911}
+  mesh: {fileID: 1387513913}
 --- !u!1 &1457269507
 GameObject:
   m_ObjectHideFlags: 0
@@ -5717,6 +6113,7 @@ GameObject:
   - component: {fileID: 1576890410}
   - component: {fileID: 1576890409}
   - component: {fileID: 1576890408}
+  - component: {fileID: 1576890415}
   m_Layer: 0
   m_Name: SimpleMob (12)
   m_TagString: Untagged
@@ -5739,9 +6136,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 1576890409}
+  healthComponent: {fileID: 1576890415}
 --- !u!114 &1576890409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5836,7 +6251,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5882,6 +6297,20 @@ Transform:
   - {fileID: 687220500}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1576890415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1576890407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 1576890410}
+  mesh: {fileID: 1576890412}
 --- !u!1 &1623171740
 GameObject:
   m_ObjectHideFlags: 0
@@ -6046,6 +6475,7 @@ GameObject:
   - component: {fileID: 1750116348}
   - component: {fileID: 1750116347}
   - component: {fileID: 1750116346}
+  - component: {fileID: 1750116353}
   m_Layer: 0
   m_Name: SimpleMob (8)
   m_TagString: Untagged
@@ -6068,9 +6498,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 1750116347}
+  healthComponent: {fileID: 1750116353}
 --- !u!114 &1750116347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6165,7 +6613,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6211,6 +6659,20 @@ Transform:
   - {fileID: 1949183093}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1750116353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1750116345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 1750116348}
+  mesh: {fileID: 1750116350}
 --- !u!1 &1845601586
 GameObject:
   m_ObjectHideFlags: 0
@@ -6226,6 +6688,7 @@ GameObject:
   - component: {fileID: 1845601589}
   - component: {fileID: 1845601588}
   - component: {fileID: 1845601587}
+  - component: {fileID: 1845601594}
   m_Layer: 0
   m_Name: SimpleMob (7)
   m_TagString: Untagged
@@ -6248,9 +6711,27 @@ MonoBehaviour:
   inputVector: {x: 0, y: 0}
   lookVector: {x: 0, y: 0}
   heading: {x: 0, y: 0, z: 0}
+  nearbyEntities:
+  - {fileID: 1300798016}
+  - {fileID: 607886523}
+  - {fileID: 473388232}
+  - {fileID: 347656750}
+  - {fileID: 789677503}
+  - {fileID: 1387513908}
+  - {fileID: 875566178}
+  - {fileID: 1845601586}
+  - {fileID: 1750116345}
+  - {fileID: 258128625}
+  - {fileID: 173444229}
+  - {fileID: 333575129}
+  - {fileID: 1576890407}
+  - {fileID: 302327097}
+  - {fileID: 812408567}
   intensity: 1
+  stoppingDistance: 5
   target: {fileID: 722268599}
   moveComponent: {fileID: 1845601588}
+  healthComponent: {fileID: 1845601594}
 --- !u!114 &1845601588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6345,7 +6826,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a9fe5caf3216dc34bb03cdf46acde5cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6391,6 +6872,20 @@ Transform:
   - {fileID: 1504841667}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1845601594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1845601586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 1845601589}
+  mesh: {fileID: 1845601591}
 --- !u!1 &1903474464
 GameObject:
   m_ObjectHideFlags: 0
@@ -6808,7 +7303,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: c395353cca5b8c24f97ef1cedfa6c9d0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7073,63 +7568,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 538a86245a0aca943936da2c5efddf46, type: 3}
---- !u!1001 &4456718381908634211
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5804425956868286400, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
-      propertyPath: m_Name
-      value: projectile_hit
-      objectReference: {fileID: 0}
-    - target: {fileID: 7066671175939406061, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -3.0262601
-      objectReference: {fileID: 0}
-    - target: {fileID: 7066671175939406061, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2.1475148
-      objectReference: {fileID: 0}
-    - target: {fileID: 7066671175939406061, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -4.0102363
-      objectReference: {fileID: 0}
-    - target: {fileID: 7066671175939406061, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 7066671175939406061, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 7066671175939406061, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7066671175939406061, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7066671175939406061, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 7066671175939406061, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7066671175939406061, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
 --- !u!1001 &4675531882531970116
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7191,63 +7629,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 51ce904cf42b5564b909427ab6f5ae62, type: 3}
---- !u!1001 &7197723196881956225
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5388521174524617545, guid: 908491c098828cc468ce07eea888fc1f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 2.3527641
-      objectReference: {fileID: 0}
-    - target: {fileID: 5388521174524617545, guid: 908491c098828cc468ce07eea888fc1f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3.89
-      objectReference: {fileID: 0}
-    - target: {fileID: 5388521174524617545, guid: 908491c098828cc468ce07eea888fc1f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -12.99
-      objectReference: {fileID: 0}
-    - target: {fileID: 5388521174524617545, guid: 908491c098828cc468ce07eea888fc1f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 5388521174524617545, guid: 908491c098828cc468ce07eea888fc1f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 5388521174524617545, guid: 908491c098828cc468ce07eea888fc1f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5388521174524617545, guid: 908491c098828cc468ce07eea888fc1f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5388521174524617545, guid: 908491c098828cc468ce07eea888fc1f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 5388521174524617545, guid: 908491c098828cc468ce07eea888fc1f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5388521174524617545, guid: 908491c098828cc468ce07eea888fc1f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8110561282060722610, guid: 908491c098828cc468ce07eea888fc1f, type: 3}
-      propertyPath: m_Name
-      value: projectile_trail
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 908491c098828cc468ce07eea888fc1f, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -7279,5 +7660,3 @@ SceneRoots:
   - {fileID: 1623171744}
   - {fileID: 552528264}
   - {fileID: 1188163922}
-  - {fileID: 7197723196881956225}
-  - {fileID: 4456718381908634211}
