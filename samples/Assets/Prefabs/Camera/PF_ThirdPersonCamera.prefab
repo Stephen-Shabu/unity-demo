@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &8037983521566573341
+--- !u!1 &5159571121971549174
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,40 +8,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6324216416353808658}
-  - component: {fileID: 6470287136047485009}
-  - component: {fileID: 8420534957562506886}
-  - component: {fileID: 1554052152923271560}
-  - component: {fileID: 2369416241537966208}
+  - component: {fileID: 790273290709681027}
+  - component: {fileID: 7268846838249761574}
+  - component: {fileID: 5634640878102556824}
+  - component: {fileID: 989113411454096354}
+  - component: {fileID: 6955161020487592161}
   m_Layer: 0
-  m_Name: TopDownCamera
-  m_TagString: Untagged
+  m_Name: PF_ThirdPersonCamera
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6324216416353808658
+--- !u!4 &790273290709681027
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8037983521566573341}
+  m_GameObject: {fileID: 5159571121971549174}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.260419, y: 3.981315, z: 2.9946735}
+  m_LocalPosition: {x: 0, y: 1.48, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!20 &6470287136047485009
+--- !u!20 &7268846838249761574
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8037983521566573341}
+  m_GameObject: {fileID: 5159571121971549174}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
@@ -71,7 +71,7 @@ Camera:
   field of view: 60
   orthographic: 0
   orthographic size: 5
-  m_Depth: 0
+  m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -86,21 +86,21 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &8420534957562506886
+--- !u!81 &5634640878102556824
 AudioListener:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8037983521566573341}
+  m_GameObject: {fileID: 5159571121971549174}
   m_Enabled: 1
---- !u!114 &1554052152923271560
+--- !u!114 &989113411454096354
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8037983521566573341}
+  m_GameObject: {fileID: 5159571121971549174}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
@@ -117,7 +117,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -138,16 +138,16 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!114 &2369416241537966208
+--- !u!114 &6955161020487592161
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8037983521566573341}
+  m_GameObject: {fileID: 5159571121971549174}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74a35070bdaf4204283214ca1994560d, type: 3}
+  m_Script: {fileID: 11500000, guid: c55c05be6801bd94ba505d7868ead632, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   panTopSpeed: 300
@@ -155,4 +155,6 @@ MonoBehaviour:
   panDeacceleration: 200
   damping: 5
   orbitDistance: 10
-  orbitHeight: 10
+  orbitHeight: 5
+  minYAngle: 0
+  maxYAngle: 0
