@@ -6,5 +6,5 @@ This repo is in active development as I am continuing to add features and system
 
 Feel free to have a look and if you want to reach out you can find me here:
 
-- [Email: stephen.shabu@outlook.com](stephen.shabu@outlook.com)
+- [Email: stephen.shabu@outlook.com](mailto:stephen.shabu@outlook.com)
 - [Linkedin: Stephen Shabu](https://www.linkedin.com/in/stephen-shabu-344b64b2/)
