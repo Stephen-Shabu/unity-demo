@@ -24,7 +24,7 @@ public static class CreateDatabaseTask
 
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "CREATE TABLE IF NOT EXISTS profiles (id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, xplevel INTEGER, xptotal INTEGER, lastcompletedlevel INTEGER)";
+                    command.CommandText = "CREATE TABLE IF NOT EXISTS profiles (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, xplevel INTEGER, xptotal INTEGER, lastcompletedlevel INTEGER)";
                     command.ExecuteNonQuery();
                 }
             }
