@@ -1,50 +1,68 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class CharactorController : MonoBehaviour
+namespace Samples
 {
-    [SerializeField] private PlayerInput playerInput;
-    [SerializeField] private Vector2 inputVector = Vector2.zero;
-    [SerializeField] private Vector2 lookVector = Vector2.zero;
-    [SerializeField] private MovementComponent moveComponent;
-    [SerializeField] private BaseCameraComponent cameraComponent;
-    [SerializeField] private ProjectileComponent projectileComponent;
-
-    private bool hasJumped = false;
-    private bool hasAttacked;
-
-    public void OnAttack(InputValue value)
+    public class CharactorController : MonoBehaviour
     {
-        hasAttacked = value.isPressed;
-        projectileComponent.Fire();
-    }
+        [SerializeField] private PlayerInput playerInput;
+        [SerializeField] private Vector2 inputVector = Vector2.zero;
+        [SerializeField] private Vector2 lookVector = Vector2.zero;
+        [SerializeField] private CharacterMovement moveComponent;
+        [SerializeField] private BaseCameraComponent cameraComponent;
+        [SerializeField] private ProjectileComponent projectileComponent;
 
-    public void OnMove(InputValue value)
-    {
-        inputVector = value.Get<Vector2>();
-    }
+        [SerializeField] private bool hasJumped = false;
+        [SerializeField] private bool hasAttacked;
+        [SerializeField] private bool hasDodged;
 
-    public void OnLook(InputValue value)
-    {
-        lookVector = value.Get<Vector2>();
-    }
+        public void Initialise(BaseCameraComponent camera)
+        {
+            cameraComponent = camera;
+            moveComponent.Intialise();
+        }
 
-    public void OnJump(InputValue value)
-    {
-        hasJumped = value.isPressed;
-        moveComponent.ApplyJumpVelocity(hasJumped);
-    }
+        public void OnAttack(InputValue value)
+        {
+            hasAttacked = value.isPressed;
+            projectileComponent.Fire(hasAttacked);
+        }
 
-    private void FixedUpdate()
-    {
-        Vector3 cameraForward = cameraComponent.transform.forward;
-        Vector3 cameraRight = cameraComponent.transform.right;
-        cameraForward.y = 0.0f;
+        public void OnDodge(InputValue value)
+        {
+            Debug.Log("Dodge");
+            hasDodged = value.isPressed;
+            moveComponent.ApplyDogde(hasDodged);
+        }
 
-        Vector3 movementDirection = (cameraForward * inputVector.y + cameraRight * inputVector.x).normalized;
+        public void OnMove(InputValue value)
+        {
+            inputVector = value.Get<Vector2>();
+        }
 
-        moveComponent.UpdateMovement(movementDirection);
-        cameraComponent.TrackPlayer(transform, lookVector);
+        public void OnLook(InputValue value)
+        {
+            lookVector = value.Get<Vector2>();
+        }
+
+        public void OnJump(InputValue value)
+        {
+            hasJumped = value.isPressed;
+            moveComponent.ApplyJumpVelocity(hasJumped);
+        }
+
+        public void UpdateController()
+        {
+            Vector3 cameraForward = cameraComponent.transform.forward;
+            Vector3 cameraRight = cameraComponent.transform.right;
+            cameraForward.y = 0.0f;
+
+            Vector3 movementDirection = (cameraForward * inputVector.y + cameraRight * inputVector.x).normalized;
+
+            moveComponent.UpdateMovement(movementDirection, hasAttacked);
+            cameraComponent.TrackPlayer(transform, lookVector);
+        }
     }
 }

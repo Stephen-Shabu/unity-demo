@@ -22,4 +22,12 @@ public static class MathDefines
 
         return interpolatedaAngle;
     }
+
+    public static class Easing
+    {
+        public static float EaseInOut(float t)
+        {
+            return 1 - Mathf.Pow(1 - t, 2f);
+        }
+    }
 }

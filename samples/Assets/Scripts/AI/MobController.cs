@@ -22,6 +22,9 @@ public class MobController : MonoBehaviour
     public void Initialize(Transform newTarget)
     {
         healthComponent.OnHealthReachedZero = HandleOnHealthReachedZero;
+        healthComponent.OnDeathComplete = HandleDeathComplete;
+        healthComponent.Initialise();
+        moveComponent.Intialise();
         target = newTarget;
         Debug.Log("Target Changed");
     }
@@ -29,11 +32,15 @@ public class MobController : MonoBehaviour
     private void HandleOnHealthReachedZero()
     {
         hasHealthReachedZero = !hasHealthReachedZero;
-        OnHealthReachedZero?.Invoke();
         meleeComponent.CancelMeleeAttack();
     }
 
-    private void FixedUpdate()
+    private void HandleDeathComplete()
+    {
+        OnHealthReachedZero?.Invoke();
+    }
+
+    public void UpdateController()
     {
         if (target != null)
         {

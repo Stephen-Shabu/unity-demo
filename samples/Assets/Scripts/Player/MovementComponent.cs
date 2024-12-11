@@ -1,32 +1,30 @@
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.InputSystem;
+﻿using UnityEngine;
 
 public class MovementComponent : MonoBehaviour
 {
-    [SerializeField] private Rigidbody attactedRigidBody;
-    [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private float topSpeed;
-    [SerializeField] private float turnRate;
-    [SerializeField] private float accelerationFactor;
-    [SerializeField] private float deaccelerationFactor;
-    [SerializeField] float inertiaFactor = 5f;
+    [SerializeField] protected Rigidbody attachedRigidBody;
+    [SerializeField] protected LayerMask groundLayer;
+    [SerializeField] protected float topSpeed;
+    [SerializeField] protected float turnRate;
+    [SerializeField] protected float accelerationFactor;
+    [SerializeField] protected float deaccelerationFactor;
+    [SerializeField] protected float inertiaFactor = 5f;
 
-    private float currentTurnSpeed;
-    private float currentLinearSpeed;
-    private Vector3 lastMoveVector;
-    private Vector3 currentMoveVector;
-    private Vector3 finalMoveVector;
+    protected float currentTurnSpeed;
+    protected float currentLinearSpeed;
+    protected Vector3 lastMoveVector;
+    protected Vector3 currentMoveVector;
+    protected Vector3 finalMoveVector;
 
-    private int groundedRes;
-    private bool hasJumped;
-    private Vector3 groundCollisionCenter;
-    private Collider characterCollider;
-    private Collider[] groundCollisionResult;
+    protected Vector3 groundCollisionCenter;
+    protected Collider characterCollider;
+    protected Collider[] groundCollisionResult;
 
-    private void Start()
+    protected bool hasJumped;
+
+    public virtual void Intialise()
     {
-        if (attactedRigidBody == null)
+        if (attachedRigidBody == null)
         {
             Debug.LogError("No Rigidbody assigned in the inspector");
         }
@@ -35,42 +33,28 @@ public class MovementComponent : MonoBehaviour
         groundCollisionResult = new Collider[MovementDefines.Character.FLOOR_COLLIDER_COUNT];
     }
 
-    public void ApplyJumpVelocity(bool isJumping)
+    public virtual void UpdateMovement(Vector3 direction, bool isFiring)
     {
-        hasJumped = isJumping;
-
-        if (hasJumped && groundedRes > 0)
+        if (attachedRigidBody.linearVelocity.y < 0 && !IsGrounded())
         {
-            attactedRigidBody.linearVelocity = Vector3.up * 8f;
+            attachedRigidBody.linearVelocity += Vector3.up * Physics.gravity.y * (2.5f - 1) * Time.fixedDeltaTime;
         }
-    }
-
-    public void UpdateMovement(Vector3 direction)
-    {
-        groundCollisionCenter.x = transform.position.x;
-        groundCollisionCenter.z = transform.position.z;
-        groundCollisionCenter.y = transform.position.y - characterCollider.bounds.extents.y;
-
-        groundedRes = Physics.OverlapBoxNonAlloc(groundCollisionCenter, Vector3.one * MovementDefines.Character.GROUNDED_COLLIDER_SIZE_MUTIPLIER, groundCollisionResult, transform.rotation, groundLayer);
-
-        if (attactedRigidBody.linearVelocity.y < 0 && groundedRes == 0)
+        else if (attachedRigidBody.linearVelocity.y > 0 && !hasJumped)
         {
-            attactedRigidBody.linearVelocity += Vector3.up * Physics.gravity.y * (2.5f - 1) * Time.smoothDeltaTime;
-        }
-        else if (attactedRigidBody.linearVelocity.y > 0 && !hasJumped)
-        {
-            attactedRigidBody.linearVelocity += Vector3.up * Physics.gravity.y * (2.0f - 1) * Time.smoothDeltaTime;
+            attachedRigidBody.linearVelocity += Vector3.up * Physics.gravity.y * (2.0f - 1) * Time.fixedDeltaTime;
         }
 
         var targetVelocity = GetMoveVector(direction);
-        targetVelocity.y = attactedRigidBody.linearVelocity.y;
-        attactedRigidBody.linearVelocity = Vector3.Lerp(attactedRigidBody.linearVelocity, targetVelocity, inertiaFactor * Time.deltaTime);
-        attactedRigidBody.rotation = GetRotation(currentMoveVector);
+        targetVelocity.y = attachedRigidBody.linearVelocity.y;
+
+        attachedRigidBody.linearVelocity = isFiring ? Vector3.zero : Vector3.Lerp(attachedRigidBody.linearVelocity, targetVelocity, inertiaFactor * Time.fixedDeltaTime);
+        attachedRigidBody.rotation = GetRotation(currentMoveVector);
     }
 
     private Vector3 GetMoveVector(Vector3 direction)
     {
         var canAccelerate = direction.sqrMagnitude > MovementDefines.Character.MAGNITUDE_THRESHOLD;
+
         if (canAccelerate)
         {
             lastMoveVector = currentMoveVector;
@@ -81,7 +65,7 @@ public class MovementComponent : MonoBehaviour
             currentMoveVector = lastMoveVector;
         }
 
-        currentLinearSpeed += canAccelerate ? accelerationFactor * Time.deltaTime : -(deaccelerationFactor * Time.deltaTime);
+        currentLinearSpeed += canAccelerate ? accelerationFactor * Time.fixedDeltaTime : -(deaccelerationFactor * Time.fixedDeltaTime);
 
         if (currentLinearSpeed > topSpeed)
         {
@@ -99,11 +83,22 @@ public class MovementComponent : MonoBehaviour
         return moveVector;
     }
 
+    protected bool IsGrounded()
+    {
+        groundCollisionCenter.x = transform.position.x;
+        groundCollisionCenter.z = transform.position.z;
+        groundCollisionCenter.y = transform.position.y - characterCollider.bounds.extents.y;
+
+        var grounded = Physics.OverlapBoxNonAlloc(groundCollisionCenter, Vector3.one * MovementDefines.Character.GROUNDED_COLLIDER_SIZE_MUTIPLIER, groundCollisionResult, transform.rotation, groundLayer);
+
+        return grounded > 0;
+    }
+
     private Quaternion GetRotation(Vector3 direction)
     {
         Vector3 turnDirection = new Vector3(direction.x, 0, direction.z);
-        float forwardTiltAmount = Mathf.Abs(transform.InverseTransformDirection(attactedRigidBody.linearVelocity).z) * 2.5f;
-        float angularTiltAmount = Vector3.Dot(attactedRigidBody.angularVelocity, Vector3.up) * 5f;
+        float forwardTiltAmount = Mathf.Abs(transform.InverseTransformDirection(attachedRigidBody.linearVelocity).z) * 2.5f;
+        float angularTiltAmount = Vector3.Dot(attachedRigidBody.angularVelocity, Vector3.up) * 5f;
         currentTurnSpeed = turnRate * Time.smoothDeltaTime;
 
         var start = MathDefines.GetAngleFromDirectionXZ(transform.forward);
