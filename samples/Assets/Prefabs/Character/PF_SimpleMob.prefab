@@ -185,14 +185,6 @@ MonoBehaviour:
   accelerationFactor: 5
   deaccelerationFactor: 20
   inertiaFactor: 5
-  animCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  isDogding: 0
-  orbitRadius: 5
 --- !u!114 &6954567763542251268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,6 +202,8 @@ MonoBehaviour:
   meshes:
   - {fileID: 7351945241571910031}
   - {fileID: 3532879170079386949}
+  cachedColours: []
+  deathVfxPrefab: {fileID: 5957226033150986559, guid: 9ea01764c56fa2f46b003ecbccf4b5d7, type: 3}
 --- !u!114 &9057324534014362804
 MonoBehaviour:
   m_ObjectHideFlags: 0

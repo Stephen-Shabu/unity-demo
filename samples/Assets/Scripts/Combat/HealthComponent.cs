@@ -3,6 +3,9 @@ using UnityEngine;
 using System.Threading.Tasks;
 using UnityEngine.UIElements;
 using System;
+using Unity.Android.Gradle;
+using UnityEngine.XR;
+using Unity.VisualScripting;
 
 public class HealthComponent : MonoBehaviour
 {
@@ -12,20 +15,38 @@ public class HealthComponent : MonoBehaviour
     public bool IsHealthZero { get; private set; }
 
     [SerializeField] private Rigidbody attactedRigidBody;
-    [SerializeField] private MeshRenderer mesh;
+    [SerializeField] private Renderer[] meshes;
+    [SerializeField] private GameObject deathVfxPrefab;
 
     private int currentHealth = 4;
     private float flashAnimTime;
     private float timeToReachTarget = 1f;
 
-    private MaterialPropertyBlock characterPropertyBlock;
+    private MaterialPropertyBlock[] propertyBlocks;
+    private Color[] cachedColours;
     private const string SHADER_PROP_DISSOLVE = "_DissolveThreshold";
-    private const string SHADER_PROP_BASECOLOUR = "_BaseColour";
+    private const string SHADER_PROP_BASECOLOUR = "_BaseColor";
     private const int FLASH_TIME = 100;
+    private ParticleSystem deathBurstVfx;
 
-    private void Start()
+    public void Initialise()
     {
-        characterPropertyBlock = new MaterialPropertyBlock();
+        deathBurstVfx = Instantiate(deathVfxPrefab).GetComponent<ParticleSystem>();
+        deathBurstVfx.gameObject.SetActive(false);
+
+        int meshCount = meshes.Length;
+        propertyBlocks = new MaterialPropertyBlock[meshCount];
+        cachedColours = new Color[meshCount];
+
+        for (int i = 0; i < meshCount; i++)
+        {
+            propertyBlocks[i] = new MaterialPropertyBlock();
+
+            meshes[i].GetPropertyBlock(propertyBlocks[i]);
+            meshes[i].material.GetColor(SHADER_PROP_BASECOLOUR);
+
+            cachedColours[i] = meshes[i].material.GetColor(SHADER_PROP_BASECOLOUR);
+        }
     }
 
     public void ReactToHit(Vector3 hitDirection)
@@ -38,13 +59,22 @@ public class HealthComponent : MonoBehaviour
         {
             OnHealthReachedZero?.Invoke();
             attactedRigidBody.linearVelocity += hitDirection * 10f;
-            UpdateExperienceBarAsync();
-            FadeOut();
+
+            void PlayDeathVFX()
+            {
+                deathBurstVfx.transform.position = transform.position;
+                deathBurstVfx.gameObject.SetActive(true);
+                deathBurstVfx.Play();
+                attactedRigidBody.gameObject.SetActive(false);
+                OnDeathComplete?.Invoke();
+            }
+
+            ApplyHitColour(Color.red, PlayDeathVFX);
         }
         else
         {
             OnDamageRecieved?.Invoke();
-            UpdateExperienceBarAsync();
+            ApplyHitColour(Color.white);
             attactedRigidBody.linearVelocity += hitDirection * 5f;
         }
         IsHealthZero = currentHealth == 0;
@@ -52,14 +82,19 @@ public class HealthComponent : MonoBehaviour
 
     private async void FadeOut()
     {
-        mesh.GetPropertyBlock(characterPropertyBlock);
-        //var maxValue = characterPropertyBlock.GetFloat(SHADER_PROP_DISSOLVE);
         while (Mathf.Abs(flashAnimTime - timeToReachTarget) > 0.01f)
         {
             flashAnimTime += Time.deltaTime;
             var threshold = 0 - (0 - .6f) - flashAnimTime;
-            characterPropertyBlock.SetFloat(SHADER_PROP_DISSOLVE, threshold);
-            mesh.SetPropertyBlock(characterPropertyBlock);
+
+            int length = propertyBlocks.Length;
+
+            for (int i = 0; i < length; i++)
+            {
+                meshes[i].GetPropertyBlock(propertyBlocks[i]);
+                propertyBlocks[i].SetFloat(SHADER_PROP_DISSOLVE, threshold);
+                meshes[i].SetPropertyBlock(propertyBlocks[i]);
+            }
 
             await Task.Yield();
         }
@@ -67,16 +102,26 @@ public class HealthComponent : MonoBehaviour
         OnDeathComplete?.Invoke();
     }
 
-    private async void UpdateExperienceBarAsync()
+    private async void ApplyHitColour(Color hitColor, Action onComplete = null)
     {
-        mesh.GetPropertyBlock(characterPropertyBlock);
+        int length = propertyBlocks.Length;
 
-        characterPropertyBlock.SetColor(SHADER_PROP_BASECOLOUR, Color.white);
-        mesh.SetPropertyBlock(characterPropertyBlock);
+        for (int i = 0; i < length; i++)
+        {
+            meshes[i].GetPropertyBlock(propertyBlocks[i]);
+
+            propertyBlocks[i].SetColor(SHADER_PROP_BASECOLOUR, hitColor);
+            meshes[i].SetPropertyBlock(propertyBlocks[i]);
+        }
 
         await Task.Delay(FLASH_TIME);
 
-        characterPropertyBlock.SetColor(SHADER_PROP_BASECOLOUR, Color.gray);
-        mesh.SetPropertyBlock(characterPropertyBlock);
+        for (int i = 0; i < length; i++)
+        {
+            propertyBlocks[i].SetColor(SHADER_PROP_BASECOLOUR, cachedColours[i]);
+            meshes[i].SetPropertyBlock(propertyBlocks[i]);
+        }
+
+        onComplete?.Invoke();
     }
 }
