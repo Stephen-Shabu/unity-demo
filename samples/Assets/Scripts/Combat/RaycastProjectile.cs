@@ -2,6 +2,7 @@ using System;
 using Unity.VisualScripting;
 using UnityEditor.MemoryProfiler;
 using UnityEngine;
+using static UnityEngine.UI.Image;
 
 public class RaycastProjectile : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class RaycastProjectile : MonoBehaviour
 
     [SerializeField] float projectileSpeed;
     [SerializeField] float projectileEndDistance;
+    [SerializeField] float bulletRadius = .4f;
+    [SerializeField] float maxDistance = .4f;
     [SerializeField] LayerMask collionLayer;
 
     private Vector3 rayEnd;
@@ -18,7 +21,7 @@ public class RaycastProjectile : MonoBehaviour
     private Vector3 rayStart;
     private bool hasFired;
     private Ray projectileRay = new Ray();
-    private RaycastHit hit = new RaycastHit();
+    private RaycastHit[] hits = new RaycastHit[1];
 
     public void Initialise()
     {
@@ -43,21 +46,26 @@ public class RaycastProjectile : MonoBehaviour
         {
             rayEnd = rayStart + (rayDirection * projectileSpeed);
 
-            projectileRay.origin = rayEnd;
+            projectileRay.origin = rayStart;
             projectileRay.direction = rayDirection;
 
-            if (Physics.Raycast(projectileRay, out hit, projectileSpeed, collionLayer))
+            if(IsSphereCast() > 0)
             {
+                Debug.DrawLine(transform.position, hits[0].point, Color.red);
+                Debug.DrawRay(hits[0].point, hits[0].normal * 0.5f, Color.yellow); // Collision normal
+                DebugExtension.DrawWireSphere(hits[0].point, Color.red, .4f);
+
                 ProjectileCollided?.Invoke(this);
 
-                if (hit.rigidbody != null && hit.rigidbody.TryGetComponent(out HealthComponent healthComp))
+                if (hits[0].collider != null && hits[0].collider.TryGetComponent(out HealthComponent healthComp))
                 {
                     if (!healthComp.IsHealthZero)
                     {
                         healthComp.ReactToHit(rayDirection);
-                        StopProjectile();
                     }
                 }
+
+                StopProjectile();
             }
 
             if (Vector3.Distance(initialPosition, rayEnd) >= projectileEndDistance)
@@ -69,6 +77,22 @@ public class RaycastProjectile : MonoBehaviour
             transform.position = rayStart;
             transform.forward = rayDirection;
         }
+    }
+
+    private int IsSphereCast()
+    {
+        Vector3 origin = transform.position;
+
+        int hitCount = Physics.SphereCastNonAlloc(
+            origin,
+            bulletRadius,
+            rayDirection.normalized,
+            hits,
+            maxDistance,
+            collionLayer
+        );
+
+        return hitCount;
     }
 
     private void StopProjectile()

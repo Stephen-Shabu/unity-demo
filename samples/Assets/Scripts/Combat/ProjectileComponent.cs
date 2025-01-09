@@ -14,10 +14,12 @@ public class ProjectileComponent : MonoBehaviour
     private Stack<RaycastProjectile> raycastProjects;
     private bool isPoolInitialized;
     private float timeSinceLastshot;
+    private bool canFire;
 
-    private void Start()
+    public void Initialise()
     {
         isPoolInitialized = false;
+
         for (int i = 0; i < projectileCount; i++)
         {
             var instance = Instantiate(raycastProjectilePrefab);
@@ -30,7 +32,7 @@ public class ProjectileComponent : MonoBehaviour
 
             raycastBullet.Initialise();
             var index = i;
-            raycastBullet.ProjectileCollided = (RaycastProjectile rp) => 
+            raycastBullet.ProjectileCollided = (RaycastProjectile rp) =>
             {
                 hitMarkers[index].gameObject.SetActive(true);
                 hitMarkers[index].transform.position = rp.gameObject.transform.position;
@@ -42,9 +44,14 @@ public class ProjectileComponent : MonoBehaviour
         isPoolInitialized = true;
     }
 
-    public void Fire()
+    public void Fire(bool canFire)
     {
-        if (Time.time > fireRate + timeSinceLastshot)
+        this.canFire = canFire;
+    }
+
+    public void UpdateComponent()
+    {
+        if (canFire && Time.time > fireRate + timeSinceLastshot)
         {
             var bullet = projectiles.Find(x => !x.HasFired);
             var muzzlePosition = transform.position + (transform.forward * .9f);
@@ -57,10 +64,7 @@ public class ProjectileComponent : MonoBehaviour
 
             timeSinceLastshot = Time.time;
         }
-    }
 
-    public void FixedUpdate()
-    {
         if (isPoolInitialized)
         {
             for (int i = 0, range = projectiles.Count; i < range; i++)

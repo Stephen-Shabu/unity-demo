@@ -22,6 +22,7 @@ namespace Samples
         {
             cameraComponent = camera;
             moveComponent.Intialise();
+            projectileComponent.Initialise();
         }
 
         public void OnAttack(InputValue value)
@@ -63,6 +64,7 @@ namespace Samples
 
             moveComponent.UpdateMovement(movementDirection, hasAttacked);
             cameraComponent.TrackPlayer(transform, lookVector);
+            projectileComponent.UpdateComponent();
         }
     }
 }
