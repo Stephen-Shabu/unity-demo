@@ -9,6 +9,7 @@ public class GameUIView : MonoBehaviour
     public RectTransform HomePanel => homePanel;
     public RectTransform GamePanel => gamePanel;
     public RectTransform ResultPanel => resultPanel;
+    public RectTransform PausePanel => pausePanel;
     public GameObject RoundCompletePanel => roundCompletePanel;
     public GameObject GameCompletePanel => gameCompletePanel;
     public Button StartButton => startButton;
@@ -27,6 +28,7 @@ public class GameUIView : MonoBehaviour
     [SerializeField] private RectTransform homePanel;
     [SerializeField] private RectTransform gamePanel;
     [SerializeField] private RectTransform resultPanel;
+    [SerializeField] private RectTransform pausePanel;
     [SerializeField] private GameObject roundCompletePanel;
     [SerializeField] private GameObject gameCompletePanel;
     [SerializeField] private Button startButton;

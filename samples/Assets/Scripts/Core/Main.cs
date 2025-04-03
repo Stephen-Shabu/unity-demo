@@ -150,10 +150,10 @@ public class Main : MonoBehaviour
                 mobControllers[i].SetNeighbors(mobControllers);
             }
 
-            roundHasStarted = true;
         }
 
         await Task.Delay(2 * MathDefines.MILLISECOND_MULTIPLIER);
+        roundHasStarted = true;
         onComplete?.Invoke();
     }
 
@@ -216,15 +216,21 @@ public class Main : MonoBehaviour
         {
             await Task.Delay(1 * MathDefines.MILLISECOND_MULTIPLIER);
 
-            gameUIController.AnimateXpMeter(earnedXp, () =>
+            async void GoToResultScreen()
             {
+                gameUIController.HideHUD();
+
+                await Task.Delay(1 * (MathDefines.MILLISECOND_MULTIPLIER / 2));
+
                 var isGameComplete = roundIndex == gameRounds.Length - 1;
                 gameUIController.SetResultPanel(isGameComplete, roundIndex + 1);
 
                 gameUIController.NavigateToPanel(2);
 
                 roundHasStarted = false;
-            });
+            }
+
+            gameUIController.AnimateXpMeter(earnedXp, GoToResultScreen);
         }
     }
 }

@@ -4,6 +4,7 @@ using System;
 
 public class XpMeterController : MonoBehaviour
 {
+    public XpMeterView XpMeterView => xpMeterView;
     public int[] XpAdditions = new int[] { 50, 10, 15, 5, 100, 3, 18};
 
     [SerializeField] private XpMeterView xpMeterView;

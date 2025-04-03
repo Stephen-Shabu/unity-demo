@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Threading.Tasks;
+using UnityEditor.Search;
 
 public class GameUIController : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class GameUIController : MonoBehaviour
 
     public float transitionSpeed = 10f;
     private Vector2 targetPosition;
+    private Vector2 targetHUDPosition;
+    private Vector2 targetPausePanelPosition;
 
     private const string START_TEXT = "START";
     private const string RESUME_TEXT = "RESUME";
@@ -72,6 +75,9 @@ public class GameUIController : MonoBehaviour
         {
             OnDebugFinishGameButtonPressed?.Invoke();
         });
+
+        HideHUD();
+        HidePausePanel();
     }
 
     public void SetResultPanel(bool isGameComplete, int roundNumber)
@@ -84,11 +90,38 @@ public class GameUIController : MonoBehaviour
     public void UpdateGameUI()
     {
         gameUIView.PanelRoot.anchoredPosition = Vector2.Lerp(gameUIView.PanelRoot.anchoredPosition, targetPosition, Time.deltaTime * transitionSpeed);
+        gameUIView.PausePanel.anchoredPosition = Vector2.Lerp(gameUIView.PausePanel.anchoredPosition, targetPausePanelPosition, Time.deltaTime * transitionSpeed);
+        xpController.XpMeterView.Root.anchoredPosition = Vector2.Lerp(xpController.XpMeterView.Root.anchoredPosition, targetHUDPosition, Time.deltaTime * transitionSpeed);
     }
 
     public void AnimateXpMeter(float amount, Action onComplete)
     {
+        ShowHUD();
         xpController.AddExperience(amount, onComplete);
+    }
+
+    public void ShowHUD()
+    {
+        var hudHeight = xpController.XpMeterView.Root.rect.height;
+        targetHUDPosition = new Vector2(0, hudHeight);
+    }
+
+    public void HideHUD()
+    {
+        var hudHeight = xpController.XpMeterView.Root.rect.height;
+        targetHUDPosition = new Vector2(0, -hudHeight);
+    }
+
+    public void ShowPausePanel()
+    {
+        var panelHeight = xpController.XpMeterView.Root.rect.height;
+        targetPausePanelPosition = new Vector2(0, 0);
+    }
+
+    public void HidePausePanel()
+    {
+        var panelHeight = gameUIView.PanelRoot.rect.height;
+        targetPausePanelPosition = new Vector2(0, -panelHeight);
     }
 
     public void NavigateToPanel(int panelIndex, bool canSetImmediate = false)
