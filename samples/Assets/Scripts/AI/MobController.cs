@@ -12,6 +12,7 @@ public class MobController : MonoBehaviour
     [Range(0, 1)][SerializeField] private float intensity = 1;
     [SerializeField] private float stoppingDistance = 5;
     [SerializeField] private Transform target;
+    [SerializeField] private AnimationComponent animComponent;
     [SerializeField] private MovementComponent moveComponent;
     [SerializeField] private HealthComponent healthComponent;
     [SerializeField] private MeleeComponent meleeComponent;
@@ -78,6 +79,7 @@ public class MobController : MonoBehaviour
                 moveComponent.UpdateMovement(heading, false);
             }
 
+            animComponent.SetMovementParameter(moveComponent.IsMoving, moveComponent.SpeedPercentage);
             moveComponent.UpdateLookDirection(heading);
         }
     }
