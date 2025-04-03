@@ -1,11 +1,6 @@
-using System.Security.Cryptography;
 using UnityEngine;
 using System.Threading.Tasks;
-using UnityEngine.UIElements;
 using System;
-using Unity.Android.Gradle;
-using UnityEngine.XR;
-using Unity.VisualScripting;
 
 public class HealthComponent : MonoBehaviour
 {

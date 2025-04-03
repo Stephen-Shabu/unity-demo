@@ -1,8 +1,5 @@
 using System;
-using Unity.VisualScripting;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
-using static UnityEngine.UI.Image;
 
 public class RaycastProjectile : MonoBehaviour
 {
