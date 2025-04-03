@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Threading.Tasks;
+using System;
 
 public class XpMeterController : MonoBehaviour
 {
@@ -18,23 +19,24 @@ public class XpMeterController : MonoBehaviour
     private int callCount;
     private bool isUpdating;
 
-    private void Start()
+    public void Initialise()
     {
-        xpMeterView.AddXpButton.onClick.AddListener(() => 
-        {
-            if (isUpdating) return;
+        var profile = Main.Instance.ProfileCache;
 
-            isUpdating = true;
-            var expAmount = XpAdditions[callCount % XpAdditions.Length];
-            callCount++;
-            AddExperience(expAmount);
-        });
+        if (profile != null)
+        {
+            currentExperience = profile.XpTotal;
+            currentLevel = profile.XpLevel;
+            Debug.Log($"Init xp bar {currentExperience} {currentLevel}");
+        }
+
+        InitializeExperienceBar(currentExperience);
     }
 
-    public void AddExperience(float experienceAmount)
+    public void AddExperience(float experienceAmount, Action onComplete = null)
     {
         InitializeExperienceBar(currentExperience);
-        UpdateExperienceBarAsync(experienceAmount);
+        UpdateExperienceBarAsync(experienceAmount, onComplete);
     }
 
     private void InitializeExperienceBar(float currentExp)
@@ -51,7 +53,7 @@ public class XpMeterController : MonoBehaviour
         }
     }
 
-    private async void UpdateExperienceBarAsync(float experienceAmount)
+    private async void UpdateExperienceBarAsync(float experienceAmount, Action onComplete = null)
     {
         float targetExperience = currentExperience + experienceAmount;
         float exp = experienceAmount;
@@ -74,6 +76,10 @@ public class XpMeterController : MonoBehaviour
             await Task.Yield();
         }
         isUpdating = false;
+
+        await Task.Delay(1 * MathDefines.MILLISECOND_MULTIPLIER);
+
+        onComplete?.Invoke();
     }
 
     private async void AnimateXpGained(float targetXp, float currentXp, float amount)
@@ -117,7 +123,7 @@ public class XpMeterController : MonoBehaviour
         else
         {
             Debug.Log("Max level reached!");
-            currentLevel--; // Ensure current level stays within bounds
+            currentLevel--;
         }
     }
 
