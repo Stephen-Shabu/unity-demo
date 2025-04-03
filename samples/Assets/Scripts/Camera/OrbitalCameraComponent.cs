@@ -10,6 +10,11 @@ public class OrbitalCameraComponent : BaseCameraComponent
 
     private float currentYAngle;
 
+    public override void Initialise(Transform target)
+    {
+        currentAngle = startAngle * Mathf.Rad2Deg;
+    }
+
     public override void TrackPlayer(Transform target, Vector2 direction)
     {
         if (direction.sqrMagnitude > MovementDefines.Camera.MAGNITUDE_THRESHOLD)
