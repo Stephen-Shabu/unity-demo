@@ -56,40 +56,9 @@ public class CharacterMovement : MovementComponent
             targetVelocity.y = attachedRigidBody.linearVelocity.y;
 
             attachedRigidBody.linearVelocity = isFiring ? Vector3.zero : Vector3.Lerp(attachedRigidBody.linearVelocity, targetVelocity, inertiaFactor * Time.fixedDeltaTime);
-            attachedRigidBody.rotation = GetRotation(currentMoveVector);
+            forwardSpeed = Mathf.Abs(transform.InverseTransformDirection(attachedRigidBody.linearVelocity).z);
+            UpdateLookDirection(currentMoveVector);
         }
-    }
-
-    private Vector3 GetMoveVector(Vector3 direction)
-    {
-        var canAccelerate = direction.sqrMagnitude > MovementDefines.Character.MAGNITUDE_THRESHOLD;
-
-        if (canAccelerate)
-        {
-            lastMoveVector = currentMoveVector;
-            currentMoveVector = direction;
-        }
-        else
-        {
-            currentMoveVector = lastMoveVector;
-        }
-
-        currentLinearSpeed += canAccelerate ? accelerationFactor * Time.fixedDeltaTime : -(deaccelerationFactor * Time.fixedDeltaTime);
-
-        if (currentLinearSpeed > topSpeed)
-        {
-            currentLinearSpeed = topSpeed;
-        }
-        else if (currentLinearSpeed < 0)
-        {
-            currentLinearSpeed = 0;
-        }
-
-        var moveVector = currentMoveVector * currentLinearSpeed;
-        finalMoveVector.x = moveVector.x;
-        finalMoveVector.z = moveVector.z;
-
-        return moveVector;
     }
 
     private Quaternion GetRotation(Vector3 direction)

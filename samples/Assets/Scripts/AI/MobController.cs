@@ -18,15 +18,23 @@ public class MobController : MonoBehaviour
 
     private bool hasHealthReachedZero = false;
     private bool canLaunchAttack = false;
+    private int neighborCount;
+    private MobController[] neighbors;
 
     public void Initialize(Transform newTarget)
     {
         healthComponent.OnHealthReachedZero = HandleOnHealthReachedZero;
         healthComponent.OnDeathComplete = HandleDeathComplete;
+        healthComponent.OnDamageRecieved = HandleOnDamageTaken;
         healthComponent.Initialise();
         moveComponent.Intialise();
         target = newTarget;
         Debug.Log("Target Changed");
+    }
+
+    private void HandleOnDamageTaken()
+    {
+        animComponent.SetHitParameter(true);
     }
 
     private void HandleOnHealthReachedZero()
@@ -40,15 +48,22 @@ public class MobController : MonoBehaviour
         OnHealthReachedZero?.Invoke();
     }
 
+    public void SetNeighbors(MobController[] mobs)
+    {
+        neighbors = mobs;
+    }
+
     public void UpdateController()
     {
         if (target != null)
         {
-            var moveDirection = new Vector3(inputVector.x, 0, inputVector.y);
+            float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
-            if (!hasHealthReachedZero && Vector3.Distance(transform.position, target.position) > stoppingDistance)
+            if (!hasHealthReachedZero && distanceToTarget > stoppingDistance)
             {
+                float scaledIntensity = Mathf.Clamp01((distanceToTarget - stoppingDistance) / stoppingDistance);
                 heading = target.position - transform.position;
+                moveComponent.UpdateMovement(heading.normalized * intensity * scaledIntensity, false);
             }
             else
             {
@@ -60,9 +75,10 @@ public class MobController : MonoBehaviour
                 }
 
                 heading = Vector3.zero;
+                moveComponent.UpdateMovement(heading, false);
             }
 
-            moveComponent.UpdateMovement(heading.normalized * intensity, false);
+            moveComponent.UpdateLookDirection(heading);
         }
     }
 }

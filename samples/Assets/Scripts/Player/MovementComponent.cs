@@ -1,7 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 
 public class MovementComponent : MonoBehaviour
 {
+    public bool IsMoving => forwardSpeed > MovementDefines.Character.MAGNITUDE_THRESHOLD;
+    public float Speed => forwardSpeed;
+    public float SpeedPercentage => Mathf.InverseLerp(0, topSpeed, Speed);
+
     [SerializeField] protected Rigidbody attachedRigidBody;
     [SerializeField] protected LayerMask groundLayer;
     [SerializeField] protected float topSpeed;
@@ -21,6 +26,8 @@ public class MovementComponent : MonoBehaviour
     protected Collider[] groundCollisionResult;
 
     protected bool hasJumped;
+    protected bool isMoving;
+    protected float forwardSpeed;
 
     public virtual void Intialise()
     {
@@ -48,10 +55,15 @@ public class MovementComponent : MonoBehaviour
         targetVelocity.y = attachedRigidBody.linearVelocity.y;
 
         attachedRigidBody.linearVelocity = isFiring ? Vector3.zero : Vector3.Lerp(attachedRigidBody.linearVelocity, targetVelocity, inertiaFactor * Time.fixedDeltaTime);
-        attachedRigidBody.rotation = GetRotation(currentMoveVector);
+        forwardSpeed = Mathf.Abs(transform.InverseTransformDirection(attachedRigidBody.linearVelocity).z);
     }
 
-    private Vector3 GetMoveVector(Vector3 direction)
+    public virtual void UpdateLookDirection(Vector3 directionVector)
+    {
+        attachedRigidBody.rotation = GetRotation(directionVector);
+    }
+
+    protected Vector3 GetMoveVector(Vector3 direction)
     {
         var canAccelerate = direction.sqrMagnitude > MovementDefines.Character.MAGNITUDE_THRESHOLD;
 

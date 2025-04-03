@@ -10,6 +10,7 @@ namespace Samples
         [SerializeField] private PlayerInput playerInput;
         [SerializeField] private Vector2 inputVector = Vector2.zero;
         [SerializeField] private Vector2 lookVector = Vector2.zero;
+        [SerializeField] private AnimationComponent animComponent;
         [SerializeField] private CharacterMovement moveComponent;
         [SerializeField] private BaseCameraComponent cameraComponent;
         [SerializeField] private ProjectileComponent projectileComponent;
@@ -29,6 +30,7 @@ namespace Samples
         {
             hasAttacked = value.isPressed;
             projectileComponent.Fire(hasAttacked);
+            animComponent.SetFiring(hasAttacked);
         }
 
         public void OnDodge(InputValue value)
@@ -61,8 +63,8 @@ namespace Samples
             cameraForward.y = 0.0f;
 
             Vector3 movementDirection = (cameraForward * inputVector.y + cameraRight * inputVector.x).normalized;
-
             moveComponent.UpdateMovement(movementDirection, hasAttacked);
+            animComponent.SetMovementParameter(moveComponent.IsMoving, moveComponent.SpeedPercentage);
             cameraComponent.TrackPlayer(transform, lookVector);
             projectileComponent.UpdateComponent();
         }
