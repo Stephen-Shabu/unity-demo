@@ -27,10 +27,11 @@
 *.opendb
 *.VC.db
 *.pidb.meta
+**/*.sln
 
 # Ignore Visual Studio Code project files
 .vscode/
-.vs/
+**/.vs/
 
 # Ignore generated files by Unity
 /Assets/Plugins/*/Generated/
