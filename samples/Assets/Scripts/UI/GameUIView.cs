@@ -24,6 +24,9 @@ public class GameUIView : MonoBehaviour
     public Button DebugFinishGameButton => debugGameRoundButton;
     public TextMeshProUGUI StartButtonText => startButtonText;
     public TextMeshProUGUI RoundCompleteText => roundCompleteText;
+    public AudioClip ButtonConfirmSFX => buttonConfirmSFX;
+    public AudioClip PauseMenuInSFX => pauseMenuInSFX;
+    public AudioClip PauseMenuOutSFX => pauseMenuOutSFX;
 
     [SerializeField] private CanvasGroup panelBackgroundCanvasGroup;
     [SerializeField] private RectTransform panelRoot;
@@ -45,4 +48,7 @@ public class GameUIView : MonoBehaviour
     [SerializeField] private TextMeshProUGUI roundCompleteText;
     [SerializeField] private Button debugFinishRoundButton;
     [SerializeField] private Button debugGameRoundButton;
+    [SerializeField] private AudioClip buttonConfirmSFX;
+    [SerializeField] private AudioClip pauseMenuInSFX;
+    [SerializeField] private AudioClip pauseMenuOutSFX;
 }

@@ -16,11 +16,13 @@ public class MobController : MonoBehaviour
     [SerializeField] private MovementComponent moveComponent;
     [SerializeField] private HealthComponent healthComponent;
     [SerializeField] private MeleeComponent meleeComponent;
+    [SerializeField] private AudioClip deathSFX;
 
     private bool hasHealthReachedZero = false;
     private bool canLaunchAttack = false;
     private int neighborCount;
     private MobController[] neighbors;
+    private AudioSource source;
 
     public void Initialize(Transform newTarget)
     {
@@ -31,6 +33,7 @@ public class MobController : MonoBehaviour
         moveComponent.Intialise();
         target = newTarget;
         Debug.Log("Target Changed");
+        source = new GameObject($"{name} death audio source").AddComponent<AudioSource>();
     }
 
     private void HandleOnDamageTaken()
@@ -42,6 +45,7 @@ public class MobController : MonoBehaviour
     {
         hasHealthReachedZero = !hasHealthReachedZero;
         meleeComponent.CancelMeleeAttack();
+        source.PlayOneShot(deathSFX);
     }
 
     private void HandleDeathComplete()
@@ -79,6 +83,7 @@ public class MobController : MonoBehaviour
                 moveComponent.UpdateMovement(heading, false);
             }
 
+            source.transform.position = transform.position;
             animComponent.SetMovementParameter(moveComponent.IsMoving, moveComponent.SpeedPercentage);
             moveComponent.UpdateLookDirection(heading);
         }

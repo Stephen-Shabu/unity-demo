@@ -9774,6 +9774,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileSpeed: 1
   projectileEndDistance: 100
+  bulletRadius: 0.4
+  maxDistance: 0.4
   collionLayer:
     serializedVersion: 2
     m_Bits: 1
