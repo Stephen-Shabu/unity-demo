@@ -9,15 +9,17 @@ public class GameUIView : MonoBehaviour
     public RectTransform HomePanel => homePanel;
     public RectTransform GamePanel => gamePanel;
     public RectTransform ResultPanel => resultPanel;
-    public RectTransform PausePanel => pausePanel;
     public GameObject RoundCompletePanel => roundCompletePanel;
     public GameObject GameCompletePanel => gameCompletePanel;
+    public RectTransform PausePanel => pausePanel;
     public Button StartButton => startButton;
     public Button SettingsButton => settingsButton;
     public Button SettingsBackButton => settingsBackButton;
     public Button NextRoundButton => nextRoundButton;
     public Button GameCompleteExitButton => gameCompleteExitButton;
+    public Button PauseMenuResumeButton => pauseMenuResumeButton;
     public Button PauseMenuExitButton => pauseMenuExitButton;
+    public Button PauseMenuExitAppButton => pauseMenuExitAppButton;
     public Button DebugFinishRoundButton => debugFinishRoundButton;
     public Button DebugFinishGameButton => debugGameRoundButton;
     public TextMeshProUGUI StartButtonText => startButtonText;
@@ -36,7 +38,9 @@ public class GameUIView : MonoBehaviour
     [SerializeField] private Button settingsBackButton;
     [SerializeField] private Button nextRoundButton;
     [SerializeField] private Button gameCompleteExitButton;
+    [SerializeField] private Button pauseMenuResumeButton;
     [SerializeField] private Button pauseMenuExitButton;
+    [SerializeField] private Button pauseMenuExitAppButton;
     [SerializeField] private TextMeshProUGUI startButtonText;
     [SerializeField] private TextMeshProUGUI roundCompleteText;
     [SerializeField] private Button debugFinishRoundButton;

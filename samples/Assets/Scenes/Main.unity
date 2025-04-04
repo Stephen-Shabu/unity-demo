@@ -3519,7 +3519,9 @@ MonoBehaviour:
   settingsBackButton: {fileID: 1925272998}
   nextRoundButton: {fileID: 1215686781}
   gameCompleteExitButton: {fileID: 103848178}
+  pauseMenuResumeButton: {fileID: 1719988537}
   pauseMenuExitButton: {fileID: 332372607}
+  pauseMenuExitAppButton: {fileID: 1073243679}
   startButtonText: {fileID: 476739989}
   roundCompleteText: {fileID: 1195936584}
   debugFinishRoundButton: {fileID: 32107974}
@@ -6505,6 +6507,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1269757733}
   - component: {fileID: 1269757734}
+  - component: {fileID: 1269757735}
   m_Layer: 5
   m_Name: GameUIController
   m_TagString: Untagged
@@ -6544,9 +6547,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3fc54a86e1a56e4abd565b7c8bea2d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerInput: {fileID: 0}
   gameUIView: {fileID: 771546912}
   xpController: {fileID: 2093789948}
   transitionSpeed: 10
+--- !u!114 &1269757735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1269757732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 1
+  m_DefaultControlScheme: Gamepad
+  m_DefaultActionMap: UI
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &1294998719
 GameObject:
   m_ObjectHideFlags: 0

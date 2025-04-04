@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using System.Threading.Tasks;
-using UnityEditor.Search;
+using UnityEngine.InputSystem;
 
 public class GameUIController : MonoBehaviour
 {
@@ -11,6 +11,7 @@ public class GameUIController : MonoBehaviour
     public Action OnDebugFinishRoundButtonPressed;
     public Action OnDebugFinishGameButtonPressed;
 
+    [SerializeField] private PlayerInput playerInput;
     [SerializeField] private GameUIView gameUIView;
     [SerializeField] private XpMeterController xpController;
 
@@ -18,6 +19,7 @@ public class GameUIController : MonoBehaviour
     private Vector2 targetPosition;
     private Vector2 targetHUDPosition;
     private Vector2 targetPausePanelPosition;
+    private bool isPaused;
 
     private const string START_TEXT = "START";
     private const string RESUME_TEXT = "RESUME";
@@ -122,6 +124,28 @@ public class GameUIController : MonoBehaviour
     {
         var panelHeight = gameUIView.PanelRoot.rect.height;
         targetPausePanelPosition = new Vector2(0, -panelHeight);
+    }
+
+    public void OnPause(InputValue value)
+    {
+        if (value.isPressed && !isPaused)
+        {
+            isPaused = true;
+            gameUIView.PauseMenuResumeButton.interactable = isPaused;
+            gameUIView.PauseMenuExitButton.interactable = isPaused;
+            gameUIView.PauseMenuExitAppButton.interactable = isPaused;
+            FadeBackground(0, 1);
+            ShowPausePanel();
+        }
+        else if (value.isPressed && isPaused)
+        {
+            isPaused = false;
+            gameUIView.PauseMenuResumeButton.interactable = isPaused;
+            gameUIView.PauseMenuExitButton.interactable = isPaused;
+            gameUIView.PauseMenuExitAppButton.interactable = isPaused;
+            FadeBackground(1, 0);
+            HidePausePanel();
+        }
     }
 
     public void NavigateToPanel(int panelIndex, bool canSetImmediate = false)
