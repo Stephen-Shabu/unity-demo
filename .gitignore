@@ -37,7 +37,7 @@
 /Assets/Plugins/*/Generated/
 
 # Ignore crash reports, logs, etc.
-/[Uu]ser[Ss]ettings/
+samples/[Uu]ser[Ss]ettings/
 
 # Ignore builds folder (contains build output for different platforms)
 /[Bb]uilds/
