@@ -14,13 +14,14 @@ public class Main : MonoBehaviour
     private Profile profileCache;
 
     [SerializeField] private GameUIController gameUIController;
+    [SerializeField] private Timer roundTimer;
     [SerializeField] private GameRound[] gameRounds;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private int mobDefeatedCount;
     [SerializeField] private BaseCameraComponent activeCamera;
 
-    [SerializeField] private GameRound activeGameRound;
+    private GameRound activeGameRound;
     private int roundIndex = 0;
     private bool roundHasStarted = false;
     private CharactorController playerController;
@@ -28,7 +29,7 @@ public class Main : MonoBehaviour
 
     private void Awake()
     {
-        if(Instance == null)
+        if (Instance == null)
             Instance = this;
     }
 
@@ -69,6 +70,12 @@ public class Main : MonoBehaviour
         gameUIController.Init();
         gameUIController.OnStartButtonPressed = StartRound;
         gameUIController.OnNextRoundButtonPressed = SetUpNextRound;
+        gameUIController.OnBackToMainMenu = () =>
+        {
+            roundHasStarted = false;
+            Destroy(playerController.gameObject);
+            ResetRound();
+        };
         gameUIController.OnDebugFinishRoundButtonPressed = DebugFinishRound;
         gameUIController.OnDebugFinishGameButtonPressed = DebugFinishGame;
         roundHasStarted = false;
@@ -113,6 +120,8 @@ public class Main : MonoBehaviour
     {
         activeGameRound = gameRounds[roundIndex];
 
+        roundTimer.ResetTimeText(activeGameRound.RoundMaxTime);
+
         if (roundIndex < gameRounds.Length - 1)
         {
             var args = new SpawnerArgs()
@@ -153,6 +162,19 @@ public class Main : MonoBehaviour
         }
 
         await Task.Delay(2 * MathDefines.MILLISECOND_MULTIPLIER);
+
+        async void OnTimerComplete()
+        {
+            gameUIController.HideHUD();
+
+            await Task.Delay(1 * (MathDefines.MILLISECOND_MULTIPLIER / 2));
+
+            gameUIController.GoToResultPanel(UIDefines.ResultPanelState.Time_Up, roundIndex + 1);
+
+            roundHasStarted = false;
+        }
+
+        roundTimer.StartTimer(activeGameRound.RoundMaxTime, null, OnTimerComplete);
         roundHasStarted = true;
         onComplete?.Invoke();
     }
@@ -166,20 +188,16 @@ public class Main : MonoBehaviour
 
     private void ResetRound()
     {
+        roundTimer.StopTimer();
+        roundTimer.ResetTimeText(activeGameRound.RoundMaxTime);
         mobDefeatedCount = 0;
 
-        for (int i = 0; i < mobControllers.Length ; i++)
+        for (int i = 0; i < mobControllers.Length; i++)
         {
             Destroy(mobControllers[i].gameObject);
         }
     }
 
-    private void Update()
-    {
-        gameUIController.UpdateGameUI();
-    }
-
-    private float flockingDistance = 0;
     private void FixedUpdate()
     {
         if (roundHasStarted)
@@ -210,10 +228,19 @@ public class Main : MonoBehaviour
 
         currentXp += earnedXp;
 
+        roundTimer.StopTimer();
+
         var result = await UpdateProfileTask.Execute(1, (int)currentXp, roundIndex + 1);
 
         if (result)
         {
+            var getProfileResult = await GetProfileTask.Execute(1);
+
+            if (getProfileResult != null)
+            {
+                profileCache = getProfileResult;
+            }
+
             await Task.Delay(1 * MathDefines.MILLISECOND_MULTIPLIER);
 
             async void GoToResultScreen()
@@ -222,10 +249,8 @@ public class Main : MonoBehaviour
 
                 await Task.Delay(1 * (MathDefines.MILLISECOND_MULTIPLIER / 2));
 
-                var isGameComplete = roundIndex == gameRounds.Length - 1;
-                gameUIController.SetResultPanel(isGameComplete, roundIndex + 1);
-
-                gameUIController.NavigateToPanel(2);
+                var resultPanelState = roundIndex == gameRounds.Length - 1 ? UIDefines.ResultPanelState.Game_Complete : UIDefines.ResultPanelState.Round_Complete;
+                gameUIController.GoToResultPanel(resultPanelState, roundIndex + 1);
 
                 roundHasStarted = false;
             }

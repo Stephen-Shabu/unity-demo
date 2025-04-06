@@ -1,5 +1,4 @@
 using UnityEngine;
-using static GameEvents.EventsCollection;
 using System;
 
 public class MobController : MonoBehaviour
@@ -87,5 +86,10 @@ public class MobController : MonoBehaviour
             animComponent.SetMovementParameter(moveComponent.IsMoving, moveComponent.SpeedPercentage);
             moveComponent.UpdateLookDirection(heading);
         }
+    }
+
+    private void OnDestroy()
+    {
+        Destroy(source.gameObject);
     }
 }

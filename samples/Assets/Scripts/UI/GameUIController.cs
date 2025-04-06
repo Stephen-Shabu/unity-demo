@@ -2,13 +2,13 @@ using System;
 using UnityEngine;
 using System.Threading.Tasks;
 using UnityEngine.InputSystem;
-using static UnityEngine.GraphicsBuffer;
-using static UnityEngine.Rendering.DebugUI;
 using System.Threading;
+using static UIDefines;
 
 public class GameUIController : MonoBehaviour
 {
     public Action<Action>OnStartButtonPressed;
+    public Action OnBackToMainMenu;
     public Action OnNextRoundButtonPressed;
     public Action OnSettingsButtonPressed;
     public Action OnDebugFinishRoundButtonPressed;
@@ -19,32 +19,25 @@ public class GameUIController : MonoBehaviour
     [SerializeField] private XpMeterController xpController;
     [SerializeField] private AudioSource gameUIAudioSource;
     [SerializeField] private AnimationCurve panelTransistionCurve;
-    [SerializeField] private float mult;
 
-    public float transitionSpeed = 10f;
     private Vector2 targetPosition;
     private Vector2 targetHUDPosition;
     private Vector2 targetPausePanelPosition;
     private bool isPaused;
 
-    private const string START_TEXT = "START";
-    private const string RESUME_TEXT = "RESUME";
-    private const string ROUND_COMPLETE_TEXT = "Well Done! \nYou completed round {0}";
-
-    private CancellationTokenSource movePanelCTS;
-
     public void Init()
     {
         gameUIView.PanelBackgroundCanvasGroup.alpha = 1f;
         targetPosition = gameUIView.PanelRoot.anchoredPosition;
-        xpController.Initialise();
         SetStartButtonText();
+        xpController.Initialise();
 
         gameUIView.NextRoundButton.onClick.AddListener(() =>
         {
-            gameUIAudioSource.PlayOneShot(gameUIView.ButtonConfirmSFX, 1);
+            gameUIView.NextRoundButton.interactable = false;
+            gameUIAudioSource.PlayOneShot(gameUIView.NextRoundSFX, 1);
             OnNextRoundButtonPressed?.Invoke();
-            NavigateToPanel(1, true);
+            GoToGamePanel(false);
         });
 
         gameUIView.StartButton.onClick.AddListener(() =>
@@ -52,7 +45,7 @@ public class GameUIController : MonoBehaviour
             gameUIAudioSource.PlayOneShot(gameUIView.ButtonConfirmSFX, 1);
             gameUIView.StartButton.interactable = false;
             gameUIView.SettingsButton.interactable = false;
-            OnStartButtonPressed?.Invoke(() => { NavigateToPanel(1);  FadeBackground(1, 0); }); 
+            OnStartButtonPressed?.Invoke(() => { GoToGamePanel(true); }); 
         });
         
         gameUIView.SettingsButton.onClick.AddListener(() => 
@@ -76,10 +69,24 @@ public class GameUIController : MonoBehaviour
         gameUIView.GameCompleteExitButton.onClick.AddListener(() =>
         {
             gameUIView.GameCompleteExitButton.interactable = false;
-            gameUIView.StartButton.interactable = true;
-            gameUIView.SettingsButton.interactable = true;
-            NavigateToPanel(0);
+
+            ReturnToHomePanel();
         });
+
+        gameUIView.PauseMenuExitButton.onClick.AddListener(() =>
+        {
+            gameUIView.PauseMenuExitButton.interactable = false;
+
+            ReturnToHomePanel();
+        });
+
+        gameUIView.ResultExitButton.onClick.AddListener(() => 
+        {
+            gameUIView.ResultExitButton.interactable = false;
+
+            ReturnToHomePanel();
+        });
+
 
         gameUIView.DebugFinishRoundButton.onClick.AddListener(() =>
         {
@@ -92,21 +99,46 @@ public class GameUIController : MonoBehaviour
         });
 
         HideHUD();
-        HidePausePanel();
+        HidePausePanel(true);
     }
 
-    public void SetResultPanel(bool isGameComplete, int roundNumber)
+    private void GoToGamePanel(bool canFadeBackground)
     {
-        gameUIView.RoundCompletePanel.SetActive(!isGameComplete);
-        gameUIView.GameCompletePanel.SetActive(isGameComplete);
-        gameUIView.RoundCompleteText.SetText(string.Format(ROUND_COMPLETE_TEXT, roundNumber));
+        NavigateToPanel(1); 
+        
+        if(canFadeBackground) FadeBackground(1, 0);
     }
 
-    public void UpdateGameUI()
+    private void ReturnToHomePanel(Action onComplete = null)
     {
-        //gameUIView.PanelRoot.anchoredPosition = Vector2.Lerp(gameUIView.PanelRoot.anchoredPosition, targetPosition, Time.deltaTime * transitionSpeed);
-        //gameUIView.PausePanel.anchoredPosition = Vector2.Lerp(gameUIView.PausePanel.anchoredPosition, targetPausePanelPosition, Time.deltaTime * transitionSpeed);
-        //xpController.XpMeterView.Root.anchoredPosition = Vector2.Lerp(xpController.XpMeterView.Root.anchoredPosition, targetHUDPosition, Time.deltaTime * transitionSpeed);
+        gameUIView.StartButton.interactable = false;
+        gameUIView.SettingsButton.interactable = false;
+        SetStartButtonText();
+        OnBackToMainMenu?.Invoke();
+        FadeBackground(0, 1, 1f);
+        NavigateToPanel(0, false, () =>
+        {
+            onComplete?.Invoke();
+            gameUIView.StartButton.interactable = true;
+            gameUIView.SettingsButton.interactable = true;
+        });
+    }
+
+    public void GoToResultPanel(ResultPanelState state, int roundIndex)
+    {
+        if (state.Equals(ResultPanelState.Round_Complete)) gameUIAudioSource.PlayOneShot(gameUIView.ResultScreenSFX, 1);
+        if (state.Equals(ResultPanelState.Time_Up) || state.Equals(ResultPanelState.You_Died)) gameUIAudioSource.PlayOneShot(gameUIView.GameOverSFX, 1);
+
+        gameUIView.GameCompletePanel.SetActive(state.Equals(ResultPanelState.Game_Complete));
+        gameUIView.RoundCompletePanel.SetActive(state.Equals(ResultPanelState.Round_Complete));
+        gameUIView.GameOverPanel.SetActive(state.Equals(ResultPanelState.Time_Up) || state.Equals(ResultPanelState.You_Died));
+
+        var gameOverBodyText = state.Equals(ResultPanelState.Time_Up) ? UIDefines.TIME_UP_TEXT : UIDefines.YOU_DIED_TEXT;
+
+        gameUIView.RoundCompleteText.SetText(string.Format(UIDefines.ROUND_COMPLETE_TEXT, roundIndex));
+        gameUIView.GameOverText.SetText(gameOverBodyText);
+
+        NavigateToPanel(2, false, () => { gameUIView.NextRoundButton.interactable = true; });
     }
 
     public void AnimateXpMeter(float amount, Action onComplete)
@@ -115,7 +147,7 @@ public class GameUIController : MonoBehaviour
         xpController.AddExperience(amount, onComplete);
     }
 
-    public void ShowHUD()
+    private void ShowHUD()
     {
         var hudHeight = xpController.XpMeterView.Root.rect.height;
         targetHUDPosition = new Vector2(0, hudHeight);
@@ -129,7 +161,7 @@ public class GameUIController : MonoBehaviour
         MovePanel(xpController.XpMeterView.Root, targetHUDPosition, 1f);
     }
 
-    public void ShowPausePanel()
+    private void ShowPausePanel()
     {
         gameUIAudioSource.PlayOneShot(gameUIView.PauseMenuInSFX, 1);
         targetPausePanelPosition = new Vector2(0, 0);
@@ -139,14 +171,21 @@ public class GameUIController : MonoBehaviour
         MovePanel(gameUIView.PausePanel, targetPausePanelPosition, 0.5f, ()=> SetPauseMenuButtonsInteractivity(true));
     }
 
-    public void HidePausePanel()
+    private void HidePausePanel(bool canSetImmediate = false)
     {
-        gameUIAudioSource.PlayOneShot(gameUIView.PauseMenuOutSFX, 1);
         var panelHeight = gameUIView.PanelRoot.rect.height;
         targetPausePanelPosition = new Vector2(0, -panelHeight);
 
-        SetPauseMenuButtonsInteractivity(false);
-        MovePanel(gameUIView.PausePanel, targetPausePanelPosition, 0.5f, () => SetPauseMenuButtonsInteractivity(true));
+        if (!canSetImmediate)
+        {
+            gameUIAudioSource.PlayOneShot(gameUIView.PauseMenuOutSFX, 1);
+            SetPauseMenuButtonsInteractivity(false);
+            MovePanel(gameUIView.PausePanel, targetPausePanelPosition, 0.5f, () => SetPauseMenuButtonsInteractivity(true));            
+        }
+        else
+        {
+            gameUIView.PausePanel.anchoredPosition = targetPausePanelPosition;
+        }
     }
 
     public void OnPause(InputValue value)
@@ -199,8 +238,8 @@ public class GameUIController : MonoBehaviour
     private void SetStartButtonText()
     {
         var profile = Main.Instance.ProfileCache;
-        var title = profile.LastCompletedLevel > 0 ? RESUME_TEXT : START_TEXT;
-        gameUIView.StartButtonText.text = string.Format(gameUIView.StartButtonText.text, title);
+        var title = profile.LastCompletedLevel > 0 ? UIDefines.RESUME_TEXT : UIDefines.START_TEXT;
+        gameUIView.StartButtonText.SetText(title);
     }
 
     private async void MovePanel(RectTransform panel, Vector2 target, float timeToReachTarget = 2.0f, Action onComplete = null)
@@ -218,7 +257,6 @@ public class GameUIController : MonoBehaviour
         }
 
         onComplete?.Invoke();
-        Debug.Log("Transition Complete");
     }
 
     private async void FadeBackground(float startAlpha, float targetAlpha, float timeToReachTarget = 2.0f)

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Threading.Tasks;
 using System;
+using Unity.VisualScripting;
 
 public class HealthComponent : MonoBehaviour
 {
@@ -118,5 +119,10 @@ public class HealthComponent : MonoBehaviour
         }
 
         onComplete?.Invoke();
+    }
+
+    private void OnDestroy()
+    {
+        Destroy(deathBurstVfx.gameObject);
     }
 }

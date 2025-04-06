@@ -943,7 +943,7 @@ MonoBehaviour:
   moveComponent: {fileID: 5796900805026691837}
   healthComponent: {fileID: 6954567763542251268}
   meleeComponent: {fileID: 9057324534014362804}
-  deathSFX: {fileID: 8300000, guid: d2e03dac7d4bd9345b279e5c284a64aa, type: 3}
+  deathSFX: {fileID: 8300000, guid: e5500500adfe1df4b8cdb58e0d21a7dd, type: 3}
 --- !u!114 &5796900805026691837
 MonoBehaviour:
   m_ObjectHideFlags: 0

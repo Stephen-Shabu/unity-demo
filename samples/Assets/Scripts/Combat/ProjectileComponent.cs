@@ -89,4 +89,22 @@ public class ProjectileComponent : MonoBehaviour
             }
         }
     }
+
+    private void OnDestroy()
+    {
+        foreach (var marker in hitMarkers)
+        {
+            Destroy(marker.gameObject);
+        }
+
+        foreach (var projectile in projectiles)
+        {
+            Destroy(projectile.gameObject);
+        }
+
+        foreach (var source in audioSources)
+        {
+            Destroy(source.gameObject);
+        }
+    }
 }
