@@ -9,6 +9,7 @@ public class XpMeterView : MonoBehaviour
     public TextMeshProUGUI XpLevelText => xpLevelText;
     public TextMeshProUGUI XpGained => xpGained;
     public CanvasGroup XpGainedTextCanvasGroup => xpGainedTextCanvasGroup;
+    public AudioClip XpGainSFX => xpGainSFX;
     public Button AddXpButton => addXpButton;
 
     [SerializeField] private RectTransform root;
@@ -16,5 +17,7 @@ public class XpMeterView : MonoBehaviour
     [SerializeField] private TextMeshProUGUI xpLevelText;
     [SerializeField] private TextMeshProUGUI xpGained;
     [SerializeField] private CanvasGroup xpGainedTextCanvasGroup;
+    [SerializeField] private AudioClip xpGainSFX;
+    [SerializeField] private AudioClip levelUpFX;
     [SerializeField] private Button addXpButton;
 }

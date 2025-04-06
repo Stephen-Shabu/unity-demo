@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Threading.Tasks;
 using System;
+using System.Threading;
+using Mono.Cecil.Cil;
 
 public class XpMeterController : MonoBehaviour
 {
@@ -14,6 +16,7 @@ public class XpMeterController : MonoBehaviour
     [SerializeField] private int currentLevel = 0;
     [SerializeField] private AnimationCurve animCurve;
     [SerializeField] private AnimationCurve xpGainPositionCurve;
+    [SerializeField] private AudioSource xpGainSource;
 
     private int expFloor;
     private int expCeil;
@@ -56,30 +59,53 @@ public class XpMeterController : MonoBehaviour
 
     private async void UpdateExperienceBarAsync(float experienceAmount, Action onComplete = null)
     {
+        float startExperience = currentExperience;
         float targetExperience = currentExperience + experienceAmount;
-        float exp = experienceAmount;
+
+        xpGainSource.pitch = 1;
+        xpGainSource.resource = xpMeterView.XpGainSFX;
 
         AnimateXpGained(targetExperience, currentExperience, experienceAmount);
+
+        int lastXPThreshold = -1;
 
         while (!Mathf.Approximately(currentExperience, targetExperience))
         {
             if (currentExperience >= expCeil)
             {
                 LevelUp();
+                lastXPThreshold = -1;
+
+                startExperience = currentExperience;
+                targetExperience = currentExperience + experienceAmount;
             }
 
-            float newExp = Mathf.MoveTowards(currentExperience, targetExperience, fillSpeed * Time.deltaTime);
-            experienceAmount -= newExp - currentExperience;
-            var amount = Mathf.InverseLerp(expFloor, expCeil, currentExperience);
-            xpMeterView.XpBarImage.fillAmount = amount;
-            currentExperience = newExp;
+
+            float startNorm = Mathf.InverseLerp(expFloor, expCeil, startExperience);
+            float targetNorm = Mathf.InverseLerp(expFloor, expCeil, targetExperience);
+            float currentNorm = Mathf.InverseLerp(expFloor, expCeil, currentExperience);
+
+            float newNorm = Mathf.MoveTowards(currentNorm, targetNorm, fillSpeed * Time.deltaTime);
+            xpMeterView.XpBarImage.fillAmount = newNorm;
+
+            float newExperience = Mathf.Lerp(expFloor, expCeil, newNorm);
+            experienceAmount -= (newExperience - currentExperience);
+            currentExperience = newExperience;
+
+            int currentThreshold = Mathf.FloorToInt(newNorm * 10);
+            if (currentThreshold > lastXPThreshold)
+            {
+                lastXPThreshold = currentThreshold;
+
+                xpGainSource.pitch = 1 + (RewardDefines.MAX_LEVEL_UP_PITCH * newNorm);
+                xpGainSource.Play();
+            }
 
             await Task.Yield();
         }
+
         isUpdating = false;
-
         await Task.Delay(1 * MathDefines.MILLISECOND_MULTIPLIER);
-
         onComplete?.Invoke();
     }
 
@@ -123,7 +149,6 @@ public class XpMeterController : MonoBehaviour
         }
         else
         {
-            Debug.Log("Max level reached!");
             currentLevel--;
         }
     }
