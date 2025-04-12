@@ -30,6 +30,19 @@ public class CharacterMovement : MovementComponent
             isDogding = true;
             pivot = transform.position + (transform.forward) * pivotDistance;
 
+            RotateAroundPointAsync(pivot, Vector3.up, -90f, dodgeDuration);
+        }
+    }
+
+    public void ExecuteLeftDogde(bool hasDogded)
+    {
+        this.hasDogded = hasDogded;
+
+        if (hasDogded && !isDogding)
+        {
+            isDogding = true;
+            pivot = transform.position + (transform.forward) * pivotDistance;
+
             RotateAroundPointAsync(pivot, Vector3.up, 90f, dodgeDuration);
         }
     }
