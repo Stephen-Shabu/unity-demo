@@ -12,6 +12,7 @@ public class Timer : MonoBehaviour
 
     private IEnumerator IETimer;
     private WaitForSeconds _yieldTime;
+    private bool isPaused = false;
 
     public void StartTimer(float time, System.Action<float> updateCallback,
         System.Action completeCallback = null)
@@ -30,7 +31,7 @@ public class Timer : MonoBehaviour
     {
         float startTime = time;
 
-        while (startTime > 0)
+        while (startTime > 0 && !isPaused)
         {
             yield return _yieldTime;
             startTime -= 1;
@@ -58,6 +59,16 @@ public class Timer : MonoBehaviour
         {
             StopCoroutine(IETimer);
         }
+    }
+
+    public void PauseTimer()
+    {
+        isPaused = true;
+    }
+
+    public void UnPauseTimer()
+    {
+        isPaused = false;
     }
 
     public void ResetTimeText(float time)
