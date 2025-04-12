@@ -3,16 +3,34 @@ using Samples;
 using System.Threading.Tasks;
 using System.IO;
 using System;
-using Unity.VisualScripting;
+using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
+public enum GameState
+{
+    Booting,
+    MainMenu,
+    Settings,
+    InGame,
+    Paused,
+    Results
+}
+
+public enum UIEventKey { OpenPauseMenu, BackToMainMenu }
 
 public class Main : MonoBehaviour
 {
     public static Main Instance;
     public Profile ProfileCache => Instance.profileCache;
+    public GameState State => currentState;
 
-    private Profile profileCache;
+    public static readonly Dictionary<UIEventKey, HashSet<GameState>> AllowedStates = new()
+    {
+        { UIEventKey.OpenPauseMenu, new HashSet<GameState> { GameState.InGame, GameState.Paused } },
+        { UIEventKey.BackToMainMenu, new HashSet<GameState> { GameState.Results, GameState.Paused } },
+    };
 
+    [SerializeField] private PlayerInput playerInput;
     [SerializeField] private GameUIController gameUIController;
     [SerializeField] private Timer roundTimer;
     [SerializeField] private GameRound[] gameRounds;
@@ -21,6 +39,8 @@ public class Main : MonoBehaviour
     [SerializeField] private int mobDefeatedCount;
     [SerializeField] private BaseCameraComponent activeCamera;
 
+    private GameState currentState;
+    private Profile profileCache;
     private GameRound activeGameRound;
     private int roundIndex = 0;
     private bool roundHasStarted = false;
@@ -35,6 +55,8 @@ public class Main : MonoBehaviour
 
     private async void Start()
     {
+        SetState(GameState.MainMenu);
+
         if (File.Exists(GameDefines.DATABASE_FILE_PATH))
         {
             File.Delete(GameDefines.DATABASE_FILE_PATH);
@@ -67,7 +89,7 @@ public class Main : MonoBehaviour
             }
         }
 
-        gameUIController.Init();
+        gameUIController.Init(playerInput);
         gameUIController.OnStartButtonPressed = StartRound;
         gameUIController.OnNextRoundButtonPressed = SetUpNextRound;
         gameUIController.OnBackToMainMenu = () =>
@@ -79,6 +101,18 @@ public class Main : MonoBehaviour
         gameUIController.OnDebugFinishRoundButtonPressed = DebugFinishRound;
         gameUIController.OnDebugFinishGameButtonPressed = DebugFinishGame;
         roundHasStarted = false;
+    }
+
+    public void SetState(GameState newState)
+    {
+        currentState = newState;
+    }
+
+    public bool IsEventAllowed(UIEventKey eventKey)
+    {
+        var state = Main.Instance.State;
+        return AllowedStates.TryGetValue(eventKey, out var allowedStates) &&
+               allowedStates.Contains(state);
     }
 
     private void DebugFinishRound()
@@ -118,6 +152,8 @@ public class Main : MonoBehaviour
 
     private async void StartRound(Action onComplete = null)
     {
+        SetState(GameState.InGame);
+
         activeGameRound = gameRounds[roundIndex];
 
         roundTimer.ResetTimeText(activeGameRound.RoundMaxTime);
@@ -141,7 +177,7 @@ public class Main : MonoBehaviour
                 var player = await InstantiateAsync(playerPrefab, spawnPoint.position, Quaternion.identity);
                 playerController = player[0].GetComponent<CharactorController>();
                 activeCamera.Initialise(playerController.transform);
-                playerController.Initialise(activeCamera);
+                playerController.Initialise(activeCamera, playerInput);
             }
 
             for (int i = 0; i < activeGameRound.NumberOfEnemies; i++)
@@ -156,7 +192,7 @@ public class Main : MonoBehaviour
 
             for (int i = 0; i < activeGameRound.NumberOfEnemies; i++)
             {
-                mobControllers[i].SetNeighbors(mobControllers);
+                mobControllers[i].SetNeighbors(mobControllers, i);
             }
 
         }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine.InputSystem;
 using System.Threading;
 using static UIDefines;
+using static UnityEngine.Rendering.DebugUI;
 
 public class GameUIController : MonoBehaviour
 {
@@ -14,19 +15,24 @@ public class GameUIController : MonoBehaviour
     public Action OnDebugFinishRoundButtonPressed;
     public Action OnDebugFinishGameButtonPressed;
 
-    [SerializeField] private PlayerInput playerInput;
     [SerializeField] private GameUIView gameUIView;
     [SerializeField] private XpMeterController xpController;
     [SerializeField] private AudioSource gameUIAudioSource;
     [SerializeField] private AnimationCurve panelTransistionCurve;
 
+    private PlayerInput playerInput;
     private Vector2 targetPosition;
     private Vector2 targetHUDPosition;
     private Vector2 targetPausePanelPosition;
     private bool isPaused;
 
-    public void Init()
+    public void Init(PlayerInput input)
     {
+        playerInput = input;
+
+        playerInput.actions["Pause"].performed -= OnPause;
+        playerInput.actions["Pause"].performed += OnPause;
+
         gameUIView.PanelBackgroundCanvasGroup.alpha = 1f;
         targetPosition = gameUIView.PanelRoot.anchoredPosition;
         SetStartButtonText();
@@ -42,6 +48,9 @@ public class GameUIController : MonoBehaviour
 
         gameUIView.StartButton.onClick.AddListener(() =>
         {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
             gameUIAudioSource.PlayOneShot(gameUIView.ButtonConfirmSFX, 1);
             gameUIView.StartButton.interactable = false;
             gameUIView.SettingsButton.interactable = false;
@@ -50,6 +59,7 @@ public class GameUIController : MonoBehaviour
         
         gameUIView.SettingsButton.onClick.AddListener(() => 
         {
+            Main.Instance.SetState(GameState.Settings);
             gameUIAudioSource.PlayOneShot(gameUIView.ButtonConfirmSFX, 1);
 
             gameUIView.SettingsBackButton.interactable = true;
@@ -60,6 +70,7 @@ public class GameUIController : MonoBehaviour
 
         gameUIView.SettingsBackButton.onClick.AddListener(() =>
         {
+            Main.Instance.SetState(GameState.MainMenu);
             gameUIAudioSource.PlayOneShot(gameUIView.ButtonConfirmSFX, 1);
             gameUIView.SettingsBackButton.interactable = false;
             gameUIView.SettingsButton.interactable = true;
@@ -126,17 +137,30 @@ public class GameUIController : MonoBehaviour
 
     public void GoToResultPanel(ResultPanelState state, int roundIndex)
     {
-        if (state.Equals(ResultPanelState.Round_Complete)) gameUIAudioSource.PlayOneShot(gameUIView.ResultScreenSFX, 1);
-        if (state.Equals(ResultPanelState.Time_Up) || state.Equals(ResultPanelState.You_Died)) gameUIAudioSource.PlayOneShot(gameUIView.GameOverSFX, 1);
+        Main.Instance.SetState(GameState.Results);
+
+        switch (state)
+        {
+            case ResultPanelState.Round_Complete:
+                gameUIAudioSource.PlayOneShot(gameUIView.ResultScreenSFX, 1);
+                gameUIView.NextRoundButton.Select();
+                gameUIView.RoundCompleteText.SetText(string.Format(UIDefines.ROUND_COMPLETE_TEXT, roundIndex));
+                break;
+            case ResultPanelState.Time_Up:
+            case ResultPanelState.You_Died:
+                gameUIAudioSource.PlayOneShot(gameUIView.GameOverSFX, 1);
+                var gameOverBodyText = state.Equals(ResultPanelState.Time_Up) ? UIDefines.TIME_UP_TEXT : UIDefines.YOU_DIED_TEXT;
+                gameUIView.GameOverText.SetText(gameOverBodyText);
+                gameUIView.RestartRoundButton.Select();
+                break;
+            case ResultPanelState.Game_Complete:
+                gameUIView.GameCompleteExitButton.Select();
+                break;
+        }
 
         gameUIView.GameCompletePanel.SetActive(state.Equals(ResultPanelState.Game_Complete));
         gameUIView.RoundCompletePanel.SetActive(state.Equals(ResultPanelState.Round_Complete));
         gameUIView.GameOverPanel.SetActive(state.Equals(ResultPanelState.Time_Up) || state.Equals(ResultPanelState.You_Died));
-
-        var gameOverBodyText = state.Equals(ResultPanelState.Time_Up) ? UIDefines.TIME_UP_TEXT : UIDefines.YOU_DIED_TEXT;
-
-        gameUIView.RoundCompleteText.SetText(string.Format(UIDefines.ROUND_COMPLETE_TEXT, roundIndex));
-        gameUIView.GameOverText.SetText(gameOverBodyText);
 
         NavigateToPanel(2, false, () => { gameUIView.NextRoundButton.interactable = true; });
     }
@@ -188,25 +212,44 @@ public class GameUIController : MonoBehaviour
         }
     }
 
-    public void OnPause(InputValue value)
+    private void OnPause(InputAction.CallbackContext context)
     {
-        if (value.isPressed && !isPaused)
+        var isPressed = context.action.IsPressed();
+        var playerActionMap = playerInput.actions.FindActionMap("Player");
+
+        if (Main.Instance.IsEventAllowed(UIEventKey.OpenPauseMenu))
         {
-            isPaused = true;
-            gameUIView.PauseMenuResumeButton.interactable = isPaused;
-            gameUIView.PauseMenuExitButton.interactable = isPaused;
-            gameUIView.PauseMenuExitAppButton.interactable = isPaused;
-            FadeBackground(0, 1, 0.5f);
-            ShowPausePanel();
-        }
-        else if (value.isPressed && isPaused)
-        {
-            isPaused = false;
-            gameUIView.PauseMenuResumeButton.interactable = isPaused;
-            gameUIView.PauseMenuExitButton.interactable = isPaused;
-            gameUIView.PauseMenuExitAppButton.interactable = isPaused;
-            FadeBackground(1, 0, 0.5f);
-            HidePausePanel();
+            Main.Instance.SetState(GameState.Paused);
+
+            if (isPressed && !isPaused)
+            {
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = true;
+
+                playerActionMap.Disable();
+                gameUIView.PauseMenuResumeButton.Select();
+
+                isPaused = true;
+                gameUIView.PauseMenuResumeButton.interactable = isPaused;
+                gameUIView.PauseMenuExitButton.interactable = isPaused;
+                gameUIView.PauseMenuExitAppButton.interactable = isPaused;
+                FadeBackground(0, 1, 0.5f);
+                ShowPausePanel();
+            }
+            else if (isPressed && isPaused)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+
+                playerActionMap.Enable();
+
+                isPaused = false;
+                gameUIView.PauseMenuResumeButton.interactable = isPaused;
+                gameUIView.PauseMenuExitButton.interactable = isPaused;
+                gameUIView.PauseMenuExitAppButton.interactable = isPaused;
+                FadeBackground(1, 0, 0.5f);
+                HidePausePanel();
+            }
         }
     }
 
@@ -272,6 +315,10 @@ public class GameUIController : MonoBehaviour
 
             await Task.Yield();
         }
+    }
 
+    private void OnDestroy()
+    {
+        if(playerInput != null) playerInput.actions["Pause"].performed -= OnPause;
     }
 }

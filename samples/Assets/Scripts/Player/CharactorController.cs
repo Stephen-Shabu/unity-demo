@@ -1,13 +1,15 @@
+using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.Windows;
 
 namespace Samples
 {
     public class CharactorController : MonoBehaviour
     {
-        [SerializeField] private PlayerInput playerInput;
         [SerializeField] private Vector2 inputVector = Vector2.zero;
         [SerializeField] private Vector2 lookVector = Vector2.zero;
         [SerializeField] private AnimationComponent animComponent;
@@ -19,40 +21,69 @@ namespace Samples
         [SerializeField] private bool hasAttacked;
         [SerializeField] private bool hasDodged;
 
-        public void Initialise(BaseCameraComponent camera)
+        private PlayerInput playerInput;
+
+        public void Initialise(BaseCameraComponent camera, PlayerInput input)
         {
+            playerInput = input;
             cameraComponent = camera;
             moveComponent.Intialise();
             projectileComponent.Initialise();
-        }
 
-        public void OnAttack(InputValue value)
+            playerInput.actions["Attack"].performed -= OnAttack;
+            playerInput.actions["Attack"].performed += OnAttack;
+            playerInput.actions["Dodge"].performed -= OnDodge;
+            playerInput.actions["Dodge"].performed += OnDodge;
+            playerInput.actions["LeftDodge"].performed -= OnLeftDodge;
+            playerInput.actions["LeftDodge"].performed += OnLeftDodge;
+            
+            playerInput.actions["Move"].performed -= OnMove;
+            playerInput.actions["Move"].performed += OnMove;
+            playerInput.actions["Move"].canceled -= OnMove;
+            playerInput.actions["Move"].canceled += OnMove;
+
+            playerInput.actions["Look"].performed -= OnLook;
+            playerInput.actions["Look"].performed += OnLook;
+            playerInput.actions["Look"].canceled -= OnLook;
+            playerInput.actions["Look"].canceled += OnLook;
+
+            playerInput.actions["Jump"].performed -= OnJump;
+            playerInput.actions["Jump"].performed += OnJump;
+        }
+        public void OnAttack(InputAction.CallbackContext context)
         {
-            hasAttacked = value.isPressed;
+            hasAttacked = context.action.IsPressed();
             projectileComponent.Fire(hasAttacked);
             animComponent.SetFiring(hasAttacked);
         }
 
-        public void OnDodge(InputValue value)
+        public void OnDodge(InputAction.CallbackContext context)
         {
             Debug.Log("Dodge");
-            hasDodged = value.isPressed;
+            hasDodged = context.action.IsPressed();
             moveComponent.ApplyDogde(hasDodged);
         }
 
-        public void OnMove(InputValue value)
+        public void OnLeftDodge(InputAction.CallbackContext context)
         {
-            inputVector = value.Get<Vector2>();
+            Debug.Log("Dodge");
+            hasDodged = context.action.IsPressed();
+            moveComponent.ExecuteLeftDogde(hasDodged);
         }
 
-        public void OnLook(InputValue value)
+        public void OnMove(InputAction.CallbackContext context)
         {
-            lookVector = value.Get<Vector2>();
+            inputVector = context.ReadValue<Vector2>();
         }
 
-        public void OnJump(InputValue value)
+        public void OnLook(InputAction.CallbackContext context)
         {
-            hasJumped = value.isPressed;
+            lookVector = context.ReadValue<Vector2>();
+        }
+
+        public void OnJump(InputAction.CallbackContext context)
+        {
+            hasJumped = context.action.IsPressed();
             moveComponent.ApplyJumpVelocity(hasJumped);
         }
 
@@ -67,6 +98,21 @@ namespace Samples
             animComponent.SetMovementParameter(moveComponent.IsMoving, moveComponent.SpeedPercentage);
             cameraComponent.TrackPlayer(transform, lookVector);
             projectileComponent.UpdateComponent();
+        }
+
+        private void OnDestroy()
+        {
+            if (playerInput != null)
+            {
+                playerInput.actions["Attack"].performed -= OnAttack;
+                playerInput.actions["Dodge"].performed -= OnDodge;
+                playerInput.actions["LeftDodge"].performed -= OnLeftDodge;
+                playerInput.actions["Move"].performed -= OnMove;
+                playerInput.actions["Move"].canceled -= OnMove;
+                playerInput.actions["Look"].performed -= OnLook;
+                playerInput.actions["Look"].canceled -= OnLook;
+                playerInput.actions["Jump"].performed -= OnJump;                
+            }
         }
     }
 }
