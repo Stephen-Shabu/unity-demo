@@ -123,6 +123,6 @@ public class HealthComponent : MonoBehaviour
 
     private void OnDestroy()
     {
-        Destroy(deathBurstVfx.gameObject);
+        if(deathBurstVfx) Destroy(deathBurstVfx.gameObject);
     }
 }

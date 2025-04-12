@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Timeline;
 using static Unity.VisualScripting.Member;
 
 public class ProjectileComponent : MonoBehaviour
@@ -92,19 +93,21 @@ public class ProjectileComponent : MonoBehaviour
 
     private void OnDestroy()
     {
+        isPoolInitialized = false;
+
         foreach (var marker in hitMarkers)
         {
-            Destroy(marker.gameObject);
+            if(marker != null) Destroy(marker.gameObject);
         }
 
         foreach (var projectile in projectiles)
         {
-            Destroy(projectile.gameObject);
+            if (projectile != null) Destroy(projectile.gameObject);
         }
 
         foreach (var source in audioSources)
         {
-            Destroy(source.gameObject);
+            if (source != null) Destroy(source.gameObject);
         }
     }
 }
