@@ -14,6 +14,31 @@ public class Timer : MonoBehaviour
     private WaitForSeconds _yieldTime;
     private bool isPaused = false;
 
+    public void Initialise()
+    {
+        GameEventsEmitter.OnEvent(EventType.ChangeState, (data) =>
+        {
+            StateEventData stateData;
+
+            if (data is StateEventData value)
+            {
+                stateData = value;
+
+                if (stateData.State.Equals(GameState.Paused))
+                {
+                    isPaused = true;
+                }
+                else if (stateData.State.Equals(GameState.InGame))
+                {
+                    if (isPaused)
+                    {
+                        isPaused = false;
+                    }
+                }
+            }
+        });
+    }
+
     public void StartTimer(float time, System.Action<float> updateCallback,
         System.Action completeCallback = null)
     {
@@ -31,22 +56,26 @@ public class Timer : MonoBehaviour
     {
         float startTime = time;
 
-        while (startTime > 0 && !isPaused)
+        while (startTime > 0)
         {
             yield return _yieldTime;
-            startTime -= 1;
 
-            int minute = ((int)startTime / 60);
-            _timerText.text = string.Format(GameDefines.TIMER_FORMAT, (int)startTime / 60, startTime % 60);
-
-            if (startTime <= 5)
+            if (!isPaused)
             {
-                timerAudioSource.PlayOneShot(timerSFX);
-                _timerText.color = urgentTextColor;
-            }
+                startTime -= 1;
+
+                int minute = ((int)startTime / 60);
+                _timerText.text = string.Format(GameDefines.TIMER_FORMAT, (int)startTime / 60, startTime % 60);
+
+                if (startTime <= 5)
+                {
+                    timerAudioSource.PlayOneShot(timerSFX);
+                    _timerText.color = urgentTextColor;
+                }
             
-            if (updateCallback != null)
-                updateCallback(startTime);
+                if (updateCallback != null)
+                    updateCallback(startTime);                
+            }
         }
 
         if (completeCallback != null)

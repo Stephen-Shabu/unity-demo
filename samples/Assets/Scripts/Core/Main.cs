@@ -4,31 +4,11 @@ using System.Threading.Tasks;
 using System.IO;
 using System;
 using UnityEngine.InputSystem;
-using System.Collections.Generic;
-
-public enum GameState
-{
-    Booting,
-    MainMenu,
-    Settings,
-    InGame,
-    Paused,
-    Results
-}
-
-public enum UIEventKey { OpenPauseMenu, BackToMainMenu }
 
 public class Main : MonoBehaviour
 {
     public static Main Instance;
     public Profile ProfileCache => Instance.profileCache;
-    public GameState State => currentState;
-
-    public static readonly Dictionary<UIEventKey, HashSet<GameState>> AllowedStates = new()
-    {
-        { UIEventKey.OpenPauseMenu, new HashSet<GameState> { GameState.InGame, GameState.Paused } },
-        { UIEventKey.BackToMainMenu, new HashSet<GameState> { GameState.Results, GameState.Paused } },
-    };
 
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private GameUIController gameUIController;
@@ -39,23 +19,27 @@ public class Main : MonoBehaviour
     [SerializeField] private int mobDefeatedCount;
     [SerializeField] private BaseCameraComponent activeCamera;
 
-    private GameState currentState;
     private Profile profileCache;
     private GameRound activeGameRound;
     private int roundIndex = 0;
     private bool roundHasStarted = false;
     private CharactorController playerController;
     private MobController[] mobControllers;
+    private GameStateController gameStateController;
 
     private void Awake()
     {
         if (Instance == null)
             Instance = this;
+
+        gameStateController = new GameStateController();
+
+        roundTimer.Initialise();
     }
 
     private async void Start()
     {
-        SetState(GameState.MainMenu);
+        GameEventsEmitter.EmitEvent(EventType.ChangeState, new StateEventData { State = GameState.MainMenu });
 
         if (File.Exists(GameDefines.DATABASE_FILE_PATH))
         {
@@ -103,18 +87,6 @@ public class Main : MonoBehaviour
         roundHasStarted = false;
     }
 
-    public void SetState(GameState newState)
-    {
-        currentState = newState;
-    }
-
-    public bool IsEventAllowed(UIEventKey eventKey)
-    {
-        var state = Main.Instance.State;
-        return AllowedStates.TryGetValue(eventKey, out var allowedStates) &&
-               allowedStates.Contains(state);
-    }
-
     private void DebugFinishRound()
     {
         for (int i = 0; i < activeGameRound.NumberOfEnemies; i++)
@@ -152,7 +124,7 @@ public class Main : MonoBehaviour
 
     private async void StartRound(Action onComplete = null)
     {
-        SetState(GameState.InGame);
+        GameEventsEmitter.EmitEvent(EventType.ChangeState, new StateEventData { State = GameState.InGame });
 
         activeGameRound = gameRounds[roundIndex];
 
@@ -209,6 +181,9 @@ public class Main : MonoBehaviour
 
             roundHasStarted = false;
         }
+
+        var playerActionMap = playerInput.actions.FindActionMap("Player");
+        playerActionMap.Enable();
 
         roundTimer.StartTimer(activeGameRound.RoundMaxTime, null, OnTimerComplete);
         roundHasStarted = true;
