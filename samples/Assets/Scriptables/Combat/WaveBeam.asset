@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bd1777a1852c044eb59137b01a0bdde, type: 3}
+  m_Name: WaveBeam
+  m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 8233144362191244728, guid: 0b59c87ee501a68419ebb8e1b1d9be95, type: 3}
+  hitVfxPrefab: {fileID: 5804425956868286400, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
+  fireRate: 0.8
+  projectileSFX: {fileID: 8300000, guid: ac3737a04b40bbf47aec22f223d7a990, type: 3}

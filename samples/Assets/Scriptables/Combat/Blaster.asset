@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bd1777a1852c044eb59137b01a0bdde, type: 3}
+  m_Name: Blaster
+  m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 8903300447151231617, guid: 761176486549d3e499204c104f9edaa6, type: 3}
+  hitVfxPrefab: {fileID: 5804425956868286400, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
+  fireRate: 0.2
+  projectileSFX: {fileID: 8300000, guid: 4bc6e3b05139fe4409d091467020bf3a, type: 3}

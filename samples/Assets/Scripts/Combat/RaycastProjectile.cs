@@ -1,10 +1,11 @@
 using System;
 using UnityEngine;
 
-public class RaycastProjectile : MonoBehaviour
+public class RaycastProjectile : MonoBehaviour, Projectible
 {
-    public bool HasFired => hasFired;
-    public Action<RaycastProjectile> ProjectileCollided;
+    public bool HasFired() => hasFired;
+    public Vector3 GetPosition() => transform.position;
+    public Action<Projectible> OnProjectileCollided { get; set; }
 
     [SerializeField] float projectileSpeed;
     [SerializeField] float projectileEndDistance;
@@ -52,7 +53,7 @@ public class RaycastProjectile : MonoBehaviour
                 Debug.DrawRay(hits[0].point, hits[0].normal * 0.5f, Color.yellow); // Collision normal
                 DebugExtension.DrawWireSphere(hits[0].point, Color.red, .4f);
 
-                ProjectileCollided?.Invoke(this);
+                OnProjectileCollided?.Invoke(this);
 
                 if (hits[0].collider != null && hits[0].collider.TryGetComponent(out HealthComponent healthComp))
                 {
@@ -74,6 +75,11 @@ public class RaycastProjectile : MonoBehaviour
             transform.position = rayStart;
             transform.forward = rayDirection;
         }
+    }
+
+    public void DestroyProjectile()
+    {
+        Destroy(gameObject);
     }
 
     private int IsSphereCast()
