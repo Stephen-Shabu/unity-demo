@@ -10,6 +10,7 @@ public class XpMeterView : MonoBehaviour
     public TextMeshProUGUI XpGained => xpGained;
     public CanvasGroup XpGainedTextCanvasGroup => xpGainedTextCanvasGroup;
     public AudioClip XpGainSFX => xpGainSFX;
+    public AudioClip LevelUpFX => levelUpFX;
     public Button AddXpButton => addXpButton;
 
     [SerializeField] private RectTransform root;

@@ -17,6 +17,7 @@ public class XpMeterController : MonoBehaviour
     [SerializeField] private AnimationCurve animCurve;
     [SerializeField] private AnimationCurve xpGainPositionCurve;
     [SerializeField] private AudioSource xpGainSource;
+    [SerializeField] private AudioSource levelUpSource;
 
     private int expFloor;
     private int expCeil;
@@ -139,7 +140,7 @@ public class XpMeterController : MonoBehaviour
     {
         currentLevel++;
         xpMeterView.XpLevelText.text = $"{currentLevel}";
-
+        levelUpSource.PlayOneShot(xpMeterView.LevelUpFX);
         if (currentLevel < RewardDefines.XP_PER_LEVEL.Length)
         {
             expFloor = GetExpFloor(currentLevel);
