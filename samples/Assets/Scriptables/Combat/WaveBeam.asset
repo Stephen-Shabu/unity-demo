@@ -15,4 +15,4 @@ MonoBehaviour:
   projectilePrefab: {fileID: 8233144362191244728, guid: 0b59c87ee501a68419ebb8e1b1d9be95, type: 3}
   hitVfxPrefab: {fileID: 5804425956868286400, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
   fireRate: 0.8
-  projectileSFX: {fileID: 8300000, guid: ac3737a04b40bbf47aec22f223d7a990, type: 3}
+  projectileSFX: {fileID: 8300000, guid: 2ed74ee064c065143a38c4ca36dbf6cc, type: 3}
