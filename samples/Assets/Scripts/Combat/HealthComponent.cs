@@ -14,7 +14,7 @@ public class HealthComponent : MonoBehaviour
     [SerializeField] private Renderer[] meshes;
     [SerializeField] private GameObject deathVfxPrefab;
 
-    private int currentHealth = 4;
+    [SerializeField] private int currentHealth = 4;
     private float flashAnimTime;
     private float timeToReachTarget = 1f;
 

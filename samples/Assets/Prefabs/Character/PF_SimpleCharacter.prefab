@@ -1229,6 +1229,7 @@ GameObject:
   - component: {fileID: 7495245315555725949}
   - component: {fileID: 9049477761016303304}
   - component: {fileID: 3679818703257898365}
+  - component: {fileID: 6747242659022837139}
   - component: {fileID: 6178401170517585107}
   - component: {fileID: 5610375082820630550}
   - component: {fileID: 2774410699304610351}
@@ -1328,8 +1329,27 @@ MonoBehaviour:
   accelerationFactor: 5
   deaccelerationFactor: 20
   inertiaFactor: 5
+  targetLungeAngle: 0
+  currentLungeAngle: 0
   pivotDistance: 2
   dodgeDuration: 0.5
+--- !u!114 &6747242659022837139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6445612190130063754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attactedRigidBody: {fileID: 7495245315555725949}
+  meshes:
+  - {fileID: 2695402171709774374}
+  deathVfxPrefab: {fileID: 5957226033150986559, guid: 9ea01764c56fa2f46b003ecbccf4b5d7, type: 3}
+  currentHealth: 400
 --- !u!114 &6178401170517585107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1346,6 +1366,7 @@ MonoBehaviour:
   lookVector: {x: 0, y: 0}
   animComponent: {fileID: 2774410699304610351}
   moveComponent: {fileID: 3679818703257898365}
+  healthComponent: {fileID: 6747242659022837139}
   cameraComponent: {fileID: 0}
   projectileComponent: {fileID: 5610375082820630550}
   hasJumped: 0
