@@ -1,19 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
+using System;
 
 namespace Samples
 {
     public class CharactorController : MonoBehaviour
     {
+        public Action OnHealthReachedZero;
+
         [SerializeField] private Vector2 inputVector = Vector2.zero;
         [SerializeField] private Vector2 lookVector = Vector2.zero;
         [SerializeField] private AnimationComponent animComponent;
         [SerializeField] private CharacterMovement moveComponent;
+        [SerializeField] private HealthComponent healthComponent;
         [SerializeField] private BaseCameraComponent cameraComponent;
         [SerializeField] private ProjectileComponent projectileComponent;
 
@@ -29,6 +28,11 @@ namespace Samples
             cameraComponent = camera;
             moveComponent.Intialise();
             projectileComponent.Initialise();
+            healthComponent.Initialise();
+
+            healthComponent.OnHealthReachedZero = HandleOnHealthReachedZero;
+            healthComponent.OnDeathComplete = HandleDeathComplete;
+            healthComponent.OnDamageRecieved = HandleOnDamageTaken;
 
             playerInput.actions["Attack"].performed -= OnAttack;
             playerInput.actions["Attack"].performed += OnAttack;
@@ -46,45 +50,52 @@ namespace Samples
             playerInput.actions["Look"].performed += OnLook;
             playerInput.actions["Look"].canceled -= OnLook;
             playerInput.actions["Look"].canceled += OnLook;
-
-            playerInput.actions["Jump"].performed -= OnJump;
-            playerInput.actions["Jump"].performed += OnJump;
         }
-        public void OnAttack(InputAction.CallbackContext context)
+
+        private void HandleOnDamageTaken()
+        {
+            animComponent.SetHitParameter(true);
+        }
+
+        private void HandleOnHealthReachedZero()
+        {
+            GameEventsEmitter.EmitEvent(EventType.PlayerDefeated, new GenericEventData { Type = EventType.PlayerDefeated });
+        }
+
+        private void HandleDeathComplete()
+        {
+            OnHealthReachedZero?.Invoke();
+        }
+
+        private void OnAttack(InputAction.CallbackContext context)
         {
             hasAttacked = context.action.IsPressed();
             projectileComponent.Fire(hasAttacked);
             animComponent.SetFiring(hasAttacked);
         }
 
-        public void OnDodge(InputAction.CallbackContext context)
+        private void OnDodge(InputAction.CallbackContext context)
         {
             Debug.Log("Dodge");
             hasDodged = context.action.IsPressed();
             moveComponent.ApplyDogde(hasDodged);
         }
 
-        public void OnLeftDodge(InputAction.CallbackContext context)
+        private void OnLeftDodge(InputAction.CallbackContext context)
         {
             Debug.Log("Dodge");
             hasDodged = context.action.IsPressed();
             moveComponent.ExecuteLeftDogde(hasDodged);
         }
 
-        public void OnMove(InputAction.CallbackContext context)
+        private void OnMove(InputAction.CallbackContext context)
         {
             inputVector = context.ReadValue<Vector2>();
         }
 
-        public void OnLook(InputAction.CallbackContext context)
+        private void OnLook(InputAction.CallbackContext context)
         {
             lookVector = context.ReadValue<Vector2>();
-        }
-
-        public void OnJump(InputAction.CallbackContext context)
-        {
-            hasJumped = context.action.IsPressed();
-            moveComponent.ApplyJumpVelocity(hasJumped);
         }
 
         public void UpdateController()
@@ -110,8 +121,7 @@ namespace Samples
                 playerInput.actions["Move"].performed -= OnMove;
                 playerInput.actions["Move"].canceled -= OnMove;
                 playerInput.actions["Look"].performed -= OnLook;
-                playerInput.actions["Look"].canceled -= OnLook;
-                playerInput.actions["Jump"].performed -= OnJump;                
+                playerInput.actions["Look"].canceled -= OnLook;            
             }
         }
     }
