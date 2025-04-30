@@ -20,6 +20,7 @@ public static class GetProfileTask
             using (var connection = new SqliteConnection(GameDefines.DATABASE_PATH))
             {
                 await connection.OpenAsync();
+
                 using (var command = connection.CreateCommand())
                 {
                     command.CommandText = "SELECT xplevel, xptotal, lastcompletedlevel FROM profiles WHERE id = @id";
@@ -29,9 +30,9 @@ public static class GetProfileTask
                     {
                         while (reader.Read())
                         {
-                            profile.XpLevel = Convert.ToInt32(reader["xplevel"]);
-                            profile.XpTotal = Convert.ToInt32(reader["xptotal"]);
-                            profile.LastCompletedLevel = Convert.ToInt32(reader["lastcompletedlevel"]);
+                            profile.XpLevel = reader["xplevel"] is DBNull ? 0 : Convert.ToInt32(reader["xplevel"]);
+                            profile.XpTotal = reader["xptotal"] is DBNull ? 0 : Convert.ToInt32(reader["xptotal"]);
+                            profile.LastCompletedLevel = reader["lastcompletedlevel"] is DBNull ? 0 : Convert.ToInt32(reader["lastcompletedlevel"]);
                         }
                     }
                 }
