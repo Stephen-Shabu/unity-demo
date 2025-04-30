@@ -944,6 +944,10 @@ MonoBehaviour:
   healthComponent: {fileID: 6954567763542251268}
   meleeComponent: {fileID: 9057324534014362804}
   deathSFX: {fileID: 8300000, guid: e5500500adfe1df4b8cdb58e0d21a7dd, type: 3}
+  formationRadius: 5
+  unitIndex: 0
+  totalUnits: 0
+  positionSmoothTime: 0.5
 --- !u!114 &5796900805026691837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -965,6 +969,8 @@ MonoBehaviour:
   accelerationFactor: 5
   deaccelerationFactor: 20
   inertiaFactor: 5
+  targetLungeAngle: 0
+  currentLungeAngle: 0
 --- !u!114 &6954567763542251268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -981,6 +987,7 @@ MonoBehaviour:
   meshes:
   - {fileID: 6579163705851113254}
   deathVfxPrefab: {fileID: 5957226033150986559, guid: 9ea01764c56fa2f46b003ecbccf4b5d7, type: 3}
+  currentHealth: 2
 --- !u!114 &9057324534014362804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -994,6 +1001,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attactedRigidBody: {fileID: 4939114769334688689}
+  attackCooldownTime: 5
+  collionLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &6803687616171415659
 MonoBehaviour:
   m_ObjectHideFlags: 0

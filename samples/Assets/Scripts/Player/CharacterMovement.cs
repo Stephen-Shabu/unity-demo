@@ -123,6 +123,7 @@ public class CharacterMovement : MovementComponent
             Vector3 v2 = v1 - pivot;
             v2 = q * v2;
             v1 = pivot + v2;
+
             attachedRigidBody.position = v1;
 
             previousEasedT = easedT;
@@ -130,7 +131,7 @@ public class CharacterMovement : MovementComponent
             elapsed += Time.deltaTime;
 
             Debug.Log($"Initial Offset: {initialOffset}, Current Position: {transform.position}, Pivot: {pivot}, Move Pos: ({(pivot + rotatedOffset)}");
-            Debug.DrawLine(transform.position, pivot, UnityEngine.Color.red); // Heading
+            Debug.DrawLine(transform.position, pivot, UnityEngine.Color.red);
             Debug.DrawLine(pivot, pivot + rotatedOffset, UnityEngine.Color.blue);
 
             await WaitForFixedUpdateAsync();

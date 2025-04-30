@@ -1218,7 +1218,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.9019608}
+  m_Color: {r: 0.26508543, g: 0.27558184, b: 0.3490566, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1251,7 +1251,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 108981969}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -1947,7 +1947,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: ' Exit to Desktop'
+  m_text: ' Quit Game'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 500b1a0a647f05a4eb5db662e363e3f7, type: 2}
   m_sharedMaterial: {fileID: -5578376901726759645, guid: 500b1a0a647f05a4eb5db662e363e3f7, type: 2}
@@ -2710,13 +2710,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.659376, y: -0.18913414, z: 0.17667924, w: 0.70585835}
+  m_LocalRotation: {x: 0.1612676, y: -0.5777559, z: 0.22064689, w: 0.7690942}
   m_LocalPosition: {x: -27.698143, y: 40.971268, z: -16.08409}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1432823911}
-  m_LocalEulerAnglesHint: {x: 86.1, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 30.2, y: -71.07, z: 10.2}
 --- !u!114 &410087042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3808,7 +3808,7 @@ MonoBehaviour:
   xpGained: {fileID: 940586535}
   xpGainedTextCanvasGroup: {fileID: 940586534}
   xpGainSFX: {fileID: 8300000, guid: e524a8ac6aee985458db821987d5b91a, type: 3}
-  levelUpFX: {fileID: 0}
+  levelUpFX: {fileID: 8300000, guid: cd1f548b1e6b67b428d496a8af0f6c79, type: 3}
   addXpButton: {fileID: 0}
 --- !u!1 &755917047
 GameObject:
@@ -3992,6 +3992,7 @@ MonoBehaviour:
   gameOverPanel: {fileID: 1687691646}
   startButton: {fileID: 1978938461}
   settingsButton: {fileID: 467363619}
+  exitGameButton: {fileID: 1513532504}
   settingsBackButton: {fileID: 1925272998}
   nextRoundButton: {fileID: 1215686781}
   gameCompleteExitButton: {fileID: 103848178}
@@ -4011,6 +4012,7 @@ MonoBehaviour:
   resultScreenSFX: {fileID: 8300000, guid: 3bb7424ebcbb8654b9623c419994d47d, type: 3}
   nextRoundSFX: {fileID: 8300000, guid: 2d2bc8d7203f8af42869d29397dfd118, type: 3}
   gameOverSFX: {fileID: 8300000, guid: df834c2babb7de44eb9ddc954ad9373a, type: 3}
+  gameCompleteScreenSFX: {fileID: 8300000, guid: de915a8357c79f74e99cb1b1d959f0af, type: 3}
 --- !u!1 &793022184
 GameObject:
   m_ObjectHideFlags: 0
@@ -6584,6 +6586,7 @@ GameObject:
   - component: {fileID: 1188163924}
   - component: {fileID: 1188163925}
   - component: {fileID: 1188163926}
+  - component: {fileID: 1188163927}
   m_Layer: 0
   m_Name: Main
   m_TagString: Untagged
@@ -6620,6 +6623,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerInput: {fileID: 1188163926}
   gameUIController: {fileID: 1269757734}
+  hitStopController: {fileID: 1188163927}
   roundTimer: {fileID: 1188163924}
   gameRounds:
   - {fileID: 11400000, guid: 91b4a701ea465d242a012ebf10d7e41f, type: 2}
@@ -6780,6 +6784,18 @@ MonoBehaviour:
   m_DefaultActionMap: UI
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1188163927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188163921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2241d328b42b80945a5536228e6de8f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1195936582
 GameObject:
   m_ObjectHideFlags: 0
@@ -9733,7 +9749,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Exit to Desktop
+  m_text: Quit GAme
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 500b1a0a647f05a4eb5db662e363e3f7, type: 2}
   m_sharedMaterial: {fileID: -5578376901726759645, guid: 500b1a0a647f05a4eb5db662e363e3f7, type: 2}
@@ -10941,6 +10957,7 @@ GameObject:
   - component: {fileID: 2093789947}
   - component: {fileID: 2093789948}
   - component: {fileID: 2093789949}
+  - component: {fileID: 2093789950}
   m_Layer: 5
   m_Name: XpMeterController
   m_TagString: Untagged
@@ -11071,6 +11088,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   xpGainSource: {fileID: 2093789949}
+  levelUpSource: {fileID: 2093789950}
 --- !u!82 &2093789949
 AudioSource:
   m_ObjectHideFlags: 0
@@ -11085,6 +11103,103 @@ AudioSource:
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!82 &2093789950
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2093789946}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 0.8
   m_Pitch: 1
   Loop: 0
   Mute: 0

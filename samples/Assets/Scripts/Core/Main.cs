@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System;
 using UnityEngine.InputSystem;
+using static UIDefines;
 
 public class Main : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class Main : MonoBehaviour
 
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private GameUIController gameUIController;
+    [SerializeField] private HitStopController hitStopController;
     [SerializeField] private Timer roundTimer;
     [SerializeField] private GameRound[] gameRounds;
     [SerializeField] private GameObject playerPrefab;
@@ -35,11 +37,30 @@ public class Main : MonoBehaviour
         gameStateController = new GameStateController();
 
         roundTimer.Initialise();
+        hitStopController.Initialise();
+
+        playerInput.onControlsChanged -= OnControlsChanged;
+        playerInput.onControlsChanged += OnControlsChanged;
     }
 
     private async void Start()
     {
+        gameUIController.Init(playerInput);
+        gameUIController.OnStartButtonPressed = StartRound;
+        gameUIController.OnNextRoundButtonPressed = SetUpNextRound;
+        gameUIController.OnBackToMainMenu = () =>
+        {
+            roundHasStarted = false;
+            Destroy(playerController.gameObject);
+            ResetRound();
+        };
+        gameUIController.OnDebugFinishRoundButtonPressed = DebugFinishRound;
+        gameUIController.OnDebugFinishGameButtonPressed = DebugFinishGame;
+        roundHasStarted = false;
+
         GameEventsEmitter.EmitEvent(EventType.ChangeState, new StateEventData { State = GameState.MainMenu });
+        GameEventsEmitter.OnEvent(EventType.EnemyDefeated, HandleMobDefeated);
+        GameEventsEmitter.OnEvent(EventType.PlayerDefeated, HandlePlayerDefeated);
 
         if (File.Exists(GameDefines.DATABASE_FILE_PATH))
         {
@@ -72,26 +93,20 @@ public class Main : MonoBehaviour
                 roundIndex = profileCache.LastCompletedLevel;
             }
         }
+        gameUIController.SetStartButtonText();
+        gameUIController.InitialseHUD();
+    }
 
-        gameUIController.Init(playerInput);
-        gameUIController.OnStartButtonPressed = StartRound;
-        gameUIController.OnNextRoundButtonPressed = SetUpNextRound;
-        gameUIController.OnBackToMainMenu = () =>
-        {
-            roundHasStarted = false;
-            Destroy(playerController.gameObject);
-            ResetRound();
-        };
-        gameUIController.OnDebugFinishRoundButtonPressed = DebugFinishRound;
-        gameUIController.OnDebugFinishGameButtonPressed = DebugFinishGame;
-        roundHasStarted = false;
+    private void OnControlsChanged(PlayerInput input)
+    {
+        Debug.Log(input.currentControlScheme);
     }
 
     private void DebugFinishRound()
     {
         for (int i = 0; i < activeGameRound.NumberOfEnemies; i++)
         {
-            HandleMobDefeated();
+            HandleMobDefeated(new GenericEventData { Type = EventType.EnemyDefeated});
         }
     }
 
@@ -130,7 +145,7 @@ public class Main : MonoBehaviour
 
         roundTimer.ResetTimeText(activeGameRound.RoundMaxTime);
 
-        if (roundIndex < gameRounds.Length - 1)
+        if (roundIndex < gameRounds.Length)
         {
             var args = new SpawnerArgs()
             {
@@ -151,14 +166,16 @@ public class Main : MonoBehaviour
                 activeCamera.Initialise(playerController.transform);
                 playerController.Initialise(activeCamera, playerInput);
             }
+            else 
+            {
+                playerController.transform.position = spawnPoint.position;
+            }
 
             for (int i = 0; i < activeGameRound.NumberOfEnemies; i++)
             {
                 var enemy = await InstantiateAsync(activeGameRound.enemyType, points[i], Quaternion.identity);
                 var enemyController = enemy[0].GetComponent<MobController>();
                 enemyController.Initialize(playerController.transform);
-                enemyController.OnHealthReachedZero -= HandleMobDefeated;
-                enemyController.OnHealthReachedZero += HandleMobDefeated;
                 mobControllers[i] = enemyController;
             }
 
@@ -222,7 +239,7 @@ public class Main : MonoBehaviour
         }
     }
 
-    private void HandleMobDefeated()
+    private void HandleMobDefeated(EventData e)
     {
         mobDefeatedCount++;
 
@@ -230,6 +247,15 @@ public class Main : MonoBehaviour
         {
             CompleteRound();
         }
+    }
+
+    private async void HandlePlayerDefeated(EventData e)
+    {
+        await Task.Delay(1 * (MathDefines.MILLISECOND_MULTIPLIER / 2));
+
+        gameUIController.GoToResultPanel(ResultPanelState.You_Died, roundIndex + 1);
+        var playerActionMap = playerInput.actions.FindActionMap("Player");
+        playerActionMap.Disable();
     }
 
     private async void CompleteRound()
@@ -263,10 +289,16 @@ public class Main : MonoBehaviour
                 var resultPanelState = roundIndex == gameRounds.Length - 1 ? UIDefines.ResultPanelState.Game_Complete : UIDefines.ResultPanelState.Round_Complete;
                 gameUIController.GoToResultPanel(resultPanelState, roundIndex + 1);
 
-                roundHasStarted = false;
+                var playerActionMap = playerInput.actions.FindActionMap("Player");
+                playerActionMap.Disable();
             }
 
             gameUIController.AnimateXpMeter(earnedXp, GoToResultScreen);
         }
+    }
+
+    private void OnDestroy()
+    {
+        playerInput.onControlsChanged -= OnControlsChanged;
     }
 }

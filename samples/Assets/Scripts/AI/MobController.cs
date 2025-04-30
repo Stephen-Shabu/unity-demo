@@ -1,5 +1,7 @@
 using UnityEngine;
 using System;
+using TMPro;
+using System.Collections;
 
 public class MobController : MonoBehaviour
 {
@@ -18,10 +20,19 @@ public class MobController : MonoBehaviour
     [SerializeField] private AudioClip deathSFX;
 
     private bool hasHealthReachedZero = false;
-    private bool canLaunchAttack = false;
+    private bool hasLaunchedAttack = false;
+    private bool canReposition = false;
     private int neighborCount;
     private MobController[] neighbors;
     private AudioSource source;
+
+    public float formationRadius = 5f;
+    private int unitIndex;
+    private int totalUnits;
+    private Vector3 repositionTarget = Vector3.zero;
+    private bool repositionFlag = false;
+    private float repositionCoolDownDuration = 3f;
+    private float currentRepositionCoolDown = 0;
 
     public void Initialize(Transform newTarget)
     {
@@ -31,7 +42,6 @@ public class MobController : MonoBehaviour
         healthComponent.Initialise();
         moveComponent.Intialise();
         target = newTarget;
-        Debug.Log("Target Changed");
         source = new GameObject($"{name} death audio source").AddComponent<AudioSource>();
     }
 
@@ -45,6 +55,7 @@ public class MobController : MonoBehaviour
         hasHealthReachedZero = !hasHealthReachedZero;
         meleeComponent.CancelMeleeAttack();
         source.PlayOneShot(deathSFX);
+        GameEventsEmitter.EmitEvent(EventType.EnemyDefeated, new GenericEventData { Type = EventType.EnemyDefeated });
     }
 
     private void HandleDeathComplete()
@@ -52,9 +63,13 @@ public class MobController : MonoBehaviour
         OnHealthReachedZero?.Invoke();
     }
 
-    public void SetNeighbors(MobController[] mobs)
+    public void SetNeighbors(MobController[] mobs, int idx)
     {
+        unitIndex = idx;
         neighbors = mobs;
+        totalUnits = neighbors.Length;
+        float radiusMultiplier = 1f + (totalUnits / 10f);
+        formationRadius = formationRadius * radiusMultiplier;
     }
 
     public void UpdateController()
@@ -62,34 +77,98 @@ public class MobController : MonoBehaviour
         if (target != null)
         {
             float distanceToTarget = Vector3.Distance(transform.position, target.position);
+            float scaledIntensity = Mathf.Clamp01((distanceToTarget - stoppingDistance + 0.5f) / stoppingDistance + 0.5f);
 
-            if (!hasHealthReachedZero && distanceToTarget > stoppingDistance)
+            if (!canReposition)
             {
-                float scaledIntensity = Mathf.Clamp01((distanceToTarget - stoppingDistance) / stoppingDistance);
                 heading = target.position - transform.position;
                 moveComponent.UpdateMovement(heading.normalized * intensity * scaledIntensity, false);
+                moveComponent.UpdateLookDirection(heading);
             }
-            else
+            else 
             {
-                if (!canLaunchAttack)
+                if (!repositionFlag)
                 {
-                    canLaunchAttack = true;
-                    meleeComponent.LaunchMeleeAttack(heading, () => { canLaunchAttack = false; });
-                    Debug.Log("Lauch Attack");
+                    repositionTarget = CalculateCirclePosition();
+                    repositionFlag = true;
                 }
 
-                heading = Vector3.zero;
-                moveComponent.UpdateMovement(heading, false);
+                distanceToTarget = Vector3.Distance(transform.position, repositionTarget);
+                scaledIntensity = Mathf.Clamp01((distanceToTarget - 1f) / 1f);
+
+                if (distanceToTarget < 1f)
+                {
+                    heading = Vector3.zero;
+
+                    if (currentRepositionCoolDown < repositionCoolDownDuration)
+                    {
+                        currentRepositionCoolDown += Time.deltaTime;
+                        moveComponent.UpdateLookDirection(target.position - transform.position);
+                    }
+                    else if (currentRepositionCoolDown >= repositionCoolDownDuration)
+                    {
+                        currentRepositionCoolDown = 0;
+                        canReposition = false;
+                        repositionFlag = false;
+                        distanceToTarget = Vector3.Distance(transform.position, target.position);
+                    }
+                }
+                else
+                {
+                    currentRepositionCoolDown = 0;
+
+                    if (currentRepositionCoolDown == 0)
+                    {
+                        heading = repositionTarget - transform.position;
+                    }
+                    moveComponent.UpdateLookDirection(heading);
+                }
+
+                moveComponent.UpdateMovement(heading.normalized * intensity * scaledIntensity, false);
+
+                Debug.DrawLine(repositionTarget, repositionTarget + Vector3.left * .2f, UnityEngine.Color.red);
+                Debug.DrawLine(repositionTarget, repositionTarget + Vector3.right * .2f, UnityEngine.Color.red);
+                Debug.DrawLine(repositionTarget, repositionTarget + Vector3.up * .2f, UnityEngine.Color.red);
+                Debug.DrawLine(repositionTarget, repositionTarget + Vector3.down * .2f, UnityEngine.Color.red);
             }
 
-            source.transform.position = transform.position;
             animComponent.SetMovementParameter(moveComponent.IsMoving, moveComponent.SpeedPercentage);
-            moveComponent.UpdateLookDirection(heading);
+            source.transform.position = transform.position;
+
+            if (meleeComponent.CanAttack(!(distanceToTarget > stoppingDistance)))
+            {
+                void HandleAttackStartUp() => moveComponent.ApplyLean(MovementDefines.Character.LEAN_ANGLE);
+                
+                void HandleAttackStarted() 
+                { 
+                    moveComponent.ApplyLean(0);
+                    hasLaunchedAttack = true;
+                }
+
+                void HandleAttackComplete() 
+                {
+                    canReposition = true;
+
+                    hasLaunchedAttack = false; 
+                }
+
+                meleeComponent.LaunchMeleeAttack(target, HandleAttackStartUp, HandleAttackStarted, HandleAttackComplete);
+            }
         }
+    }
+
+   private Vector3 CalculateCirclePosition()
+    {
+        float angle = UnityEngine.Random.Range(0f, 1f) * MathDefines.FULL_CIRCLE_RAD;
+
+        Vector3 offset = new Vector3(
+            Mathf.Sin(angle) * formationRadius, 0f, Mathf.Cos(angle) * formationRadius);
+
+        return target.position + offset;
     }
 
     private void OnDestroy()
     {
-        Destroy(source.gameObject);
+        if(source != null) Destroy(source.gameObject);
     }
 }

@@ -1,19 +1,30 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem.LowLevel;
 
 public enum EventType
 {
-    ChangeState    
+    ChangeState,
+    ControlsChanged,
+    EnemyDefeated,
+    PlayerDefeated,
+    MeleeHitRegistered
 }
 
 public interface EventData
 {
+    public EventType Type { get; set; }
+}
+
+public struct GenericEventData: EventData
+{
+    public EventType Type { get; set; }
 }
 
 public struct StateEventData: EventData
 {
+    public EventType Type { get; set; }
+
     public GameState State;
 }
 
@@ -27,7 +38,7 @@ public enum GameState
     Results
 }
 
-public enum UIEventKey { OpenPauseMenu, BackToMainMenu }
+public enum UIEventKey { OpenPauseMenu, BackToMainMenu, InMenu}
 
 public static class GameEventsEmitter
 {
@@ -74,6 +85,7 @@ public class GameStateController
     {
         { UIEventKey.OpenPauseMenu, new HashSet<GameState> { GameState.InGame, GameState.Paused } },
         { UIEventKey.BackToMainMenu, new HashSet<GameState> { GameState.Results, GameState.Paused } },
+        { UIEventKey.InMenu, new HashSet<GameState> { GameState.Results, GameState.Paused, GameState.MainMenu, GameState.Settings } }
     };
 
     private GameState currentState;

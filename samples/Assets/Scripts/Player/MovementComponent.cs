@@ -28,6 +28,8 @@ public class MovementComponent : MonoBehaviour
     protected bool hasJumped;
     protected bool isMoving;
     protected float forwardSpeed;
+    [SerializeField] protected float targetLungeAngle = 0;
+    [SerializeField] protected float currentLungeAngle = 0;
 
     public virtual void Intialise()
     {
@@ -61,6 +63,12 @@ public class MovementComponent : MonoBehaviour
     public virtual void UpdateLookDirection(Vector3 directionVector)
     {
         attachedRigidBody.rotation = GetRotation(directionVector);
+        currentLungeAngle = Mathf.Lerp(currentLungeAngle, targetLungeAngle, turnRate * Time.smoothDeltaTime);
+    }
+
+    public void ApplyLean(float angle)
+    {
+        targetLungeAngle = angle;
     }
 
     protected Vector3 GetMoveVector(Vector3 direction)
@@ -119,6 +127,6 @@ public class MovementComponent : MonoBehaviour
 
         var finalRotation = Quaternion.AngleAxis(angle * Mathf.Rad2Deg, Vector3.up);
 
-        return finalRotation;
+        return finalRotation * Quaternion.AngleAxis(currentLungeAngle, Vector3.right);
     }
 }
