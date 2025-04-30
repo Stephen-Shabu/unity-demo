@@ -15,6 +15,7 @@ public class GameUIView : MonoBehaviour
     public RectTransform PausePanel => pausePanel;
     public Button StartButton => startButton;
     public Button SettingsButton => settingsButton;
+    public Button ExitGameButton => exitGameButton;
     public Button SettingsBackButton => settingsBackButton;
     public Button NextRoundButton => nextRoundButton;
     public Button GameCompleteExitButton => gameCompleteExitButton;
@@ -34,6 +35,7 @@ public class GameUIView : MonoBehaviour
     public AudioClip ResultScreenSFX => resultScreenSFX;
     public AudioClip NextRoundSFX => nextRoundSFX;
     public AudioClip GameOverSFX => gameOverSFX;
+    public AudioClip GameCompleteScreenSFX => gameCompleteScreenSFX;
 
     [SerializeField] private CanvasGroup panelBackgroundCanvasGroup;
     [SerializeField] private RectTransform panelRoot;
@@ -46,6 +48,7 @@ public class GameUIView : MonoBehaviour
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private Button startButton;
     [SerializeField] private Button settingsButton;
+    [SerializeField] private Button exitGameButton;
     [SerializeField] private Button settingsBackButton;
     [SerializeField] private Button nextRoundButton;
     [SerializeField] private Button gameCompleteExitButton;
@@ -65,4 +68,5 @@ public class GameUIView : MonoBehaviour
     [SerializeField] private AudioClip resultScreenSFX;
     [SerializeField] private AudioClip nextRoundSFX;
     [SerializeField] private AudioClip gameOverSFX;
+    [SerializeField] private AudioClip gameCompleteScreenSFX;
 }
