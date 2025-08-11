@@ -6587,6 +6587,7 @@ GameObject:
   - component: {fileID: 1188163925}
   - component: {fileID: 1188163926}
   - component: {fileID: 1188163927}
+  - component: {fileID: 1188163928}
   m_Layer: 0
   m_Name: Main
   m_TagString: Untagged
@@ -6624,6 +6625,7 @@ MonoBehaviour:
   playerInput: {fileID: 1188163926}
   gameUIController: {fileID: 1269757734}
   hitStopController: {fileID: 1188163927}
+  combatDirector: {fileID: 1188163928}
   roundTimer: {fileID: 1188163924}
   gameRounds:
   - {fileID: 11400000, guid: 91b4a701ea465d242a012ebf10d7e41f, type: 2}
@@ -6796,6 +6798,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2241d328b42b80945a5536228e6de8f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1188163928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188163921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2446daaea34a8a34997fa88fa863bb20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
 --- !u!1 &1195936582
 GameObject:
   m_ObjectHideFlags: 0

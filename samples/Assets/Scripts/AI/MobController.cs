@@ -1,9 +1,7 @@
 using UnityEngine;
 using System;
-using TMPro;
-using System.Collections;
 
-public class MobController : MonoBehaviour
+public class MobController : MonoBehaviour, AttackCapable, Attackable
 {
     public Action OnHealthReachedZero;
 
@@ -21,18 +19,12 @@ public class MobController : MonoBehaviour
 
     private bool hasHealthReachedZero = false;
     private bool hasLaunchedAttack = false;
-    private bool canReposition = false;
-    private int neighborCount;
-    private MobController[] neighbors;
     private AudioSource source;
-
-    public float formationRadius = 5f;
-    private int unitIndex;
-    private int totalUnits;
     private Vector3 repositionTarget = Vector3.zero;
     private bool repositionFlag = false;
     private float repositionCoolDownDuration = 3f;
     private float currentRepositionCoolDown = 0;
+    private EnemyState currentState = EnemyState.Wait;
 
     public void Initialize(Transform newTarget)
     {
@@ -43,6 +35,7 @@ public class MobController : MonoBehaviour
         moveComponent.Intialise();
         target = newTarget;
         source = new GameObject($"{name} death audio source").AddComponent<AudioSource>();
+        GameEventsEmitter.EmitEvent(EventType.RequestAttack, new AttackRequestEventData { Type = EventType.RequestAttack, Attacker = gameObject });
     }
 
     private void HandleOnDamageTaken()
@@ -55,7 +48,7 @@ public class MobController : MonoBehaviour
         hasHealthReachedZero = !hasHealthReachedZero;
         meleeComponent.CancelMeleeAttack();
         source.PlayOneShot(deathSFX);
-        GameEventsEmitter.EmitEvent(EventType.EnemyDefeated, new GenericEventData { Type = EventType.EnemyDefeated });
+        GameEventsEmitter.EmitEvent(EventType.EnemyDefeated, new GenericEventData { Type = EventType.EnemyDefeated, Caller = gameObject});
     }
 
     private void HandleDeathComplete()
@@ -63,13 +56,22 @@ public class MobController : MonoBehaviour
         OnHealthReachedZero?.Invoke();
     }
 
-    public void SetNeighbors(MobController[] mobs, int idx)
+    public void Wait(Transform target)
     {
-        unitIndex = idx;
-        neighbors = mobs;
-        totalUnits = neighbors.Length;
-        float radiusMultiplier = 1f + (totalUnits / 10f);
-        formationRadius = formationRadius * radiusMultiplier;
+        currentState = EnemyState.Wait;
+        intensity = 0;
+    }
+
+    public void Attack(Transform newTarget)
+    {
+        target = newTarget;
+        intensity = 1;
+        currentState = EnemyState.Attack;
+    }
+
+    public void Retreat()
+    {
+        currentState = EnemyState.Retreat;
     }
 
     public void UpdateController()
@@ -79,8 +81,16 @@ public class MobController : MonoBehaviour
             float distanceToTarget = Vector3.Distance(transform.position, target.position);
             float scaledIntensity = Mathf.Clamp01((distanceToTarget - stoppingDistance + 0.5f) / stoppingDistance + 0.5f);
 
-            if (!canReposition)
+            if(!currentState.Equals(EnemyState.Reposition))
             {
+                if (currentState.Equals(EnemyState.Wander) || currentState.Equals(EnemyState.Attack))
+                {
+                    intensity = 1;
+                }
+                else
+                {
+                    Wait(gameObject.transform);
+                }
                 heading = target.position - transform.position;
                 moveComponent.UpdateMovement(heading.normalized * intensity * scaledIntensity, false);
                 moveComponent.UpdateLookDirection(heading);
@@ -89,7 +99,7 @@ public class MobController : MonoBehaviour
             {
                 if (!repositionFlag)
                 {
-                    repositionTarget = CalculateCirclePosition();
+                    repositionTarget = CalculateNewTargetPosition();
                     repositionFlag = true;
                 }
 
@@ -108,7 +118,8 @@ public class MobController : MonoBehaviour
                     else if (currentRepositionCoolDown >= repositionCoolDownDuration)
                     {
                         currentRepositionCoolDown = 0;
-                        canReposition = false;
+
+                        Attack(target);
                         repositionFlag = false;
                         distanceToTarget = Vector3.Distance(transform.position, target.position);
                     }
@@ -135,7 +146,7 @@ public class MobController : MonoBehaviour
             animComponent.SetMovementParameter(moveComponent.IsMoving, moveComponent.SpeedPercentage);
             source.transform.position = transform.position;
 
-            if (meleeComponent.CanAttack(!(distanceToTarget > stoppingDistance)))
+            if (meleeComponent.CanAttack(!(distanceToTarget > stoppingDistance)) && currentState.Equals(EnemyState.Attack))
             {
                 void HandleAttackStartUp() => moveComponent.ApplyLean(MovementDefines.Character.LEAN_ANGLE);
                 
@@ -147,8 +158,7 @@ public class MobController : MonoBehaviour
 
                 void HandleAttackComplete() 
                 {
-                    canReposition = true;
-
+                    currentState = EnemyState.Reposition;
                     hasLaunchedAttack = false; 
                 }
 
@@ -157,18 +167,20 @@ public class MobController : MonoBehaviour
         }
     }
 
-   private Vector3 CalculateCirclePosition()
+   private Vector3 CalculateNewTargetPosition()
     {
-        float angle = UnityEngine.Random.Range(0f, 1f) * MathDefines.FULL_CIRCLE_RAD;
+        Vector3 offset = Vector3.Cross(Vector3.up, UnityEngine.Random.Range(-1, 0) * heading);
 
-        Vector3 offset = new Vector3(
-            Mathf.Sin(angle) * formationRadius, 0f, Mathf.Cos(angle) * formationRadius);
-
-        return target.position + offset;
+        return target.position + offset * UnityEngine.Random.Range(1f, 2f);
     }
 
     private void OnDestroy()
     {
         if(source != null) Destroy(source.gameObject);
+    }
+
+    public int GetMaxAttackers()
+    {
+        return 2;
     }
 }

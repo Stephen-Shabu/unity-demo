@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public enum EventType
 {
@@ -8,7 +9,9 @@ public enum EventType
     ControlsChanged,
     EnemyDefeated,
     PlayerDefeated,
-    MeleeHitRegistered
+    MeleeHitRegistered,
+    RequestAttack,
+    RoundComplete
 }
 
 public interface EventData
@@ -19,6 +22,7 @@ public interface EventData
 public struct GenericEventData: EventData
 {
     public EventType Type { get; set; }
+    public GameObject Caller { get; set; }
 }
 
 public struct StateEventData: EventData
@@ -26,6 +30,13 @@ public struct StateEventData: EventData
     public EventType Type { get; set; }
 
     public GameState State;
+}
+
+public struct AttackRequestEventData : EventData
+{
+    public EventType Type { get; set; }
+
+    public GameObject Attacker;
 }
 
 public enum GameState
@@ -78,10 +89,11 @@ public static class GameEventsEmitter
 
 public class GameStateController
 {
-    public static GameStateController Instance;
+    public static GameStateController Instance { get { return instance ?? (instance = new GameStateController()); } private set { } }
+
     public GameState State => currentState;
 
-   private readonly Dictionary<UIEventKey, HashSet<GameState>> AllowedStates = new()
+    private readonly Dictionary<UIEventKey, HashSet<GameState>> AllowedStates = new()
     {
         { UIEventKey.OpenPauseMenu, new HashSet<GameState> { GameState.InGame, GameState.Paused } },
         { UIEventKey.BackToMainMenu, new HashSet<GameState> { GameState.Results, GameState.Paused } },
@@ -89,12 +101,13 @@ public class GameStateController
     };
 
     private GameState currentState;
+    private static GameStateController instance;
 
     public GameStateController()
     {
-        if (Instance == null)
+        if (instance == null)
         {
-            Instance = this;
+            instance = this;
         }
 
         GameEventsEmitter.OnEvent(EventType.ChangeState, (data) =>
@@ -107,6 +120,25 @@ public class GameStateController
                 SetState(stateData.State);
             }
         });
+    }
+
+    private void HandleOnControlsChanged(PlayerInput input)
+    {
+        Debug.Log(input.currentControlScheme);
+
+        if (input.currentControlScheme == "Keyboard&Mouse")
+        {
+            if (IsEventAllowed(UIEventKey.InMenu) || IsEventAllowed(UIEventKey.OpenPauseMenu))
+            {
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = true;
+            }
+        }
+        else if (input.currentControlScheme == "Gamepad")
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     public bool IsEventAllowed(UIEventKey eventKey)

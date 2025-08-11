@@ -4,7 +4,7 @@ using System;
 
 namespace Samples
 {
-    public class CharactorController : MonoBehaviour
+    public class CharactorController : MonoBehaviour, Attackable
     {
         public Action OnHealthReachedZero;
 
@@ -123,6 +123,11 @@ namespace Samples
                 playerInput.actions["Look"].performed -= OnLook;
                 playerInput.actions["Look"].canceled -= OnLook;            
             }
+        }
+
+        public int GetMaxAttackers()
+        {
+            return 3;
         }
     }
 }

@@ -14,6 +14,7 @@ public class Main : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private GameUIController gameUIController;
     [SerializeField] private HitStopController hitStopController;
+    [SerializeField] private CombatDirector combatDirector;
     [SerializeField] private Timer roundTimer;
     [SerializeField] private GameRound[] gameRounds;
     [SerializeField] private GameObject playerPrefab;
@@ -35,12 +36,8 @@ public class Main : MonoBehaviour
             Instance = this;
 
         gameStateController = new GameStateController();
-
         roundTimer.Initialise();
         hitStopController.Initialise();
-
-        playerInput.onControlsChanged -= OnControlsChanged;
-        playerInput.onControlsChanged += OnControlsChanged;
     }
 
     private async void Start()
@@ -100,6 +97,19 @@ public class Main : MonoBehaviour
     private void OnControlsChanged(PlayerInput input)
     {
         Debug.Log(input.currentControlScheme);
+
+        if (input.currentControlScheme == "Keyboard&Mouse")
+        {
+            if (GameStateController.Instance.IsEventAllowed(UIEventKey.InMenu) || GameStateController.Instance.IsEventAllowed(UIEventKey.OpenPauseMenu))
+            {
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = true;
+            }
+        }
+        else if (input.currentControlScheme == "Gamepad")
+        {
+            Cursor.visible = false;
+        }
     }
 
     private void DebugFinishRound()
@@ -165,8 +175,9 @@ public class Main : MonoBehaviour
                 playerController = player[0].GetComponent<CharactorController>();
                 activeCamera.Initialise(playerController.transform);
                 playerController.Initialise(activeCamera, playerInput);
+                combatDirector.Initialise(playerController.gameObject);
             }
-            else 
+            else
             {
                 playerController.transform.position = spawnPoint.position;
             }
@@ -174,16 +185,13 @@ public class Main : MonoBehaviour
             for (int i = 0; i < activeGameRound.NumberOfEnemies; i++)
             {
                 var enemy = await InstantiateAsync(activeGameRound.enemyType, points[i], Quaternion.identity);
+                enemy[0].name = $"Enemy unit {i}";
+
                 var enemyController = enemy[0].GetComponent<MobController>();
+
                 enemyController.Initialize(playerController.transform);
                 mobControllers[i] = enemyController;
             }
-
-            for (int i = 0; i < activeGameRound.NumberOfEnemies; i++)
-            {
-                mobControllers[i].SetNeighbors(mobControllers, i);
-            }
-
         }
 
         await Task.Delay(2 * MathDefines.MILLISECOND_MULTIPLIER);
@@ -219,7 +227,7 @@ public class Main : MonoBehaviour
         roundTimer.StopTimer();
         roundTimer.ResetTimeText(activeGameRound.RoundMaxTime);
         mobDefeatedCount = 0;
-
+        roundHasStarted = false;
         for (int i = 0; i < mobControllers.Length; i++)
         {
             Destroy(mobControllers[i].gameObject);
@@ -295,10 +303,5 @@ public class Main : MonoBehaviour
 
             gameUIController.AnimateXpMeter(earnedXp, GoToResultScreen);
         }
-    }
-
-    private void OnDestroy()
-    {
-        playerInput.onControlsChanged -= OnControlsChanged;
     }
 }
