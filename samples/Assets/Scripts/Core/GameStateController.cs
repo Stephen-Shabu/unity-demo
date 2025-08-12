@@ -11,7 +11,8 @@ public enum EventType
     PlayerDefeated,
     MeleeHitRegistered,
     RequestAttack,
-    RoundComplete
+    RoundComplete,
+    ChangeWeapon
 }
 
 public interface EventData
@@ -37,6 +38,13 @@ public struct AttackRequestEventData : EventData
     public EventType Type { get; set; }
 
     public GameObject Attacker;
+}
+
+public struct WeaponChangeEventData : EventData
+{
+    public EventType Type { get; set; }
+
+    public WeaponName Name { get; set; }
 }
 
 public enum GameState

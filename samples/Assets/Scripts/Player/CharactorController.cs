@@ -27,7 +27,7 @@ namespace Samples
             playerInput = input;
             cameraComponent = camera;
             moveComponent.Intialise();
-            projectileComponent.Initialise();
+            projectileComponent.ChangeWeapon(WeaponName.BLASTER);
             healthComponent.Initialise();
 
             healthComponent.OnHealthReachedZero = HandleOnHealthReachedZero;
@@ -40,7 +40,11 @@ namespace Samples
             playerInput.actions["Dodge"].performed += OnDodge;
             playerInput.actions["LeftDodge"].performed -= OnLeftDodge;
             playerInput.actions["LeftDodge"].performed += OnLeftDodge;
-            
+            playerInput.actions["SelectSlotOne"].performed -= OnWeaponOneSelected;
+            playerInput.actions["SelectSlotOne"].performed += OnWeaponOneSelected;
+            playerInput.actions["SelectSlotTwo"].performed -= OnWeaponTwoSelected;
+            playerInput.actions["SelectSlotTwo"].performed += OnWeaponTwoSelected;
+
             playerInput.actions["Move"].performed -= OnMove;
             playerInput.actions["Move"].performed += OnMove;
             playerInput.actions["Move"].canceled -= OnMove;
@@ -50,6 +54,24 @@ namespace Samples
             playerInput.actions["Look"].performed += OnLook;
             playerInput.actions["Look"].canceled -= OnLook;
             playerInput.actions["Look"].canceled += OnLook;
+        }
+
+        public void UpdateController()
+        {
+            Vector3 cameraForward = cameraComponent.transform.forward;
+            Vector3 cameraRight = cameraComponent.transform.right;
+            cameraForward.y = 0.0f;
+
+            Vector3 movementDirection = (cameraForward * inputVector.y + cameraRight * inputVector.x).normalized;
+            moveComponent.UpdateMovement(movementDirection, hasAttacked);
+            animComponent.SetMovementParameter(moveComponent.IsMoving, moveComponent.SpeedPercentage);
+            cameraComponent.TrackPlayer(transform, lookVector);
+            projectileComponent.UpdateComponent();
+        }
+
+        public int GetMaxAttackers()
+        {
+            return 3;
         }
 
         private void HandleOnDamageTaken()
@@ -72,6 +94,16 @@ namespace Samples
             hasAttacked = context.action.IsPressed();
             projectileComponent.Fire(hasAttacked);
             animComponent.SetFiring(hasAttacked);
+        }
+
+        private void OnWeaponOneSelected(InputAction.CallbackContext context)
+        {
+            projectileComponent.ChangeWeapon(WeaponName.BLASTER);
+        }
+
+        private void OnWeaponTwoSelected(InputAction.CallbackContext context)
+        {
+            projectileComponent.ChangeWeapon(WeaponName.WAVE_BEAM);
         }
 
         private void OnDodge(InputAction.CallbackContext context)
@@ -98,19 +130,6 @@ namespace Samples
             lookVector = context.ReadValue<Vector2>();
         }
 
-        public void UpdateController()
-        {
-            Vector3 cameraForward = cameraComponent.transform.forward;
-            Vector3 cameraRight = cameraComponent.transform.right;
-            cameraForward.y = 0.0f;
-
-            Vector3 movementDirection = (cameraForward * inputVector.y + cameraRight * inputVector.x).normalized;
-            moveComponent.UpdateMovement(movementDirection, hasAttacked);
-            animComponent.SetMovementParameter(moveComponent.IsMoving, moveComponent.SpeedPercentage);
-            cameraComponent.TrackPlayer(transform, lookVector);
-            projectileComponent.UpdateComponent();
-        }
-
         private void OnDestroy()
         {
             if (playerInput != null)
@@ -123,11 +142,6 @@ namespace Samples
                 playerInput.actions["Look"].performed -= OnLook;
                 playerInput.actions["Look"].canceled -= OnLook;            
             }
-        }
-
-        public int GetMaxAttackers()
-        {
-            return 3;
         }
     }
 }

@@ -50,7 +50,7 @@ public class RaycastProjectile : MonoBehaviour, Projectible
             if(IsSphereCast() > 0)
             {
                 Debug.DrawLine(transform.position, hits[0].point, Color.red);
-                Debug.DrawRay(hits[0].point, hits[0].normal * 0.5f, Color.yellow); // Collision normal
+                Debug.DrawRay(hits[0].point, hits[0].normal * 0.5f, Color.yellow);
                 DebugExtension.DrawWireSphere(hits[0].point, Color.red, .4f);
 
                 OnProjectileCollided?.Invoke(this);

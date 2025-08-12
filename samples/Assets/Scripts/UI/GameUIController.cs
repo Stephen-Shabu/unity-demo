@@ -2,9 +2,7 @@ using System;
 using UnityEngine;
 using System.Threading.Tasks;
 using UnityEngine.InputSystem;
-using System.Threading;
 using static UIDefines;
-using static UnityEngine.Rendering.DebugUI;
 using System.Collections;
 
 public class GameUIController : MonoBehaviour
@@ -35,13 +33,11 @@ public class GameUIController : MonoBehaviour
         playerInput.actions["Pause"].performed -= OnPause;
         playerInput.actions["Pause"].performed += OnPause;
 
-        playerInput.onControlsChanged -= OnControlsChanged;
-        playerInput.onControlsChanged += OnControlsChanged;
-
         gameUIView.PanelBackgroundCanvasGroup.alpha = 1f;
         targetPosition = gameUIView.PanelRoot.anchoredPosition;
 
         GameEventsEmitter.OnEvent(EventType.ChangeState, OnEventStateChanged);
+        GameEventsEmitter.OnEvent(EventType.ChangeWeapon, OnWeaponChanged);
 
         gameUIView.NextRoundButton.onClick.AddListener(() =>
         {
@@ -139,21 +135,26 @@ public class GameUIController : MonoBehaviour
         }
     }
 
-    private void OnControlsChanged(PlayerInput input)
+    private void OnWeaponChanged(EventData e)
     {
-        Debug.Log(input.currentControlScheme);
-        if (input.currentControlScheme == "Keyboard&Mouse")
+        WeaponChangeEventData data;
+
+        if (e is WeaponChangeEventData value)
         {
-            if (GameStateController.Instance.IsEventAllowed(UIEventKey.InMenu))
+            data = value;
+
+            switch (data.Name)
             {
-                Cursor.lockState = CursorLockMode.Confined;
-                Cursor.visible = true;
+                case WeaponName.BLASTER:
+                    gameUIView.BlasterUI.color = Color.green;
+                    gameUIView.WaveBeamUI.color = new Vector4(Color.grey.r, Color.grey.g, Color.grey.b, 0.25f);
+                    break;
+
+                case WeaponName.WAVE_BEAM:
+                    gameUIView.BlasterUI.color = new Vector4(Color.grey.r, Color.grey.g, Color.grey.b, 0.25f);
+                    gameUIView.WaveBeamUI.color = Color.green;
+                    break;
             }
-        }
-        else if(input.currentControlScheme == "Gamepad")
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
         }
     }
 
@@ -191,12 +192,6 @@ public class GameUIController : MonoBehaviour
     public void GoToResultPanel(ResultPanelState state, int roundIndex)
     {
         GameEventsEmitter.EmitEvent(EventType.ChangeState, new StateEventData { State = GameState.Results });
-
-        if (playerInput.currentControlScheme == "Keyboard&Mouse")
-        {
-            Cursor.lockState = CursorLockMode.Confined;
-            Cursor.visible = true;
-        }
 
         switch (state)
         {

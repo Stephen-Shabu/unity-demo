@@ -36,6 +36,8 @@ public class GameUIView : MonoBehaviour
     public AudioClip NextRoundSFX => nextRoundSFX;
     public AudioClip GameOverSFX => gameOverSFX;
     public AudioClip GameCompleteScreenSFX => gameCompleteScreenSFX;
+    public TextMeshProUGUI BlasterUI => blasterUI;
+    public TextMeshProUGUI WaveBeamUI => waveBeamUI;
 
     [SerializeField] private CanvasGroup panelBackgroundCanvasGroup;
     [SerializeField] private RectTransform panelRoot;
@@ -69,4 +71,6 @@ public class GameUIView : MonoBehaviour
     [SerializeField] private AudioClip nextRoundSFX;
     [SerializeField] private AudioClip gameOverSFX;
     [SerializeField] private AudioClip gameCompleteScreenSFX;
+    [SerializeField] private TextMeshProUGUI blasterUI;
+    [SerializeField] private TextMeshProUGUI waveBeamUI;
 }

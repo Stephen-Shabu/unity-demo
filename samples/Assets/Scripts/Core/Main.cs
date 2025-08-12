@@ -15,6 +15,7 @@ public class Main : MonoBehaviour
     [SerializeField] private GameUIController gameUIController;
     [SerializeField] private HitStopController hitStopController;
     [SerializeField] private CombatDirector combatDirector;
+    [SerializeField] private WeaponDatabase weaponDb;
     [SerializeField] private Timer roundTimer;
     [SerializeField] private GameRound[] gameRounds;
     [SerializeField] private GameObject playerPrefab;
@@ -38,6 +39,7 @@ public class Main : MonoBehaviour
         gameStateController = new GameStateController();
         roundTimer.Initialise();
         hitStopController.Initialise();
+        weaponDb.Initialise();
     }
 
     private async void Start()

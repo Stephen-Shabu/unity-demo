@@ -1386,7 +1386,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileCount: 10
   imapctSFX: {fileID: 8300000, guid: febe15a5779c4e0498ff3d1791c5e70d, type: 3}
-  activeWeapon: {fileID: 11400000, guid: 87395466f4d65ed4887d560bc8ea42aa, type: 2}
+  activeWeapon: {fileID: 0}
+  weaponDb: {fileID: 11400000, guid: 05a23b14be2724346aa975abe56709e3, type: 2}
 --- !u!114 &2774410699304610351
 MonoBehaviour:
   m_ObjectHideFlags: 0
