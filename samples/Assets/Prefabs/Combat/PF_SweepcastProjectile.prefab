@@ -9834,6 +9834,6 @@ MonoBehaviour:
   maxSweepLength: 2.5
   collionLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 129
   projectileVfx: {fileID: 4637956466522378641}
   projectileTrailVfx: {fileID: 629384365580424974}

@@ -52,7 +52,7 @@ MonoBehaviour:
   maxDistance: 0.4
   collionLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 129
 --- !u!33 &1545754751059692503
 MeshFilter:
   m_ObjectHideFlags: 0

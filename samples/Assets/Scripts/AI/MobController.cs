@@ -16,6 +16,7 @@ public class MobController : MonoBehaviour, AttackCapable, Attackable
     [SerializeField] private HealthComponent healthComponent;
     [SerializeField] private MeleeComponent meleeComponent;
     [SerializeField] private AudioClip deathSFX;
+    [SerializeField] private LayerMask wallLayer;
 
     private bool hasHealthReachedZero = false;
     private bool hasLaunchedAttack = false;
@@ -169,9 +170,23 @@ public class MobController : MonoBehaviour, AttackCapable, Attackable
 
    private Vector3 CalculateNewTargetPosition()
     {
-        Vector3 offset = Vector3.Cross(Vector3.up, UnityEngine.Random.Range(-1, 0) * heading);
+        int[] directions = new int[2] {-1, 1};
+        int dir = directions[UnityEngine.Random.Range(0, directions.Length)];
 
-        return target.position + offset * UnityEngine.Random.Range(1f, 2f);
+        Vector3 offset = Vector3.Cross(Vector3.up, dir * heading);
+
+        var newPosition = target.position + offset * UnityEngine.Random.Range(1f, 2f);
+        RaycastHit[] hits = new RaycastHit[1];
+
+        if (Physics.SphereCastNonAlloc(new Ray(newPosition, heading), .1f, hits, .1f, wallLayer) > 0)
+        {
+            var closePoint = hits[0].collider.ClosestPoint(transform.position);
+
+            offset = Vector3.Cross(Vector3.up, (closePoint - transform.position));
+            newPosition = transform.position - offset * UnityEngine.Random.Range(1.2f, 2f);
+        }
+
+        return newPosition;
     }
 
     private void OnDestroy()

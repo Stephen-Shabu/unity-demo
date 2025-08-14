@@ -944,10 +944,9 @@ MonoBehaviour:
   healthComponent: {fileID: 6954567763542251268}
   meleeComponent: {fileID: 9057324534014362804}
   deathSFX: {fileID: 8300000, guid: e5500500adfe1df4b8cdb58e0d21a7dd, type: 3}
-  formationRadius: 5
-  unitIndex: 0
-  totalUnits: 0
-  positionSmoothTime: 0.5
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!114 &5796900805026691837
 MonoBehaviour:
   m_ObjectHideFlags: 0
