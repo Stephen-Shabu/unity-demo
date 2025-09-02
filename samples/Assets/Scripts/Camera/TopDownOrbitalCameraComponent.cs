@@ -1,11 +1,26 @@
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class TopDownOrbitalCameraComponent : BaseCameraComponent
 {
     public override void Initialise(Transform target)
     {
         currentAngle = startAngle * Mathf.Rad2Deg;
+        SetControlSchemeParams();
+
+        GameEventsEmitter.OnEvent(EventType.ControlsChanged, HandleControlSchemeChanged);
+    }
+
+    private void HandleControlSchemeChanged(EventData e)
+    {
+        ControlSchemeEventData data;
+
+        if (e is ControlSchemeEventData value)
+        {
+            data = value;
+            currentScheme = data.Scheme;
+
+            SetControlSchemeParams();
+        }
     }
 
     public override void TrackPlayer(Transform target, Vector2 direction)
@@ -19,7 +34,11 @@ public class TopDownOrbitalCameraComponent : BaseCameraComponent
         }
         else
         {
-            orbitDirection = lastLookVector;
+            if (currentScheme.Equals(ControlScheme.KeyboardAndMouse))
+                orbitDirection = Vector3.zero;
+            else
+                orbitDirection = lastLookVector;
+
             cameraPanSpeed -= (panDeacceleration * Time.deltaTime);
         }
 
@@ -32,7 +51,15 @@ public class TopDownOrbitalCameraComponent : BaseCameraComponent
             cameraPanSpeed = 0;
         }
 
-        currentAngle += (cameraPanSpeed * orbitDirection.normalized.x * Time.deltaTime);
+        if (currentScheme.Equals(ControlScheme.KeyboardAndMouse))
+        {
+            currentAngle += (cameraPanSpeed * -orbitDirection.x * Time.deltaTime);
+        }
+        else
+        {
+            currentAngle += (cameraPanSpeed * -orbitDirection.normalized.x * Time.deltaTime);
+        }
+
         currentAngle = (currentAngle % MathDefines.FULL_CIRCLE_DEG + MathDefines.FULL_CIRCLE_DEG) % MathDefines.FULL_CIRCLE_DEG;
         float radAngle = (currentAngle * Mathf.Deg2Rad);
 
@@ -51,5 +78,18 @@ public class TopDownOrbitalCameraComponent : BaseCameraComponent
         transform.position = Vector3.Lerp(transform.position, new Vector3(xPosition, orbitHeight, zPosition), damping * Time.deltaTime);
         transform.rotation = Quaternion.AngleAxis(MathDefines.GetAngleFromDirectionXZ(heading) * Mathf.Rad2Deg, Vector3.up) *
             Quaternion.AngleAxis(verticalAngle, Vector3.right);
+    }
+
+    private void SetControlSchemeParams()
+    {
+        switch (currentScheme)
+        {
+            case ControlScheme.KeyboardAndMouse:
+                panAcceleration = GameDefines.CameraSettings.MK_ACC_PAN_SPEED;
+                break;
+            case ControlScheme.Gamepad:
+                panAcceleration = GameDefines.CameraSettings.GPAD_ACC_PAN_SPEED;
+                break;
+        }
     }
 }

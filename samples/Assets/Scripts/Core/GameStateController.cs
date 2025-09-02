@@ -47,6 +47,13 @@ public struct WeaponChangeEventData : EventData
     public WeaponName Name { get; set; }
 }
 
+public struct ControlSchemeEventData : EventData
+{
+    public EventType Type { get; set; }
+
+    public ControlScheme Scheme { get; set; }
+}
+
 public enum GameState
 {
     Booting,
@@ -59,20 +66,26 @@ public enum GameState
 
 public enum UIEventKey { OpenPauseMenu, BackToMainMenu, InMenu}
 
+public enum ControlScheme { Gamepad, KeyboardAndMouse }
+
 public static class GameEventsEmitter
 {
     private static Dictionary<EventType, List<Action<EventData>>> events = new Dictionary<EventType, List<Action<EventData>>>();
 
     public static void EmitEvent(EventType e, EventData payload) 
     {
-        var actions = events[e];
-
-        if (actions.Count > 0)
+        if (events.ContainsKey(e))
         {
-            foreach (var action in actions)
+            var actions = events[e];
+
+            if (actions.Count > 0)
             {
-                action.Invoke(payload);
-            }            
+                foreach (var action in actions)
+                {
+                    if (actions.Contains(action))
+                        action.Invoke(payload);
+                }
+            }
         }
     }
 
@@ -130,7 +143,7 @@ public class GameStateController
         });
     }
 
-    private void HandleOnControlsChanged(PlayerInput input)
+    public void HandleOnControlsChanged(PlayerInput input)
     {
         Debug.Log(input.currentControlScheme);
 
@@ -141,11 +154,13 @@ public class GameStateController
                 Cursor.lockState = CursorLockMode.Confined;
                 Cursor.visible = true;
             }
+            GameEventsEmitter.EmitEvent(EventType.ControlsChanged, new ControlSchemeEventData { Type = EventType.ControlsChanged, Scheme = ControlScheme.KeyboardAndMouse });
         }
         else if (input.currentControlScheme == "Gamepad")
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+            GameEventsEmitter.EmitEvent(EventType.ControlsChanged, new ControlSchemeEventData { Type = EventType.ControlsChanged, Scheme = ControlScheme.Gamepad });
         }
     }
 

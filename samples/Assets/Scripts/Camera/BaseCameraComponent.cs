@@ -14,6 +14,7 @@ public abstract class BaseCameraComponent : MonoBehaviour
     protected float currentAngle;
     protected Vector3 orbitDirection;
     protected Vector3 lastLookVector;
+    protected ControlScheme currentScheme = ControlScheme.KeyboardAndMouse;
 
     public abstract void Initialise(Transform target);
 

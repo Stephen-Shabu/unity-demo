@@ -30,6 +30,7 @@ public class Main : MonoBehaviour
     private CharactorController playerController;
     private MobController[] mobControllers;
     private GameStateController gameStateController;
+    private PlayerInput cachedPlayerInput;
 
     private void Awake()
     {
@@ -37,6 +38,7 @@ public class Main : MonoBehaviour
             Instance = this;
 
         gameStateController = new GameStateController();
+        gameStateController.HandleOnControlsChanged(cachedPlayerInput);
         roundTimer.Initialise();
         hitStopController.Initialise();
         weaponDb.Initialise();
@@ -98,19 +100,12 @@ public class Main : MonoBehaviour
 
     private void OnControlsChanged(PlayerInput input)
     {
-        Debug.Log(input.currentControlScheme);
+        if(cachedPlayerInput == null)
+            cachedPlayerInput = input;
 
-        if (input.currentControlScheme == "Keyboard&Mouse")
+        if (Instance != null)
         {
-            if (GameStateController.Instance.IsEventAllowed(UIEventKey.InMenu) || GameStateController.Instance.IsEventAllowed(UIEventKey.OpenPauseMenu))
-            {
-                Cursor.lockState = CursorLockMode.Confined;
-                Cursor.visible = true;
-            }
-        }
-        else if (input.currentControlScheme == "Gamepad")
-        {
-            Cursor.visible = false;
+            gameStateController.HandleOnControlsChanged(input);
         }
     }
 
@@ -212,7 +207,7 @@ public class Main : MonoBehaviour
         var playerActionMap = playerInput.actions.FindActionMap("Player");
         playerActionMap.Enable();
 
-        roundTimer.StartTimer(activeGameRound.RoundMaxTime, null, OnTimerComplete);
+        //roundTimer.StartTimer(activeGameRound.RoundMaxTime, null, OnTimerComplete);
         roundHasStarted = true;
         onComplete?.Invoke();
     }
