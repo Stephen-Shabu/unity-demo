@@ -14,6 +14,9 @@ public static class MovementDefines
         public const float GROUNDED_COLLIDER_SIZE_MUTIPLIER = .25f;
         public const float INERTIA_DAMPER = .25f;
         public const float LUNGE_FORCE = 30f;
-        public const float LEAN_ANGLE = -22.5f;
+        public const float ATTACK_LEAN_ANGLE = -22.5f;
+        public const float HIT_LEAN_ANGLE = 45f;
+        public const float HIT_REACT_DURATION = 0.1f;
+        public const float HIT_FLASH_DURATION = 0.1f;
     }
 }

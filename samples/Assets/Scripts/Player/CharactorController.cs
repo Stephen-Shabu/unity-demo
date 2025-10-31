@@ -13,6 +13,7 @@ namespace Samples
         [SerializeField] private AnimationComponent animComponent;
         [SerializeField] private CharacterMovement moveComponent;
         [SerializeField] private HealthComponent healthComponent;
+        [SerializeField] private HealthFXComponent healthFxComponent;
         [SerializeField] private BaseCameraComponent cameraComponent;
         [SerializeField] private ProjectileComponent projectileComponent;
 
@@ -29,10 +30,14 @@ namespace Samples
             moveComponent.Intialise();
             projectileComponent.ChangeWeapon(WeaponName.BLASTER);
             healthComponent.Initialise();
+            healthFxComponent.Initialise();
 
-            healthComponent.OnHealthReachedZero = HandleOnHealthReachedZero;
-            healthComponent.OnDeathComplete = HandleDeathComplete;
-            healthComponent.OnDamageRecieved = HandleOnDamageTaken;
+            healthComponent.OnDamageTaken -= HandleOnDamageTaken;
+            healthComponent.OnDamageTaken += HandleOnDamageTaken;
+            healthComponent.OnDeathStarted -= HandleOnDeathStarted;
+            healthComponent.OnDeathStarted += HandleOnDeathStarted;
+            healthComponent.OnDeathFinished -= HandleOnDeathFinished;
+            healthComponent.OnDeathFinished += HandleOnDeathFinished;
 
             playerInput.actions["Attack"].performed -= OnAttack;
             playerInput.actions["Attack"].performed += OnAttack;
@@ -71,20 +76,21 @@ namespace Samples
 
         public int GetMaxAttackers()
         {
-            return 3;
+            return 1;
         }
 
-        private void HandleOnDamageTaken()
+        private void HandleOnDamageTaken(Vector3 direction, int newHealth)
         {
             animComponent.SetHitParameter(true);
+            moveComponent.InterupDodge();
         }
 
-        private void HandleOnHealthReachedZero()
+        private void HandleOnDeathStarted(Vector3 hitDirection)
         {
             GameEventsEmitter.EmitEvent(EventType.PlayerDefeated, new GenericEventData { Type = EventType.PlayerDefeated });
         }
 
-        private void HandleDeathComplete()
+        private void HandleOnDeathFinished()
         {
             OnHealthReachedZero?.Invoke();
         }

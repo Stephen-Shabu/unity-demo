@@ -83,6 +83,8 @@ public class MeleeComponent : MonoBehaviour
 
             onAttackStarted?.Invoke();
             var direction = (target.position - transform.position).normalized;
+            direction.y = 0;
+
             attactedRigidBody.linearVelocity += direction * 30f;
 
             if (activateHitBoxRoutine != null) StopCoroutine(activateHitBoxRoutine);

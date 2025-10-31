@@ -28,8 +28,11 @@ public class MovementComponent : MonoBehaviour
     protected bool hasJumped;
     protected bool isMoving;
     protected float forwardSpeed;
+
     [SerializeField] protected float targetLungeAngle = 0;
     [SerializeField] protected float currentLungeAngle = 0;
+
+    private Vector3 lungeAxis;
 
     public virtual void Intialise()
     {
@@ -57,18 +60,23 @@ public class MovementComponent : MonoBehaviour
         targetVelocity.y = attachedRigidBody.linearVelocity.y;
 
         attachedRigidBody.linearVelocity = isFiring ? Vector3.zero : Vector3.Lerp(attachedRigidBody.linearVelocity, targetVelocity, inertiaFactor * Time.fixedDeltaTime);
+
         forwardSpeed = Mathf.Abs(transform.InverseTransformDirection(attachedRigidBody.linearVelocity).z);
     }
 
     public virtual void UpdateLookDirection(Vector3 directionVector)
     {
+        Quaternion newRotation = GetRotation(directionVector);
         attachedRigidBody.rotation = GetRotation(directionVector);
         currentLungeAngle = Mathf.Lerp(currentLungeAngle, targetLungeAngle, turnRate * Time.smoothDeltaTime);
     }
 
-    public void ApplyLean(float angle)
+    public void ApplyLean(float angle, Vector3 axis, float turnRateMultiplier = 1)
     {
         targetLungeAngle = angle;
+        currentTurnSpeed *= turnRateMultiplier;
+        lungeAxis = axis;
+        lungeAxis.y = 0;
     }
 
     protected Vector3 GetMoveVector(Vector3 direction)
@@ -125,8 +133,12 @@ public class MovementComponent : MonoBehaviour
         var target = MathDefines.GetAngleFromDirectionXZ(turnDirection);
         var angle = MathDefines.InterpolateAngle(start, target, currentTurnSpeed);
 
-        var finalRotation = Quaternion.AngleAxis(angle * Mathf.Rad2Deg, Vector3.up);
+        Quaternion yawRotation = Quaternion.AngleAxis(angle * Mathf.Rad2Deg, Vector3.up);
+        Vector3 leanAxis = yawRotation * lungeAxis.normalized;
 
-        return finalRotation * Quaternion.AngleAxis(currentLungeAngle, Vector3.right);
+        Quaternion leanRotation = Quaternion.AngleAxis(currentLungeAngle, leanAxis);
+        Quaternion finalRotation = leanRotation * yawRotation;
+
+        return finalRotation;
     }
 }

@@ -7,22 +7,12 @@ public interface AttackCapable
 {
     void Wait(Transform target);
     void Attack(Transform target);
-
     void Retreat();
 }
 
 public interface Attackable
 {
     int GetMaxAttackers();
-}
-
-public enum EnemyState
-{
-    Wait,
-    Attack,
-    Wander,
-    Reposition,
-    Retreat
 }
 
 public class CombatDirector : MonoBehaviour

@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Threading.Tasks;
 using System.Collections;
+using System.Threading;
+using System;
 
 public class CharacterMovement : MovementComponent
 {
@@ -10,6 +12,7 @@ public class CharacterMovement : MovementComponent
     private Vector3 pivot;
     private bool hasDogded;
     private bool isDogding;
+    private CancellationTokenSource dodgeCTS;
 
     public void ApplyJumpVelocity(bool isJumping)
     {
@@ -71,6 +74,16 @@ public class CharacterMovement : MovementComponent
             attachedRigidBody.linearVelocity = isFiring ? Vector3.zero : Vector3.Lerp(attachedRigidBody.linearVelocity, targetVelocity, inertiaFactor * Time.fixedDeltaTime);
             forwardSpeed = Mathf.Abs(transform.InverseTransformDirection(attachedRigidBody.linearVelocity).z);
             UpdateLookDirection(currentMoveVector);
+        }
+    }
+
+    public virtual void InterupDodge()
+    {
+        if(isDogding)
+        {
+            dodgeCTS?.Cancel();
+            lastMoveVector = transform.forward;
+            isDogding = false;
         }
     }
 
