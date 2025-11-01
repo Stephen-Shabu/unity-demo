@@ -3,12 +3,15 @@ using UnityEngine;
 
 public class ProjectileComponent : MonoBehaviour
 {
+    public event System.Action<int, Projectible> OnProjectileCollided;
+    public event System.Action<int, GameObject> OnProjectileCreated;
+    public event System.Action OnProjectilePreCreate;
+
     [SerializeField] private int projectileCount;
     [SerializeField] private AudioClip imapctSFX;
     [SerializeField] private WeaponDatabase weaponDb;
 
     private List<Projectible> projectiles = new List<Projectible>();
-    private List<ParticleSystem> hitMarkers = new List<ParticleSystem>();
     private List<AudioSource> audioSources = new List<AudioSource>();
     private WeaponSchema activeWeapon;
     private bool isPoolInitialized;
@@ -21,8 +24,9 @@ public class ProjectileComponent : MonoBehaviour
         {
             OnDestroy();
 
+            OnProjectilePreCreate?.Invoke();
+
             projectiles.Clear();
-            hitMarkers.Clear();
             audioSources.Clear();
 
             if (weaponDb.Weapons.ContainsKey(name))
@@ -82,21 +86,17 @@ public class ProjectileComponent : MonoBehaviour
         for (int i = 0; i < projectileCount; i++)
         {
             var wpnPrjctl = Instantiate(activeWeapon.Data.ProjectilePrefab);
-            var wpnHtVfx = Instantiate(activeWeapon.Data.HitVfxPrefab);
-            wpnHtVfx.SetActive(false);
 
             var projectile = wpnPrjctl.GetComponent<Projectible>();
             projectile.Initialise();
-            hitMarkers.Add(wpnHtVfx.GetComponent<ParticleSystem>());
+
             audioSources.Add(new GameObject($"Project {i} audio Source").AddComponent<AudioSource>());
 
             var index = i;
 
             projectile.OnProjectileCollided = (prjctl) =>
             {
-                hitMarkers[index].gameObject.SetActive(true);
-                hitMarkers[index].transform.position = prjctl.GetPosition();
-                hitMarkers[index].Play();
+                OnProjectileCollided?.Invoke(index, prjctl);
 
                 audioSources[index].pitch = UnityEngine.Random.Range(0.95f, 1.05f);
                 audioSources[index].pitch = UnityEngine.Random.Range(0.9f, 1.0f);
@@ -106,17 +106,13 @@ public class ProjectileComponent : MonoBehaviour
             projectiles.Add(projectile);
         }
 
+        OnProjectileCreated?.Invoke(projectileCount, activeWeapon.Data.HitVfxPrefab);
         isPoolInitialized = true;
     }
 
     private void OnDestroy()
     {
         isPoolInitialized = false;
-
-        foreach (var marker in hitMarkers)
-        {
-            if(marker != null) Destroy(marker.gameObject);
-        }
 
         foreach (var projectile in projectiles)
         {
