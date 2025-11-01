@@ -114,16 +114,16 @@ namespace Samples
 
         private void OnDodge(InputAction.CallbackContext context)
         {
-            Debug.Log("Dodge");
+            Debug.Log("Dodge Right");
             hasDodged = context.action.IsPressed();
-            moveComponent.ApplyDogde(hasDodged);
+            moveComponent.ApplyDogde(hasDodged, DodgeDirection.Right);
         }
 
         private void OnLeftDodge(InputAction.CallbackContext context)
         {
-            Debug.Log("Dodge");
+            Debug.Log("Dodge Left");
             hasDodged = context.action.IsPressed();
-            moveComponent.ExecuteLeftDogde(hasDodged);
+            moveComponent.ApplyDogde(hasDodged, DodgeDirection.Left);
         }
 
         private void OnMove(InputAction.CallbackContext context)

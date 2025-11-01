@@ -1,8 +1,13 @@
 using UnityEngine;
-using System.Threading.Tasks;
 using System.Collections;
 using System.Threading;
-using System;
+
+public enum DodgeDirection
+{
+    Left,
+    Right,
+}
+
 
 public class CharacterMovement : MovementComponent
 {
@@ -13,6 +18,7 @@ public class CharacterMovement : MovementComponent
     private bool hasDogded;
     private bool isDogding;
     private CancellationTokenSource dodgeCTS;
+    private IEnumerator dodgeRoutine;
 
     public void ApplyJumpVelocity(bool isJumping)
     {
@@ -24,7 +30,7 @@ public class CharacterMovement : MovementComponent
         }
     }
 
-    public void ApplyDogde(bool hasDogded)
+    public void ApplyDogde(bool hasDogded, DodgeDirection direction)
     {
         this.hasDogded = hasDogded;
 
@@ -33,20 +39,11 @@ public class CharacterMovement : MovementComponent
             isDogding = true;
             pivot = transform.position + (transform.forward) * pivotDistance;
 
-            RotateAroundPointAsync(pivot, Vector3.up, -90f, dodgeDuration);
-        }
-    }
+            if (dodgeRoutine != null) StopCoroutine(dodgeRoutine);
 
-    public void ExecuteLeftDogde(bool hasDogded)
-    {
-        this.hasDogded = hasDogded;
-
-        if (hasDogded && !isDogding)
-        {
-            isDogding = true;
-            pivot = transform.position + (transform.forward) * pivotDistance;
-
-            RotateAroundPointAsync(pivot, Vector3.up, 90f, dodgeDuration);
+            var angle = direction.Equals(DodgeDirection.Right) ? -90f : 90f;
+            dodgeRoutine = RotateAroundPoint(pivot, Vector3.up, angle, dodgeDuration);
+            StartCoroutine(dodgeRoutine);
         }
     }
 
@@ -81,7 +78,8 @@ public class CharacterMovement : MovementComponent
     {
         if(isDogding)
         {
-            dodgeCTS?.Cancel();
+            if (dodgeRoutine != null) StopCoroutine(dodgeRoutine);
+
             lastMoveVector = transform.forward;
             isDogding = false;
         }
@@ -103,8 +101,7 @@ public class CharacterMovement : MovementComponent
         return finalRotation;
     }
 
-
-    private async Task RotateAroundPointAsync(Vector3 point, Vector3 axis, float angle, float duration)
+    private IEnumerator RotateAroundPoint(Vector3 point, Vector3 axis, float angle, float duration)
     {
         isDogding = true;
 
@@ -147,24 +144,11 @@ public class CharacterMovement : MovementComponent
             Debug.DrawLine(transform.position, pivot, UnityEngine.Color.red);
             Debug.DrawLine(pivot, pivot + rotatedOffset, UnityEngine.Color.blue);
 
-            await WaitForFixedUpdateAsync();
+            yield return new WaitForFixedUpdate();
         }
 
         lastMoveVector = transform.forward;
 
         isDogding = false;
-    }
-
-    private Task WaitForFixedUpdateAsync()
-    {
-        var tcs = new TaskCompletionSource<bool>();
-        StartCoroutine(WaitForFixedUpdateCoroutine(tcs));
-        return tcs.Task;
-    }
-
-    private IEnumerator WaitForFixedUpdateCoroutine(TaskCompletionSource<bool> tcs)
-    {
-        yield return new WaitForFixedUpdate();
-        tcs.SetResult(true);
     }
 }
