@@ -26,7 +26,7 @@ public class OrbitalCameraComponent : BaseCameraComponent
         }
         else
         {
-            orbitDirection = lastLookVector;
+            orbitDirection = Vector3.zero;
             cameraPanSpeed -= (panDeacceleration * Time.deltaTime);
         }
 
@@ -39,15 +39,16 @@ public class OrbitalCameraComponent : BaseCameraComponent
             cameraPanSpeed = 0;
         }
 
-        float targetXAngle = currentAngle + (cameraPanSpeed * orbitDirection.normalized.x * Time.deltaTime);
-        float targetYAngle = currentYAngle + (cameraPanSpeed * orbitDirection.normalized.y * Time.deltaTime);
+        float targetXAngle = currentAngle + (cameraPanSpeed * orbitDirection.x * Time.deltaTime);
+        float targetYAngle = currentYAngle + (cameraPanSpeed * -orbitDirection.y * Time.deltaTime);
 
         currentAngle = Mathf.Lerp(currentAngle, targetXAngle, damping * Time.deltaTime);
         currentYAngle = Mathf.Lerp(currentYAngle, targetYAngle, damping * Time.deltaTime);
+
         currentYAngle = Mathf.Clamp(currentYAngle, minYAngle, maxYAngle);
 
-        float xRadians = currentAngle * Mathf.Deg2Rad;
-        float yRadians = currentYAngle * Mathf.Deg2Rad;
+        float xRadians = targetXAngle * Mathf.Deg2Rad;
+        float yRadians = Mathf.Clamp(targetYAngle, minYAngle, maxYAngle) * Mathf.Deg2Rad;
 
         float xPosition = orbitDistance * Mathf.Sin(xRadians) * Mathf.Cos(yRadians);
         float yPosition = orbitDistance * Mathf.Sin(yRadians);
