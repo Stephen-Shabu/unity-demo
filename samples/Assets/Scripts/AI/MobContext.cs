@@ -8,7 +8,7 @@ public class MobContext
     public DetectionComponent DetectionComponent;
     public AnimationComponent AnimComponent;
     public MeleeComponent MeleeComponent;
-    public AudioSource Source;
+    public AudioComponent AudioComponent;
     public LayerMask WallLayer;
     public float StoppingDistance;
     [Range(0, 1)] public float ChaseIntensity;

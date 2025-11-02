@@ -20,6 +20,8 @@ public class HitReactState : IMobState
             ctx = newContext;
         }
 
+
+        ctx.AudioComponent.PlayAudio(1f, 0.1f, ctx.AudioComponent.AudioProfile.GetAudioByType(AudioType.Hit));
         ctx.AnimComponent.SetHitParameter(true);
         Vector3 localHitDirection = ctx.Transform.InverseTransformDirection(ctx.HitDirection);
         hitAxis = Vector3.Cross(Vector3.up, localHitDirection);

@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class SweepcastProjectile : MonoBehaviour, Projectible
 {
-    public Action<Projectible> OnProjectileCollided { get; set; }
+    public event Action<WeaponData> OnCreated;
+    public event Action<Vector3, Vector3> OnFired;
+    public event Action<Projectible> OnCollided;
     public bool HasFired() => hasFired;
     public Vector3 GetPosition() => transform.position;
+    public GameObject GetGameObject() => gameObject;
 
     [SerializeField] float projectileSpeed;
     [SerializeField] float projectileEndDistance;
@@ -27,8 +30,9 @@ public class SweepcastProjectile : MonoBehaviour, Projectible
     private Collider[] hits = { };
     private HashSet<HealthComponent> alreadyHit = new();
 
-    public void Initialise()
+    public void Initialise(WeaponData data)
     {
+        OnCreated?.Invoke(data);
         gameObject.SetActive(false);
         sweepLength = minSweepLength;
     }
@@ -43,6 +47,7 @@ public class SweepcastProjectile : MonoBehaviour, Projectible
         transform.forward = castDirection;
         hasFired = true;
         gameObject.SetActive(true);
+        OnFired?.Invoke(start, direction);
     }
 
     private void Update()
@@ -70,7 +75,7 @@ public class SweepcastProjectile : MonoBehaviour, Projectible
                     }
                     else
                     {
-                        OnProjectileCollided?.Invoke(this);
+                        OnCollided?.Invoke(this);
                         StopProjectile();
                     }
                 }
@@ -86,11 +91,6 @@ public class SweepcastProjectile : MonoBehaviour, Projectible
             transform.forward = castDirection;
         }
 
-    }
-
-    public void DestroyProjectile()
-    {
-        if(gameObject != null) Destroy(gameObject);
     }
 
     private bool IsSweepCast()
@@ -114,7 +114,7 @@ public class SweepcastProjectile : MonoBehaviour, Projectible
     private void StopProjectile()
     {
         hasFired = false;
-        Initialise();
+        gameObject.SetActive(false);
         sweepLength = 0;
         alreadyHit.Clear();
     }

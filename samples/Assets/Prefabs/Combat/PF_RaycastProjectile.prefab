@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 1026928773763518351}
   - component: {fileID: 7875530672501982425}
   - component: {fileID: 1545754751059692503}
+  - component: {fileID: 8759599463237993614}
+  - component: {fileID: -8231117225521601994}
   m_Layer: 0
   m_Name: PF_RaycastProjectile
   m_TagString: Untagged
@@ -61,6 +63,31 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8903300447151231617}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &8759599463237993614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8903300447151231617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aabb1416895fb194ba3ee649d82e5be7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileFXComponent
+--- !u!114 &-8231117225521601994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8903300447151231617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fc2109c5cd587549b3c3da34bad16f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileAudioComponent
+  audioProfile: {fileID: 11400000, guid: a435d9b32e8169848b79ccd9744e1ab1, type: 2}
 --- !u!1001 &2150740501206060379
 PrefabInstance:
   m_ObjectHideFlags: 0

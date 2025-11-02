@@ -9798,6 +9798,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5035480611555230856}
   - component: {fileID: 555344010756813228}
+  - component: {fileID: 2964892361731034994}
+  - component: {fileID: 6545856822085161624}
   m_Layer: 0
   m_Name: PF_SweepcastProjectile
   m_TagString: Untagged
@@ -9843,3 +9845,28 @@ MonoBehaviour:
     m_Bits: 641
   projectileVfx: {fileID: 4637956466522378641}
   projectileTrailVfx: {fileID: 629384365580424974}
+--- !u!114 &2964892361731034994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8233144362191244728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aabb1416895fb194ba3ee649d82e5be7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileFXComponent
+--- !u!114 &6545856822085161624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8233144362191244728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fc2109c5cd587549b3c3da34bad16f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileAudioComponent
+  audioProfile: {fileID: 11400000, guid: 61ce028c9128d8c4a961a1ae82ed7c00, type: 2}

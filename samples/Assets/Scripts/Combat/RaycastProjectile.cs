@@ -5,7 +5,10 @@ public class RaycastProjectile : MonoBehaviour, Projectible
 {
     public bool HasFired() => hasFired;
     public Vector3 GetPosition() => transform.position;
-    public Action<Projectible> OnProjectileCollided { get; set; }
+    public GameObject GetGameObject() => gameObject;
+    public event Action<WeaponData> OnCreated;
+    public event Action<Vector3, Vector3> OnFired;
+    public event Action<Projectible> OnCollided;
 
     [SerializeField] float projectileSpeed;
     [SerializeField] float projectileEndDistance;
@@ -21,8 +24,9 @@ public class RaycastProjectile : MonoBehaviour, Projectible
     private Ray projectileRay = new Ray();
     private RaycastHit[] hits = new RaycastHit[1];
 
-    public void Initialise()
+    public void Initialise(WeaponData data)
     {
+        OnCreated?.Invoke(data);
         gameObject.SetActive(false);
     }
 
@@ -36,6 +40,7 @@ public class RaycastProjectile : MonoBehaviour, Projectible
         transform.forward = rayDirection;
         hasFired = true;
         gameObject.SetActive(true);
+        OnFired?.Invoke(start, direction);
     }
 
     public void UpdatePosition()
@@ -53,7 +58,7 @@ public class RaycastProjectile : MonoBehaviour, Projectible
                 Debug.DrawRay(hits[0].point, hits[0].normal * 0.5f, Color.yellow);
                 DebugExtension.DrawWireSphere(hits[0].point, Color.red, .4f);
 
-                OnProjectileCollided?.Invoke(this);
+                OnCollided?.Invoke(this);
 
                 if (hits[0].collider != null && hits[0].collider.TryGetComponent(out HealthComponent healthComp))
                 {
@@ -77,11 +82,6 @@ public class RaycastProjectile : MonoBehaviour, Projectible
         }
     }
 
-    public void DestroyProjectile()
-    {
-        Destroy(gameObject);
-    }
-
     private int IsSphereCast()
     {
         Vector3 origin = transform.position;
@@ -101,6 +101,6 @@ public class RaycastProjectile : MonoBehaviour, Projectible
     private void StopProjectile()
     {
         hasFired = false;
-        Initialise();
+        gameObject.SetActive(false);
     }
 }

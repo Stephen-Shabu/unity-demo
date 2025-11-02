@@ -16,8 +16,6 @@ namespace Samples
         [SerializeField] private HealthFXComponent healthFxComponent;
         [SerializeField] private BaseCameraComponent cameraComponent;
         [SerializeField] private ProjectileComponent projectileComponent;
-        [SerializeField] private ProjectileFXComponent projectileFXComponent;
-
         [SerializeField] private bool hasJumped = false;
         [SerializeField] private bool hasAttacked;
         [SerializeField] private bool hasDodged;
@@ -29,7 +27,6 @@ namespace Samples
             playerInput = input;
             cameraComponent = camera;
             moveComponent.Intialise();
-            projectileFXComponent.Initialise();
             projectileComponent.ChangeWeapon(WeaponName.BLASTER);
             healthComponent.Initialise();
             healthFxComponent.Initialise();

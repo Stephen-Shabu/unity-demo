@@ -13,6 +13,7 @@ public class MobController : MonoBehaviour, AttackCapable, Attackable
     [SerializeField] private HealthComponent healthComponent;
     [SerializeField] private HealthFXComponent healthFxComponent;
     [SerializeField] private MeleeComponent meleeComponent;
+    [SerializeField] private AudioComponent audioComponent;
     [SerializeField] private AudioClip deathSFX;
     [SerializeField] private LayerMask wallLayer;
 
@@ -32,7 +33,7 @@ public class MobController : MonoBehaviour, AttackCapable, Attackable
             DetectionComponent = detectionComponent,
             AnimComponent = animComponent,
             MeleeComponent = meleeComponent,
-            Source = source,
+            AudioComponent = audioComponent,
             StoppingDistance = stoppingDistance,
             WallLayer = wallLayer,
             FSM = mobStateMachine
@@ -50,6 +51,7 @@ public class MobController : MonoBehaviour, AttackCapable, Attackable
         healthComponent.Initialise();
         healthFxComponent.Initialise();
         moveComponent.Intialise();
+        audioComponent.Initialise();
 
         detectionComponent.OnObstacleDetected = mobContext.HandleObstacleDetected;
 

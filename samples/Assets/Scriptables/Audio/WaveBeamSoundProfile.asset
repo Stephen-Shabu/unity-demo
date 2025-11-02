@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dafde705011b9c949b940dc0378b0e91, type: 3}
+  m_Name: WaveBeamSoundProfile
+  m_EditorClassIdentifier: Assembly-CSharp::AudioProfile
+  audioDataset:
+  - type: 0
+    clips:
+    - {fileID: 8300000, guid: febe15a5779c4e0498ff3d1791c5e70d, type: 3}
+  - type: 3
+    clips:
+    - {fileID: 8300000, guid: 2ed74ee064c065143a38c4ca36dbf6cc, type: 3}

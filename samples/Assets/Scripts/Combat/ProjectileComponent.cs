@@ -3,16 +3,10 @@ using UnityEngine;
 
 public class ProjectileComponent : MonoBehaviour
 {
-    public event System.Action<int, Projectible> OnProjectileCollided;
-    public event System.Action<int, GameObject> OnProjectileCreated;
-    public event System.Action OnProjectilePreCreate;
-
     [SerializeField] private int projectileCount;
-    [SerializeField] private AudioClip imapctSFX;
     [SerializeField] private WeaponDatabase weaponDb;
 
     private List<Projectible> projectiles = new List<Projectible>();
-    private List<AudioSource> audioSources = new List<AudioSource>();
     private WeaponSchema activeWeapon;
     private bool isPoolInitialized;
     private float timeSinceLastshot;
@@ -22,12 +16,15 @@ public class ProjectileComponent : MonoBehaviour
     {
         if (activeWeapon == null || !activeWeapon.Name.Equals(name))
         {
-            OnDestroy();
-
-            OnProjectilePreCreate?.Invoke();
+            foreach (var projectile in projectiles)
+            {
+                if (projectile != null)
+                {
+                    Destroy(projectile.GetGameObject());
+                }
+            }
 
             projectiles.Clear();
-            audioSources.Clear();
 
             if (weaponDb.Weapons.ContainsKey(name))
             {
@@ -61,9 +58,6 @@ public class ProjectileComponent : MonoBehaviour
             if (bullet != null)
             {
                 bullet.SetProjectile(muzzlePosition, muzzleForward.normalized);
-                audioSources[bulletIdx].pitch = UnityEngine.Random.Range(0.95f, 1.05f);
-                audioSources[bulletIdx].pitch = UnityEngine.Random.Range(0.9f, 1.0f);
-                audioSources[bulletIdx].PlayOneShot(activeWeapon.Data.ProjectileSFX);
             }
 
             timeSinceLastshot = Time.time;
@@ -74,7 +68,6 @@ public class ProjectileComponent : MonoBehaviour
             for (int i = 0, range = projectiles.Count; i < range; i++)
             {
                 projectiles[i].UpdatePosition();
-                audioSources[i].transform.position = projectiles[i].GetPosition();
             }
         }
     }
@@ -88,40 +81,11 @@ public class ProjectileComponent : MonoBehaviour
             var wpnPrjctl = Instantiate(activeWeapon.Data.ProjectilePrefab);
 
             var projectile = wpnPrjctl.GetComponent<Projectible>();
-            projectile.Initialise();
-
-            audioSources.Add(new GameObject($"Project {i} audio Source").AddComponent<AudioSource>());
-
-            var index = i;
-
-            projectile.OnProjectileCollided = (prjctl) =>
-            {
-                OnProjectileCollided?.Invoke(index, prjctl);
-
-                audioSources[index].pitch = UnityEngine.Random.Range(0.95f, 1.05f);
-                audioSources[index].pitch = UnityEngine.Random.Range(0.9f, 1.0f);
-                audioSources[index].PlayOneShot(imapctSFX);
-            };
+            projectile.Initialise(activeWeapon.Data);
 
             projectiles.Add(projectile);
         }
 
-        OnProjectileCreated?.Invoke(projectileCount, activeWeapon.Data.HitVfxPrefab);
         isPoolInitialized = true;
-    }
-
-    private void OnDestroy()
-    {
-        isPoolInitialized = false;
-
-        foreach (var projectile in projectiles)
-        {
-            if (projectile != null)  projectile.DestroyProjectile();
-        }
-
-        foreach (var source in audioSources)
-        {
-            if (source != null) Destroy(source.gameObject);
-        }
     }
 }

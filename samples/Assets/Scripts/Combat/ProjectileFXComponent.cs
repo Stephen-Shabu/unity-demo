@@ -1,49 +1,56 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Timeline;
 
 public class ProjectileFXComponent : MonoBehaviour
 {
-    [SerializeField] private ProjectileComponent projectileComponent;
+    private Projectible projectible;
+    private ParticleSystem hitMarker;
 
-    private List<ParticleSystem> hitMarkers = new List<ParticleSystem>();
-
-    public void Initialise()
+    private void Awake()
     {
-        projectileComponent.OnProjectileCollided -= HandleOnProjectileCollided;
-        projectileComponent.OnProjectileCollided += HandleOnProjectileCollided;
+        projectible = GetComponent<Projectible>();
 
-        projectileComponent.OnProjectileCreated -= HandleOnProjectileCreated;
-        projectileComponent.OnProjectileCreated += HandleOnProjectileCreated;
-
-        projectileComponent.OnProjectilePreCreate -= HandleOnProjectilePreCreate;
-        projectileComponent.OnProjectilePreCreate += HandleOnProjectilePreCreate;
-    }
-
-    private void HandleOnProjectilePreCreate()
-    {
-        foreach (var marker in hitMarkers)
+        if (projectible != null)
         {
-            if (marker != null) Destroy(marker.gameObject);
+            projectible.OnCreated -= HandleOnProjectileCreated;
+            projectible.OnCreated += HandleOnProjectileCreated;
+            projectible.OnCollided -= HandleOnCollided;
+            projectible.OnCollided += HandleOnCollided;
         }
-
-        hitMarkers.Clear();
-    }
-
-    private void HandleOnProjectileCreated(int projectileCount, GameObject prefab)
-    {
-        for (int i = 0; i < projectileCount; i++)
+        else
         {
-            var wpnHtVfx = Instantiate(prefab);
-            wpnHtVfx.SetActive(false);
-            hitMarkers.Add(wpnHtVfx.GetComponent<ParticleSystem>());
+            Debug.LogWarning("No Projectile found on this GameObject.");
         }
     }
 
-    private void HandleOnProjectileCollided(int index, Projectible prjctl)
+    private void HandleOnProjectileCreated(WeaponData data)
     {
-        hitMarkers[index].gameObject.SetActive(true);
-        hitMarkers[index].transform.position = prjctl.GetPosition();
-        hitMarkers[index].Play();
+        hitMarker = Instantiate(data.HitVfxPrefab).GetComponent<ParticleSystem>();
+        var main = hitMarker.main;
+        main.playOnAwake = false;
+
+        hitMarker.gameObject.SetActive(false);
+    }
+
+    private void HandleOnCollided(Projectible projectible)
+    {
+        hitMarker.gameObject.SetActive(true);
+        hitMarker.transform.position = projectible.GetPosition();
+        hitMarker.Play();
+    }
+
+    private void OnDestroy()
+    {
+        if (hitMarker != null)
+        {
+            projectible.OnCreated -= HandleOnProjectileCreated;
+            projectible.OnCollided -= HandleOnCollided;
+
+            Destroy(hitMarker.gameObject);
+        }
     }
 }

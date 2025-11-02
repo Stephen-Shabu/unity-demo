@@ -16,6 +16,7 @@ public class DeathState : IMobState
             ctx = newContext;
         }
 
+        ctx.AudioComponent.PlayAudio(1f, 0.1f, ctx.AudioComponent.AudioProfile.GetAudioByType(AudioType.Death));
         ctx.MeleeComponent.CancelMeleeAttack();
         GameEventsEmitter.EmitEvent(EventType.EnemyDefeated, new GenericEventData { Type = EventType.EnemyDefeated, Caller = ctx.Transform.gameObject });
     }

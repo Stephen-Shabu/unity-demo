@@ -850,6 +850,7 @@ GameObject:
   - component: {fileID: 9057324534014362804}
   - component: {fileID: 6803687616171415659}
   - component: {fileID: 3347487662200852520}
+  - component: {fileID: -3322571472667196089}
   m_Layer: 9
   m_Name: PF_SimpleMob
   m_TagString: Untagged
@@ -936,9 +937,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acf928a0ad8d5cf499b28bac9a56d8f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputVector: {x: 0, y: 0}
-  lookVector: {x: 0, y: 0}
-  heading: {x: 0, y: 0, z: 0}
   intensity: 1
   stoppingDistance: 5
   target: {fileID: 0}
@@ -948,6 +946,7 @@ MonoBehaviour:
   healthComponent: {fileID: 6954567763542251268}
   healthFxComponent: {fileID: 8351612122139217978}
   meleeComponent: {fileID: 9057324534014362804}
+  audioComponent: {fileID: -3322571472667196089}
   deathSFX: {fileID: 8300000, guid: e5500500adfe1df4b8cdb58e0d21a7dd, type: 3}
   wallLayer:
     serializedVersion: 2
@@ -987,11 +986,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa2ab9b3598ddfb49a004f5e82a3312d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attactedRigidBody: {fileID: 4939114769334688689}
-  meshes:
-  - {fileID: 6579163705851113254}
-  deathVfxPrefab: {fileID: 5957226033150986559, guid: 9ea01764c56fa2f46b003ecbccf4b5d7, type: 3}
-  currentHealth: 2
+  maxHealth: 4
 --- !u!114 &8351612122139217978
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1009,7 +1004,6 @@ MonoBehaviour:
   rb: {fileID: 4939114769334688689}
   health: {fileID: 6954567763542251268}
   deathVfxPrefab: {fileID: 5957226033150986559, guid: 9ea01764c56fa2f46b003ecbccf4b5d7, type: 3}
-  flashDuration: 0.1
   deathImpulse: 10
   hitImpulse: 5
 --- !u!114 &9057324534014362804
@@ -1062,6 +1056,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 896
   dObject: {fileID: 0}
+--- !u!114 &-3322571472667196089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3050748058405559078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31e3b8cc07bd3d249aa9ca269bdc8b0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioComponent
+  profile: {fileID: 11400000, guid: 6db09bc76c94f6e46bcf38b8d33304bb, type: 2}
 --- !u!1 &3663031138609584881
 GameObject:
   m_ObjectHideFlags: 0
