@@ -38,5 +38,5 @@ public class AvoidState : IMobState
         }
     }
 
-    public void Exit() { }
+    public void Exit() { ctx.DetectionComponent.ResetDectectedObject(); }
 }
