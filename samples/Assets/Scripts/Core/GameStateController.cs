@@ -9,6 +9,7 @@ public enum EventType
     ControlsChanged,
     EnemyDefeated,
     PlayerDefeated,
+    HitRegistered,
     MeleeHitRegistered,
     RequestAttack,
     RoundComplete,
@@ -52,6 +53,19 @@ public struct ControlSchemeEventData : EventData
     public EventType Type { get; set; }
 
     public ControlScheme Scheme { get; set; }
+}
+
+public struct HitRegisterEventData : EventData
+{
+    public enum HitOwner
+    {
+        Player,
+        Mob,
+    }
+
+    public EventType Type { get; set; }
+
+    public HitOwner Owner { get; set; } 
 }
 
 public enum GameState
