@@ -20,13 +20,13 @@ public class HitReactState : IMobState
             ctx = newContext;
         }
 
-
         ctx.AudioComponent.PlayAudio(1f, 0.1f, ctx.AudioComponent.AudioProfile.GetAudioByType(AudioType.Hit));
         ctx.AnimComponent.SetHitParameter(true);
         Vector3 localHitDirection = ctx.Transform.InverseTransformDirection(ctx.HitDirection);
         hitAxis = Vector3.Cross(Vector3.up, localHitDirection);
         ctx.MoveComponent.ApplyLean(MovementDefines.Character.HIT_LEAN_ANGLE, hitAxis, 10);
         reactTimer = 0f;
+        GameEventsEmitter.EmitEvent(EventType.HitRegistered, new HitRegisterEventData { Type = EventType.HitRegistered, Owner = HitRegisterEventData.HitOwner.Mob });
     }
 
     public void Exit()

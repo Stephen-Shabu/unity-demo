@@ -4,48 +4,50 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Mono.Cecil.Cil;
+using UnityEngine.UIElements;
+using Unity.VisualScripting.Antlr3.Runtime;
 
 public class MeleeComponent : MonoBehaviour
 {
+    public bool CanAttack => !canLaunchAttack && currentCooldown == attackCooldownTime;
+
     [SerializeField] private Rigidbody attactedRigidBody;
+    [SerializeField] private float attackSpeed = 10f;
+    [SerializeField] private float attackDistance = 4f;
     [SerializeField] private float attackCooldownTime;
     [SerializeField] LayerMask collionLayer;
 
+    private Action onAttackComplete;
     private bool canLaunchAttack = false;
     private float currentCooldown = 5;
     private IEnumerator IERunCoolDownTimer;
     private IEnumerator IEActivateHitBox;
     private Coroutine activateHitBoxRoutine;
+    private Coroutine launchRoutine;
     private Coroutine coolDownRoutine;
     private Collider[] hits = new Collider[1];
     private HashSet<Collider> alreadyHit = new();
-    private CancellationTokenSource launchAttackCTS;
 
-    public bool CanAttack(bool isInDistance)
-    {
-        return !canLaunchAttack && isInDistance;
-    }
-
-    public void LaunchMeleeAttack(Transform target, Action onAttackStartUp, Action onAttackStarted, Action onAttackComplete)
+    public void LaunchMeleeAttack(Vector3 direction, Action onAttackComplete)
     {
         if (!canLaunchAttack && currentCooldown >= attackCooldownTime)
         {
             canLaunchAttack = true;
             currentCooldown = 0;
-
-            Launch(target, onAttackStartUp, onAttackStarted, onAttackComplete);
+            if(launchRoutine != null) StopCoroutine(launchRoutine);
+            launchRoutine = StartCoroutine(Launch(direction, onAttackComplete));
         }
     }
 
     public void CancelMeleeAttack()
     {
-        launchAttackCTS?.Cancel();
-
         if (activateHitBoxRoutine != null)
         {
             StopCoroutine(activateHitBoxRoutine);
             activateHitBoxRoutine = null;
         }
+
         if (coolDownRoutine != null)
         {
             StopCoroutine(coolDownRoutine);
@@ -67,46 +69,43 @@ public class MeleeComponent : MonoBehaviour
         currentCooldown = attackCooldownTime;
     }
 
-    private async Task Launch(Transform target, Action onAttackStartUp, Action onAttackStarted, Action onAttackComplete)
+    private IEnumerator Launch(Vector3 direction, Action onAttackComplete)
     {
-        launchAttackCTS?.Cancel();
-        launchAttackCTS = new CancellationTokenSource();
-        var token = launchAttackCTS.Token;
+        this.onAttackComplete = onAttackComplete;
 
-        try
+        direction.y = 0;
+
+        var start = transform.position;
+        var end = start + direction * attackDistance;
+
+        var startTime = Time.time;
+        var distance = Vector3.Distance(transform.position, end);
+        var time = Mathf.Max(0.01f, distance / attackSpeed);
+
+        while (Vector3.Distance(transform.position, end) > 0.05f)
         {
-            token.ThrowIfCancellationRequested();
-
-            onAttackStartUp?.Invoke();
-
-            await Task.Delay(1 * MathDefines.MILLISECOND_MULTIPLIER, token);
-
-            onAttackStarted?.Invoke();
-            var direction = (target.position - transform.position).normalized;
-            direction.y = 0;
-
-            attactedRigidBody.linearVelocity += direction * 30f;
+            float elapsed = Time.time - startTime;
+            var fracComplete = Mathf.Clamp01(elapsed / time);
+            var easedT = Mathf.SmoothStep(0f, 1f, fracComplete);
+            Vector3 newPosition = Vector3.Lerp(start, end, easedT);
+            attactedRigidBody.MovePosition(newPosition);
 
             if (activateHitBoxRoutine != null) StopCoroutine(activateHitBoxRoutine);
 
             activateHitBoxRoutine = StartCoroutine(ActivateHitBox(direction));
 
-            await Task.Delay(1 * MathDefines.MILLISECOND_MULTIPLIER, token);
-
-            onAttackComplete?.Invoke();
-
-            canLaunchAttack = false;
-
-            if (activateHitBoxRoutine != null) StopCoroutine(activateHitBoxRoutine);
-            alreadyHit.Clear();
-
-            if (coolDownRoutine != null) StopCoroutine(coolDownRoutine);
-            coolDownRoutine = StartCoroutine(CoolDownAttack());
+            yield return new WaitForFixedUpdate();
         }
-        catch (OperationCanceledException)
-        {
 
-        }
+        this.onAttackComplete?.Invoke();
+
+        canLaunchAttack = false;
+
+        if (activateHitBoxRoutine != null) StopCoroutine(activateHitBoxRoutine);
+        alreadyHit.Clear();
+
+        if (coolDownRoutine != null) StopCoroutine(coolDownRoutine);
+        coolDownRoutine = StartCoroutine(CoolDownAttack());
     }
 
     private IEnumerator ActivateHitBox(Vector3 direction)
@@ -126,9 +125,21 @@ public class MeleeComponent : MonoBehaviour
                 {                    
                     healthComp.ReactToHit(direction);
                     alreadyHit.Add(hits[0]);
-                    attactedRigidBody.linearVelocity += direction * -20f;
+
+                    this.onAttackComplete?.Invoke();
+                    canLaunchAttack = false;
+
+                    if (launchRoutine != null) StopCoroutine(launchRoutine);
+                    if (coolDownRoutine != null) StopCoroutine(coolDownRoutine);
+
+                    coolDownRoutine = StartCoroutine(CoolDownAttack());
+
+                    attactedRigidBody.linearVelocity += direction * MovementDefines.Character.KNOCKBACK_DISTANCE;
 
                     GameEventsEmitter.EmitEvent(EventType.MeleeHitRegistered, new GenericEventData { Type = EventType.MeleeHitRegistered });
+
+                    alreadyHit.Clear();
+                    if (activateHitBoxRoutine != null) StopCoroutine(activateHitBoxRoutine);
                 }
             }
 

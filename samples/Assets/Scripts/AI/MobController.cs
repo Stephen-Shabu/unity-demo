@@ -43,6 +43,7 @@ public class MobController : MonoBehaviour, AttackCapable, Attackable
         mobStateMachine.AddState(new WaitState(mobContext, mobStateMachine));
         mobStateMachine.AddState(new FollowState(mobContext, mobStateMachine));
         mobStateMachine.AddState(new AvoidState(mobContext, mobStateMachine));
+        mobStateMachine.AddState(new AimState(mobContext, mobStateMachine));
         mobStateMachine.AddState(new AttackState(mobContext, mobStateMachine));
         mobStateMachine.AddState(new RepositionState(mobContext, mobStateMachine));
         mobStateMachine.AddState(new DeathState(mobContext, mobStateMachine));

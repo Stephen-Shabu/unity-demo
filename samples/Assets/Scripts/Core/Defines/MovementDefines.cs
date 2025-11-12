@@ -18,5 +18,6 @@ public static class MovementDefines
         public const float HIT_LEAN_ANGLE = 45f;
         public const float HIT_REACT_DURATION = 0.1f;
         public const float HIT_FLASH_DURATION = 0.1f;
+        public const float KNOCKBACK_DISTANCE = -10f;
     }
 }

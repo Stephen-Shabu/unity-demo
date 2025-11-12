@@ -974,6 +974,7 @@ MonoBehaviour:
   inertiaFactor: 5
   targetLungeAngle: 0
   currentLungeAngle: 0
+  lungeAxis: {x: 0, y: 0, z: 0}
 --- !u!114 &6954567763542251268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1019,6 +1020,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attactedRigidBody: {fileID: 4939114769334688689}
+  attackWindUpTime: 1
   attackCooldownTime: 5
   collionLayer:
     serializedVersion: 2

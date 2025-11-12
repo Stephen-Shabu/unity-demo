@@ -32,8 +32,8 @@ public class FollowState : IMobState
         ctx.DetectionComponent.UpdateComponent();
         ctx.AnimComponent.SetMovementParameter(ctx.MoveComponent.IsMoving, ctx.MoveComponent.SpeedPercentage);
 
-        if (dist <= ctx.StoppingDistance)
-            fsm.ChangeState<AttackState>();
+        if (dist <= ctx.StoppingDistance && ctx.MeleeComponent.CanAttack)
+            fsm.ChangeState<AimState>();
     }
 
     public void Exit() { }

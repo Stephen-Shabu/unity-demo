@@ -29,9 +29,8 @@ public class MovementComponent : MonoBehaviour
     protected bool isMoving;
     protected float forwardSpeed;
 
-    [SerializeField] protected float targetLungeAngle = 0;
-    [SerializeField] protected float currentLungeAngle = 0;
-
+    protected float targetLungeAngle = 0;
+    protected float currentLungeAngle = 0;
     private Vector3 lungeAxis;
 
     public virtual void Intialise()

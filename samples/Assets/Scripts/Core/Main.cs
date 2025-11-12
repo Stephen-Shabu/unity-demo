@@ -62,6 +62,7 @@ public class Main : MonoBehaviour
         GameEventsEmitter.EmitEvent(EventType.ChangeState, new StateEventData { State = GameState.MainMenu });
         GameEventsEmitter.OnEvent(EventType.EnemyDefeated, HandleMobDefeated);
         GameEventsEmitter.OnEvent(EventType.PlayerDefeated, HandlePlayerDefeated);
+        GameEventsEmitter.OnEvent(EventType.HitRegistered, HandleHitRegistered);
 
         if (File.Exists(GameDefines.DATABASE_FILE_PATH))
         {
@@ -241,6 +242,26 @@ public class Main : MonoBehaviour
             {
                 enemy.UpdateController();
             }
+        }
+    }
+
+    private void HandleHitRegistered(EventData e)
+    {
+        HitRegisterEventData hitData;
+
+        if (e is HitRegisterEventData value)
+        {
+            hitData = value;
+
+            if (hitData.Owner.Equals(HitRegisterEventData.HitOwner.Mob))
+            {
+                Debug.Log("Enemy hit");
+            }
+            else
+            {
+                Debug.Log("Player hit");
+            }
+
         }
     }
 

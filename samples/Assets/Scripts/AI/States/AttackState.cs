@@ -19,26 +19,14 @@ public class AttackState : IMobState
             ctx = newContext;
         }
 
-       hasLaunchedAttack = false;
+        hasLaunchedAttack = true;
+        var direction = (ctx.Target.position - ctx.Transform.position).normalized;
+        ctx.MeleeComponent.LaunchMeleeAttack(direction, () => { fsm.ChangeState<RepositionState>(); hasLaunchedAttack = false; });
     }
 
     public void Update()
     {
         float dist = Vector3.Distance(ctx.Transform.position, ctx.Target.position);
-
-        if (ctx.MeleeComponent.CanAttack(dist <= ctx.StoppingDistance))
-        {
-            ctx.MeleeComponent.LaunchMeleeAttack(
-                ctx.Target,
-                () => ctx.MoveComponent.ApplyLean(MovementDefines.Character.ATTACK_LEAN_ANGLE, Vector3.right),
-                () => ctx.MoveComponent.ApplyLean(0, Vector3.right),
-                () =>
-                {
-                    hasLaunchedAttack = false;
-                    fsm.ChangeState<RepositionState>();
-                });
-            hasLaunchedAttack = true;
-        }
 
         ctx.Heading = ctx.Target.position - ctx.Transform.position;
         ctx.MoveComponent.UpdateMovement(Vector3.zero, false);
@@ -52,5 +40,5 @@ public class AttackState : IMobState
         }
     }
 
-    public void Exit() { ctx.MoveComponent.ApplyLean(0, Vector3.right); }
+    public void Exit() { hasLaunchedAttack = false; }
 }
