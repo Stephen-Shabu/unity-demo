@@ -2626,6 +2626,7 @@ GameObject:
   - component: {fileID: 6747242659022837139}
   - component: {fileID: 2907843633191637402}
   - component: {fileID: 5610375082820630550}
+  - component: {fileID: 8624532490680539588}
   - component: {fileID: 2774410699304610351}
   - component: {fileID: 712544033957099600}
   m_Layer: 6
@@ -2723,11 +2724,13 @@ MonoBehaviour:
   healthFxComponent: {fileID: 2907843633191637402}
   cameraComponent: {fileID: 0}
   projectileComponent: {fileID: 5610375082820630550}
-  projectileFXComponent: {fileID: 0}
-  projectileAudioComponent: {fileID: 0}
+  meleeComponent: {fileID: 8624532490680539588}
+  rb: {fileID: 7495245315555725949}
   hasJumped: 0
   hasAttacked: 0
+  hasDashed: 0
   hasDodged: 0
+  isHit: 0
 --- !u!114 &3679818703257898365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2749,8 +2752,6 @@ MonoBehaviour:
   accelerationFactor: 5
   deaccelerationFactor: 20
   inertiaFactor: 5
-  targetLungeAngle: 0
-  currentLungeAngle: 0
   pivotDistance: 2
   dodgeDuration: 0.5
 --- !u!114 &6747242659022837139
@@ -2798,8 +2799,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileCount: 10
-  imapctSFX: {fileID: 8300000, guid: febe15a5779c4e0498ff3d1791c5e70d, type: 3}
   weaponDb: {fileID: 11400000, guid: 05a23b14be2724346aa975abe56709e3, type: 2}
+--- !u!114 &8624532490680539588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6445612190130063754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2e751f16e0f018439bbd4d652cb5dab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeComponent
+  attactedRigidBody: {fileID: 7495245315555725949}
+  attackSpeed: 10
+  attackDistance: 4
+  attackCooldownTime: 1
+  collionLayer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!114 &2774410699304610351
 MonoBehaviour:
   m_ObjectHideFlags: 0
