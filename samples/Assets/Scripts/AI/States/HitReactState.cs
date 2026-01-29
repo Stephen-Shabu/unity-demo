@@ -6,6 +6,7 @@ public class HitReactState : IMobState
     private readonly MobStateMachine fsm;
     private float reactTimer = 0f;
     private Vector3 hitAxis = Vector3.zero;
+    private float hitImpulse = 5f;
 
     public HitReactState(MobContext context, MobStateMachine machine)
     {
@@ -19,7 +20,7 @@ public class HitReactState : IMobState
         {
             ctx = newContext;
         }
-
+        ctx.Rigidbody.linearVelocity += ctx.HitDirection * hitImpulse;
         ctx.AudioComponent.PlayAudio(1f, 0.1f, ctx.AudioComponent.AudioProfile.GetAudioByType(AudioType.Hit));
         ctx.AnimComponent.SetHitParameter(true);
         Vector3 localHitDirection = ctx.Transform.InverseTransformDirection(ctx.HitDirection);

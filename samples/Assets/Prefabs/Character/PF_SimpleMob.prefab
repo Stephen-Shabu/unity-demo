@@ -947,6 +947,7 @@ MonoBehaviour:
   healthFxComponent: {fileID: 8351612122139217978}
   meleeComponent: {fileID: 9057324534014362804}
   audioComponent: {fileID: -3322571472667196089}
+  rb: {fileID: 4939114769334688689}
   deathSFX: {fileID: 8300000, guid: e5500500adfe1df4b8cdb58e0d21a7dd, type: 3}
   wallLayer:
     serializedVersion: 2
@@ -972,9 +973,6 @@ MonoBehaviour:
   accelerationFactor: 5
   deaccelerationFactor: 20
   inertiaFactor: 5
-  targetLungeAngle: 0
-  currentLungeAngle: 0
-  lungeAxis: {x: 0, y: 0, z: 0}
 --- !u!114 &6954567763542251268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1020,7 +1018,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attactedRigidBody: {fileID: 4939114769334688689}
-  attackWindUpTime: 1
+  attackSpeed: 10
+  attackDistance: 4
   attackCooldownTime: 5
   collionLayer:
     serializedVersion: 2

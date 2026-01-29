@@ -14,6 +14,7 @@ public class MobController : MonoBehaviour, AttackCapable, Attackable
     [SerializeField] private HealthFXComponent healthFxComponent;
     [SerializeField] private MeleeComponent meleeComponent;
     [SerializeField] private AudioComponent audioComponent;
+    [SerializeField] private Rigidbody rb;
     [SerializeField] private AudioClip deathSFX;
     [SerializeField] private LayerMask wallLayer;
 
@@ -27,6 +28,7 @@ public class MobController : MonoBehaviour, AttackCapable, Attackable
 
         mobContext = new MobContext()
         {
+            Rigidbody = rb,
             Transform = transform,
             Target = newTarget,
             MoveComponent = moveComponent,
@@ -60,6 +62,8 @@ public class MobController : MonoBehaviour, AttackCapable, Attackable
         healthComponent.OnDamageTaken += mobContext.HandleOnDamageTaken;
         healthComponent.OnDeathStarted -= mobContext.HandleOnDeathStarted;
         healthComponent.OnDeathStarted += mobContext.HandleOnDeathStarted;
+        healthComponent.OnDeathFinished -= mobContext.HandleOnDeathFinished;
+        healthComponent.OnDeathFinished += mobContext.HandleOnDeathFinished;
 
         target = newTarget;
         source = new GameObject($"{name} death audio source").AddComponent<AudioSource>();

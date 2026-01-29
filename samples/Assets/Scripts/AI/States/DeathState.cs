@@ -1,7 +1,10 @@
+using UnityEngine;
+
 public class DeathState : IMobState
 {
     private MobContext ctx;
     private readonly MobStateMachine fsm;
+    private float deathImpulse = 10f;
 
     public DeathState(MobContext context, MobStateMachine machine)
     {
@@ -11,14 +14,16 @@ public class DeathState : IMobState
 
     public void Enter(MobContext newContext = null)
     {
+        ctx.Rigidbody.linearVelocity += ctx.HitDirection * deathImpulse;
+
         if (newContext != null)
         {
             ctx = newContext;
         }
 
         ctx.AudioComponent.PlayAudio(1f, 0.1f, ctx.AudioComponent.AudioProfile.GetAudioByType(AudioType.Death));
+        ctx.AnimComponent.SetMovementParameter(false, ctx.MoveComponent.SpeedPercentage);
         ctx.MeleeComponent.CancelMeleeAttack();
-        GameEventsEmitter.EmitEvent(EventType.EnemyDefeated, new GenericEventData { Type = EventType.EnemyDefeated, Caller = ctx.Transform.gameObject });
     }
 
     public void Exit()
@@ -27,7 +32,7 @@ public class DeathState : IMobState
 
     public void Update()
     {
-        ctx.MoveComponent.UpdateMovement(ctx.Heading.normalized, false);
+        ctx.MoveComponent.UpdateMovement(Vector3.zero, false);
         ctx.MoveComponent.UpdateLookDirection(ctx.Heading);
     }
 }

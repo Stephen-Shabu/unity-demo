@@ -48,8 +48,6 @@ public class HealthFXComponent : MonoBehaviour
 
     private void HandleDamageTaken(Vector3 hitDir, int newHealth)
     {
-        rb.linearVelocity += hitDir * hitImpulse;
-
         if(hitFlashRoutine != null) StopCoroutine(hitFlashRoutine);
 
         hitFlashRoutine = ApplyHitFlash(Color.white);
@@ -58,8 +56,6 @@ public class HealthFXComponent : MonoBehaviour
 
     private void HandleDeathStarted(Vector3 hitDir)
     {
-        rb.linearVelocity += hitDir * deathImpulse;
-
         if (vfxRoutine != null) StopCoroutine(vfxRoutine);
 
         vfxRoutine = PlayDeathVFX();
@@ -73,7 +69,6 @@ public class HealthFXComponent : MonoBehaviour
         deathBurstVfx.transform.position = transform.position;
         deathBurstVfx.gameObject.SetActive(true);
         deathBurstVfx.Play();
-        rb.gameObject.SetActive(false);
         health.NotifyDeathComplete();
     }
 

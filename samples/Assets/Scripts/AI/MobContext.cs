@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class MobContext
 {
+    public Rigidbody Rigidbody;
     public Transform Transform;
     public Transform Target;
     public MovementComponent MoveComponent;
@@ -23,6 +24,12 @@ public class MobContext
     public void HandleOnDeathStarted(Vector3 hitDirection)
     {
         FSM.ChangeState<DeathState>();
+    }
+
+    public void HandleOnDeathFinished()
+    {
+        Transform.gameObject.SetActive(false);
+        GameEventsEmitter.EmitEvent(EventType.EnemyDefeated, new GenericEventData { Type = EventType.EnemyDefeated, Caller = Transform.gameObject });
     }
 
     public void HandleOnDamageTaken(Vector3 hitDirection, int newHealth)
