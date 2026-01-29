@@ -1,14 +1,25 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class FollowCameraComponent : BaseCameraComponent
 {
-    public override void Initialise(Transform target)
+    public override void Initialise(Transform target, PlayerInput playerInput)
     {
         Vector3 offset = transform.position - target.position;
         currentAngle = Mathf.Atan2(offset.z, offset.x) * Mathf.Rad2Deg;
+
+        playerInput.actions["Look"].performed -= OnLook;
+        playerInput.actions["Look"].performed += OnLook;
+        playerInput.actions["Look"].canceled -= OnLook;
+        playerInput.actions["Look"].canceled += OnLook;
     }
 
-    public override void TrackPlayer(Transform target, Vector2 direction)
+    private void OnLook(InputAction.CallbackContext context)
+    {
+        lookVector = context.ReadValue<Vector2>();
+    }
+
+    public override void TrackTarget(Transform target)
     {
         var eye = target.position - target.forward * orbitDistance + target.up * orbitHeight;
         var camForward = target.position - eye;

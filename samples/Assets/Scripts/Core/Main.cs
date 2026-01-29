@@ -171,7 +171,7 @@ public class Main : MonoBehaviour
             {
                 var player = await InstantiateAsync(playerPrefab, spawnPoint.position, Quaternion.identity);
                 playerController = player[0].GetComponent<CharactorController>();
-                activeCamera.Initialise(playerController.transform);
+                activeCamera.Initialise(playerController.transform, playerInput);
                 playerController.Initialise(activeCamera, playerInput);
                 combatDirector.Initialise(playerController.gameObject);
             }
@@ -237,6 +237,7 @@ public class Main : MonoBehaviour
         if (roundHasStarted)
         {
             playerController.UpdateController();
+            activeCamera.TrackTarget(playerController.transform);
 
             foreach (var enemy in mobControllers)
             {

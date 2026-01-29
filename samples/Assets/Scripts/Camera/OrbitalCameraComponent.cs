@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class OrbitalCameraComponent : BaseCameraComponent
 {
@@ -10,19 +11,29 @@ public class OrbitalCameraComponent : BaseCameraComponent
 
     private float currentYAngle;
 
-    public override void Initialise(Transform target)
+    public override void Initialise(Transform target, PlayerInput playerInput)
     {
         currentAngle = startAngle * Mathf.Rad2Deg;
+
+        playerInput.actions["Look"].performed -= OnLook;
+        playerInput.actions["Look"].performed += OnLook;
+        playerInput.actions["Look"].canceled -= OnLook;
+        playerInput.actions["Look"].canceled += OnLook;
     }
 
-    public override void TrackPlayer(Transform target, Vector2 direction)
+    private void OnLook(InputAction.CallbackContext context)
     {
-        if (direction.sqrMagnitude > MovementDefines.Camera.MAGNITUDE_THRESHOLD)
+        lookVector = context.ReadValue<Vector2>();
+    }
+
+    public override void TrackTarget(Transform target)
+    {
+        if (lookVector.sqrMagnitude > MovementDefines.Camera.MAGNITUDE_THRESHOLD)
         {
             cameraPanSpeed += (panAcceleration * Time.deltaTime);
 
             lastLookVector = orbitDirection;
-            orbitDirection = direction;
+            orbitDirection = lookVector;
         }
         else
         {

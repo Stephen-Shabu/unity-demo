@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public abstract class BaseCameraComponent : MonoBehaviour
 {
@@ -15,8 +16,9 @@ public abstract class BaseCameraComponent : MonoBehaviour
     protected Vector3 orbitDirection;
     protected Vector3 lastLookVector;
     protected ControlScheme currentScheme = ControlScheme.KeyboardAndMouse;
+    protected Vector2 lookVector = Vector2.zero;
 
-    public abstract void Initialise(Transform target);
+    public abstract void Initialise(Transform target, PlayerInput playerInput);
 
-    public abstract void TrackPlayer(Transform target, Vector2 direction);
+    public abstract void TrackTarget(Transform target);
 }

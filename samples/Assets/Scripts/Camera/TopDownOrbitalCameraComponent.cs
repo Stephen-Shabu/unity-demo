@@ -1,13 +1,24 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class TopDownOrbitalCameraComponent : BaseCameraComponent
 {
-    public override void Initialise(Transform target)
+    public override void Initialise(Transform target, PlayerInput playerInput)
     {
         currentAngle = startAngle * Mathf.Rad2Deg;
         SetControlSchemeParams();
 
+        playerInput.actions["Look"].performed -= OnLook;
+        playerInput.actions["Look"].performed += OnLook;
+        playerInput.actions["Look"].canceled -= OnLook;
+        playerInput.actions["Look"].canceled += OnLook;
+
         GameEventsEmitter.OnEvent(EventType.ControlsChanged, HandleControlSchemeChanged);
+    }
+
+    private void OnLook(InputAction.CallbackContext context)
+    {
+        lookVector = context.ReadValue<Vector2>();
     }
 
     private void HandleControlSchemeChanged(EventData e)
@@ -23,14 +34,14 @@ public class TopDownOrbitalCameraComponent : BaseCameraComponent
         }
     }
 
-    public override void TrackPlayer(Transform target, Vector2 direction)
+    public override void TrackTarget(Transform target)
     {
-        if (direction.sqrMagnitude > MovementDefines.Camera.MAGNITUDE_THRESHOLD)
+        if (lookVector.sqrMagnitude > MovementDefines.Camera.MAGNITUDE_THRESHOLD)
         {
             cameraPanSpeed += (panAcceleration * Time.deltaTime);
 
             lastLookVector = orbitDirection;
-            orbitDirection = direction;
+            orbitDirection = lookVector;
         }
         else
         {
