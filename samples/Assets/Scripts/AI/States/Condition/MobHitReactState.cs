@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class HitReactState : IMobState
+public class MobHitReactState : IMobState
 {
     private MobContext ctx;
     private readonly MobStateMachine fsm;
@@ -8,32 +8,26 @@ public class HitReactState : IMobState
     private Vector3 hitAxis = Vector3.zero;
     private float hitImpulse = 5f;
 
-    public HitReactState(MobContext context, MobStateMachine machine)
+    public MobHitReactState(MobContext context, MobStateMachine machine)
     {
         ctx = context;
         fsm = machine;
     }
 
-    public void Enter(MobContext newContext = null)
+    public void Enter()
     {
-        if (newContext != null)
-        {
-            ctx = newContext;
-        }
         ctx.Rigidbody.linearVelocity += ctx.HitDirection * hitImpulse;
         ctx.AudioComponent.PlayAudio(1f, 0.1f, ctx.AudioComponent.AudioProfile.GetAudioByType(AudioType.Hit));
-        ctx.AnimComponent.SetHitParameter(true);
+        ctx.AnimComponent.SetAnimUpatedOneShot(OneShotAnimaiton);
+        ctx.AnimComponent.ApplyOneShotAnimation();
         Vector3 localHitDirection = ctx.Transform.InverseTransformDirection(ctx.HitDirection);
         hitAxis = Vector3.Cross(Vector3.up, localHitDirection);
         ctx.MoveComponent.ApplyLean(MovementDefines.Character.HIT_LEAN_ANGLE, hitAxis, 10);
         reactTimer = 0f;
         GameEventsEmitter.EmitEvent(EventType.HitRegistered, new HitRegisterEventData { Type = EventType.HitRegistered, Owner = HitRegisterEventData.HitOwner.Mob });
+        ctx.AnimComponent.SetAnimUpdateCallback(UpdateAnimation);
     }
 
-    public void Exit()
-    {
-        ctx.MoveComponent.ApplyLean(0, hitAxis, 1);
-    }
 
     public void Update()
     {
@@ -46,12 +40,28 @@ public class HitReactState : IMobState
         ctx.MoveComponent.UpdateMovement(ctx.Heading.normalized * ctx.ChaseIntensity * scaledIntensity, false);
         ctx.MoveComponent.UpdateLookDirection(ctx.Heading);
         ctx.DetectionComponent.UpdateComponent();
-        ctx.AnimComponent.SetMovementParameter(ctx.MoveComponent.IsMoving, ctx.MoveComponent.SpeedPercentage);
+        ctx.AnimComponent.ApplyAnimation();
 
         if (reactTimer > MovementDefines.Character.HIT_REACT_DURATION)
         {
             ctx.MoveComponent.ApplyLean(0, hitAxis, 1);
-            fsm.ReturnToLastState();
+            fsm.ChangeState<MobNormalState>();
         }
+    }
+    public void Exit()
+    {
+        ctx.MoveComponent.ApplyLean(0, hitAxis, 1);
+    }
+
+    private void UpdateAnimation(Animator animator)
+    {
+        animator.SetBool("IsRunning", ctx.MoveComponent.IsMoving);
+        animator.SetFloat("MovementBlend", ctx.MoveComponent.SpeedPercentage);
+    }
+
+    private void OneShotAnimaiton(Animator animator)
+    {
+        animator.SetBool("IsHit", true);
+        animator.SetBool("IsHit", false);
     }
 }

@@ -4,13 +4,15 @@ using UnityEngine;
 
 public interface IMobState
 {
-    void Enter(MobContext newContext = null);
+    void Enter();
     void Update();
     void Exit();
 }
 
 public class MobStateMachine
 {
+    public IMobState CurrentState => currentState;
+
     private IMobState currentState;
     private IMobState previousState;
     private Dictionary<Type, IMobState> states = new();
@@ -20,12 +22,12 @@ public class MobStateMachine
         states[state.GetType()] = state;
     }
 
-    public void ChangeState<T>(MobContext newContext = null) where T : IMobState
+    public void ChangeState<T>() where T : IMobState
     {
         currentState?.Exit();
         previousState = currentState;
         currentState = states[typeof(T)];
-        currentState.Enter(newContext);
+        currentState.Enter();
     }
 
     public void ReturnToLastState()

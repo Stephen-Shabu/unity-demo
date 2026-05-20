@@ -4,6 +4,7 @@ public class PlayerRangedActionState : PlayerStateCapable
 {
     private readonly PlayerStateMachine actionFSM;
     private readonly PlayerContext ctx;
+    private bool isFiring = true;  
 
     public PlayerRangedActionState(PlayerContext context, PlayerStateMachine machine)
     {
@@ -13,14 +14,10 @@ public class PlayerRangedActionState : PlayerStateCapable
 
     public void Enter()
     {
+        isFiring = true;
+        ctx.AnimComponent.SetAnimUpatedOneShot(OneShotAnimation);
         ctx.ProjectileComponent.Fire(true);
-        ctx.AnimComponent.SetFiring(true);
-    }
-
-    public void Exit()
-    {
-        ctx.ProjectileComponent.Fire(false);
-        ctx.AnimComponent.SetFiring(false);
+        ctx.AnimComponent.ApplyOneShotAnimation();
     }
 
     public void Update()
@@ -32,5 +29,17 @@ public class PlayerRangedActionState : PlayerStateCapable
         Vector3 movementDirection = (cameraForward * ctx.InputVector.y + cameraRight * ctx.InputVector.x).normalized;
         ctx.MoveComponent.UpdateMovement(movementDirection, true);
         ctx.ProjectileComponent.UpdateComponent();
+    }
+
+    public void Exit()
+    {
+        isFiring = false;
+        ctx.ProjectileComponent.Fire(false);
+        ctx.AnimComponent.ApplyOneShotAnimation();
+    }
+
+    private void OneShotAnimation(Animator animator)
+    {
+        animator.SetBool("IsFiring", isFiring);
     }
 }

@@ -5,7 +5,6 @@ public class PlayerDodgeState : PlayerStateCapable
     private readonly PlayerStateMachine moveFSM;
     private readonly PlayerContext ctx;
     private float elapsed = 0f;
-    private float previousEasedT = 0f;
     private const float DURATION = .5f;
 
     public PlayerDodgeState(PlayerContext context, PlayerStateMachine machine)
@@ -17,13 +16,9 @@ public class PlayerDodgeState : PlayerStateCapable
     public void Enter()
     {
         elapsed = 0;
-        //ctx.MoveComponent.ApplyDogde(true, ctx.DodgeDirection);
         ctx.MoveComponent.SetDodge(ctx.DodgeDirection);
-    }
-
-    public void Exit()
-    {
-        ctx.MoveComponent.CompleteDodge();
+        ctx.AnimComponent.SetAnimUpdateCallback(UpdateAnimation);
+        ctx.AnimComponent.ApplyAnimation();
     }
 
     public void Update()
@@ -46,4 +41,15 @@ public class PlayerDodgeState : PlayerStateCapable
 
         ctx.MoveComponent.UpdateMovement(Vector3.zero, false);
     }
+
+    public void Exit()
+    {
+        ctx.MoveComponent.CompleteDodge();
+    }
+
+    private void UpdateAnimation(Animator animator)
+    {
+        var trigger = ctx.DodgeDirection.Equals(DodgeDirection.Left) ? "DODGE_L" : "DODGE_R";
+        animator.SetTrigger(trigger);
+    }   
 }

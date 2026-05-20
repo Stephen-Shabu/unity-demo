@@ -16,11 +16,6 @@ namespace Samples
         [SerializeField] private ProjectileComponent projectileComponent;
         [SerializeField] private MeleeComponent meleeComponent;
         [SerializeField] private Rigidbody rb;
-        [SerializeField] private bool hasJumped = false;
-        [SerializeField] private bool hasAttacked;
-        [SerializeField] private bool hasDashed;
-        [SerializeField] private bool hasDodged;
-        [SerializeField] private bool isHit = false;
 
         private PlayerInput playerInput;
         private float reactTimer = 0f;

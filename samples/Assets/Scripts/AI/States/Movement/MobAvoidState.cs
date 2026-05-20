@@ -1,23 +1,20 @@
 using UnityEngine;
 
-public class AvoidState : IMobState
+public class MobAvoidState : IMobState
 {
     private MobContext ctx;
     private readonly MobStateMachine fsm;
     private float safeDistance = 1.5f;
 
-    public AvoidState(MobContext context, MobStateMachine machine)
+    public MobAvoidState(MobContext context, MobStateMachine machine)
     {
         ctx = context;
         fsm = machine;
     }
 
-    public void Enter(MobContext newContext = null) 
+    public void Enter()
     {
-        if (newContext != null)
-        {
-            ctx = newContext;
-        }
+        ctx.AnimComponent.SetAnimUpdateCallback(UpdateAnimation);
     }
 
     public void Update()
@@ -29,7 +26,7 @@ public class AvoidState : IMobState
             ctx.Heading = ctx.AvoidTarget - ctx.Transform.position;
             ctx.MoveComponent.UpdateMovement(ctx.Heading.normalized, false);
             ctx.MoveComponent.UpdateLookDirection(ctx.Heading);
-            ctx.AnimComponent.SetMovementParameter(ctx.MoveComponent.IsMoving, ctx.MoveComponent.SpeedPercentage);
+            ctx.AnimComponent.ApplyAnimation();
         }
         else
         {
@@ -39,4 +36,10 @@ public class AvoidState : IMobState
     }
 
     public void Exit() { ctx.DetectionComponent.ResetDectectedObject(); }
+
+    private void UpdateAnimation(Animator animator)
+    {
+        animator.SetBool("IsRunning", ctx.MoveComponent.IsMoving);
+        animator.SetFloat("MovementBlend", ctx.MoveComponent.SpeedPercentage);
+    }
 }

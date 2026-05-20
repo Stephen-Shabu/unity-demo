@@ -1,24 +1,30 @@
-using System.Data.Common;
+using System;
 using UnityEngine;
 
 public class AnimationComponent : MonoBehaviour
 {
     [SerializeField] private Animator animator;
 
-    public void SetMovementParameter(bool isRunning, float moveBlend)
+    private Action<Animator> updateAnimator;
+    private Action<Animator> updateAnimatorOnce;
+
+    public void SetAnimUpdateCallback(Action<Animator> callback)
     {
-        animator.SetBool("IsRunning", isRunning);
-        animator.SetFloat("MovementBlend", moveBlend);
+        updateAnimator = callback;
     }
 
-    public void SetHitParameter(bool isHit)
+    public void SetAnimUpatedOneShot(Action<Animator> callback)
     {
-        animator.SetBool("IsHit", true);
-        animator.SetBool("IsHit", false);
+        updateAnimatorOnce = callback;
     }
 
-    public void SetFiring(bool isFiring)
+    public void ApplyAnimation()
     {
-        animator.SetBool("IsFiring", isFiring);
+        updateAnimator?.Invoke(animator);
     }
+
+    public void ApplyOneShotAnimation()
+    {
+        updateAnimatorOnce?.Invoke(animator);
+    }   
 }

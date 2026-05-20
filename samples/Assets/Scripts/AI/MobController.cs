@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using NUnit.Framework.Constraints;
 
 public class MobController : MonoBehaviour, AttackCapable, Attackable
 {
@@ -20,14 +19,15 @@ public class MobController : MonoBehaviour, AttackCapable, Attackable
 
     private AudioSource source;
     private MobContext mobContext;
-    private MobStateMachine mobStateMachine;
+    private MobStateMachine movementFSM;
+    private MobStateMachine actionFSM;
+    private MobStateMachine conditionFSM;
 
-    public void Initialize(Transform newTarget)
+    public void Initialize(Transform newTarget, int index)
     {
-        mobStateMachine = new MobStateMachine();
-
         mobContext = new MobContext()
         {
+            Index = index,
             Rigidbody = rb,
             Transform = transform,
             Target = newTarget,
@@ -36,34 +36,27 @@ public class MobController : MonoBehaviour, AttackCapable, Attackable
             AnimComponent = animComponent,
             MeleeComponent = meleeComponent,
             AudioComponent = audioComponent,
+            HealthComponent = healthComponent,
             StoppingDistance = stoppingDistance,
-            WallLayer = wallLayer,
-            FSM = mobStateMachine
+            WallLayer = wallLayer
         };
 
+        movementFSM = new MobStateMachine();
+        movementFSM.AddState(new MobMovementState(mobContext, movementFSM));
+        movementFSM.ChangeState<MobMovementState>();
 
-        mobStateMachine.AddState(new WaitState(mobContext, mobStateMachine));
-        mobStateMachine.AddState(new FollowState(mobContext, mobStateMachine));
-        mobStateMachine.AddState(new AvoidState(mobContext, mobStateMachine));
-        mobStateMachine.AddState(new AimState(mobContext, mobStateMachine));
-        mobStateMachine.AddState(new AttackState(mobContext, mobStateMachine));
-        mobStateMachine.AddState(new RepositionState(mobContext, mobStateMachine));
-        mobStateMachine.AddState(new DeathState(mobContext, mobStateMachine));
-        mobStateMachine.AddState(new HitReactState(mobContext, mobStateMachine));
+        actionFSM = new MobStateMachine();
+        actionFSM.AddState(new MobActionState(mobContext, actionFSM));
+        actionFSM.ChangeState<MobActionState>();
+
+        conditionFSM = new MobStateMachine();
+        conditionFSM.AddState(new MobConditionState(mobContext, conditionFSM));
+        conditionFSM.ChangeState<MobConditionState>();
 
         healthComponent.Initialise();
         healthFxComponent.Initialise();
         moveComponent.Intialise();
         audioComponent.Initialise();
-
-        detectionComponent.OnObstacleDetected = mobContext.HandleObstacleDetected;
-
-        healthComponent.OnDamageTaken -= mobContext.HandleOnDamageTaken;
-        healthComponent.OnDamageTaken += mobContext.HandleOnDamageTaken;
-        healthComponent.OnDeathStarted -= mobContext.HandleOnDeathStarted;
-        healthComponent.OnDeathStarted += mobContext.HandleOnDeathStarted;
-        healthComponent.OnDeathFinished -= mobContext.HandleOnDeathFinished;
-        healthComponent.OnDeathFinished += mobContext.HandleOnDeathFinished;
 
         target = newTarget;
         source = new GameObject($"{name} death audio source").AddComponent<AudioSource>();
@@ -72,20 +65,22 @@ public class MobController : MonoBehaviour, AttackCapable, Attackable
 
     public void Wait(Transform target)
     {
-        mobStateMachine.ChangeState<WaitState>();
+        mobContext.RaiseOnWaitForTarget();
     }
 
     public void Attack(Transform newTarget)
     {
         mobContext.Target = newTarget;
-        mobStateMachine.ChangeState<FollowState>(mobContext);
+        mobContext.RaiseOnFollowTarget();
     }
 
-    public void Retreat(){}
+    public void Retreat(){ }
 
     public void UpdateController()
     {
-        mobStateMachine.Update();
+        conditionFSM.Update();
+        movementFSM.Update();
+        actionFSM.Update();
     }
 
     private void OnDestroy()

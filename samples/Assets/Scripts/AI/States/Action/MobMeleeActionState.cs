@@ -1,27 +1,29 @@
 using UnityEngine;
 
-public class AttackState : IMobState
+public class MobMeleeActionState : IMobState
 {
     private MobContext ctx;
     private readonly MobStateMachine fsm;
     private bool hasLaunchedAttack;
 
-    public AttackState(MobContext context, MobStateMachine machine)
+    public MobMeleeActionState(MobContext context, MobStateMachine machine)
     {
         ctx = context;
         fsm = machine;
     }
 
-    public void Enter(MobContext newContext = null) 
+    public void Enter()
     {
-        if (newContext != null)
-        {
-            ctx = newContext;
-        }
-
         hasLaunchedAttack = true;
         var direction = (ctx.Target.position - ctx.Transform.position).normalized;
-        ctx.MeleeComponent.LaunchMeleeAttack(direction, () => { fsm.ChangeState<RepositionState>(); hasLaunchedAttack = false; });
+
+        ctx.MeleeComponent.LaunchMeleeAttack(direction, () => 
+        { 
+            ctx.RaiseOnAnticipateAttack(); 
+            hasLaunchedAttack = false;
+            fsm.ChangeState<MobIdleActionState>();
+        });
+        ctx.AnimComponent.SetAnimUpdateCallback(UpdateAnimation);
     }
 
     public void Update()
@@ -32,13 +34,20 @@ public class AttackState : IMobState
         ctx.MoveComponent.UpdateMovement(Vector3.zero, false);
         ctx.MoveComponent.UpdateLookDirection(ctx.Heading);
         ctx.DetectionComponent.UpdateComponent();
-        ctx.AnimComponent.SetMovementParameter(ctx.MoveComponent.IsMoving, ctx.MoveComponent.SpeedPercentage);
+        ctx.AnimComponent.ApplyAnimation();
 
         if (!hasLaunchedAttack || dist > ctx.StoppingDistance)
         {
-            fsm.ChangeState<FollowState>();
+            ctx.RaiseOnFollowTarget();
+            fsm.ChangeState<MobIdleActionState>();
         }
     }
 
     public void Exit() { hasLaunchedAttack = false; }
+
+    private void UpdateAnimation(Animator animator)
+    {
+        animator.SetBool("IsRunning", ctx.MoveComponent.IsMoving);
+        animator.SetFloat("MovementBlend", ctx.MoveComponent.SpeedPercentage);
+    }
 }

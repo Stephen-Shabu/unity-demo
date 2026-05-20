@@ -20,8 +20,15 @@ public class PlayerIdleState : PlayerStateCapable
 
         ctx.PlayerInput.actions["Dodge"].performed += OnRightDodge;
         ctx.PlayerInput.actions["LeftDodge"].performed += OnLeftDodge;
+        ctx.AnimComponent.SetAnimUpdateCallback(UpdateAnimation);
     }
 
+
+    public void Update()
+    {
+        ctx.MoveComponent.UpdateMovement(Vector3.zero, false);
+        ctx.AnimComponent.ApplyAnimation();
+    }
     public void Exit()
     {
         ctx.PlayerInput.actions["Move"].performed -= OnMove;
@@ -29,12 +36,6 @@ public class PlayerIdleState : PlayerStateCapable
 
         ctx.PlayerInput.actions["Dodge"].performed -= OnRightDodge;
         ctx.PlayerInput.actions["LeftDodge"].performed -= OnLeftDodge;
-    }
-
-    public void Update()
-    {
-        ctx.MoveComponent.UpdateMovement(Vector3.zero, false);
-        ctx.AnimComponent.SetMovementParameter(ctx.MoveComponent.IsMoving, ctx.MoveComponent.SpeedPercentage);
     }
 
     private void OnMove(InputAction.CallbackContext context)
@@ -57,5 +58,11 @@ public class PlayerIdleState : PlayerStateCapable
     {
         ctx.DodgeDirection = DodgeDirection.Left;
         moveFSM.ChangeState<PlayerDodgeState>();
+    }
+
+    private void UpdateAnimation(Animator animator)
+    {
+        animator.SetBool("IsRunning", ctx.MoveComponent.IsMoving);
+        animator.SetFloat("MovementBlend", ctx.MoveComponent.SpeedPercentage);
     }
 }

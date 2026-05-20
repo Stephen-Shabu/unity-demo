@@ -187,7 +187,7 @@ public class Main : MonoBehaviour
 
                 var enemyController = enemy[0].GetComponent<MobController>();
 
-                enemyController.Initialize(playerController.transform);
+                enemyController.Initialize(playerController.transform, i);
                 mobControllers[i] = enemyController;
             }
         }

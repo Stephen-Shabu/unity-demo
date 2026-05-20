@@ -1,26 +1,23 @@
 ﻿using UnityEngine;
 
-public class RepositionState : IMobState
+public class MobRepositionState : IMobState
 {
-    private MobContext ctx;
+    private readonly MobContext ctx;
     private readonly MobStateMachine fsm;
     private float cooldown;
 
-    public RepositionState(MobContext context, MobStateMachine machine)
+    public MobRepositionState(MobContext context, MobStateMachine machine)
     {
         ctx = context;
         fsm = machine;
     }
 
-    public void Enter(MobContext newContext = null)
+    public void Enter()
     {
-        if (newContext != null)
-        {
-            ctx = newContext;
-        }
         cooldown = 0;
         ctx.RepositionTarget = CalculateNewTargetPosition();
         ctx.ChaseIntensity = 1;
+        ctx.AnimComponent.SetAnimUpdateCallback(UpdateAnimation);
     }
 
     public void Update()
@@ -37,7 +34,7 @@ public class RepositionState : IMobState
         }
         else if (cooldown > 3f)
         {
-            fsm.ChangeState<FollowState>();
+            fsm.ChangeState<MobFollowState>();
         }
         else
         {
@@ -46,7 +43,7 @@ public class RepositionState : IMobState
 
         ctx.MoveComponent.UpdateMovement(movementDirection.normalized, false);
         ctx.MoveComponent.UpdateLookDirection(ctx.Heading);
-        ctx.AnimComponent.SetMovementParameter(ctx.MoveComponent.IsMoving, ctx.MoveComponent.SpeedPercentage);
+        ctx.AnimComponent.ApplyAnimation();
     }
 
     private Vector3 CalculateNewTargetPosition()
@@ -95,4 +92,10 @@ public class RepositionState : IMobState
     }
 
     public void Exit() { }
+
+    private void UpdateAnimation(Animator animator)
+    {
+        animator.SetBool("IsRunning", ctx.MoveComponent.IsMoving);
+        animator.SetFloat("MovementBlend", ctx.MoveComponent.SpeedPercentage);
+    }
 }

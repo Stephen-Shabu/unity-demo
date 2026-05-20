@@ -18,7 +18,8 @@ public class PlayerHitReactState: PlayerStateCapable
     {
         ctx.Rigidbody.linearVelocity += ctx.HitDirection * hitImpulse;
         reactTimer = 0;
-        ctx.AnimComponent.SetHitParameter(true);
+        ctx.AnimComponent.SetAnimUpatedOneShot(OneShotAnimaiton);
+        ctx.AnimComponent.ApplyOneShotAnimation();
         Vector3 localHitDirection = ctx.Transform.InverseTransformDirection(ctx.HitDirection);
         hitAxis = Vector3.Cross(Vector3.up, localHitDirection);
         ctx.MoveComponent.ApplyLean(MovementDefines.Character.HIT_LEAN_ANGLE, hitAxis, 10);
@@ -26,11 +27,6 @@ public class PlayerHitReactState: PlayerStateCapable
 
         ctx.MoveComponent.InterupDodge();
         GameEventsEmitter.EmitEvent(EventType.HitRegistered, new HitRegisterEventData { Type = EventType.HitRegistered, Owner = HitRegisterEventData.HitOwner.Player });
-    }
-
-    public void Exit()
-    {
-
     }
 
     public void Update()
@@ -43,4 +39,15 @@ public class PlayerHitReactState: PlayerStateCapable
             conditionFSM.ChangeState<PlayerNormalState>();
         }
     }
+
+    public void Exit()
+    {
+
+    }
+
+    private void OneShotAnimaiton(Animator animator)
+    {
+        animator.SetBool("IsHit", true);
+        animator.SetBool("IsHit", false);
+    }   
 }

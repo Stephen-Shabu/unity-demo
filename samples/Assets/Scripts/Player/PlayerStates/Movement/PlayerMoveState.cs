@@ -19,6 +19,7 @@ public class PlayerMoveState : PlayerStateCapable
 
         ctx.PlayerInput.actions["Dodge"].performed += OnRightDodge;
         ctx.PlayerInput.actions["LeftDodge"].performed += OnLeftDodge;
+        ctx.AnimComponent.SetAnimUpdateCallback(UpdateAnimation);
     }
 
     public void Exit()
@@ -38,7 +39,7 @@ public class PlayerMoveState : PlayerStateCapable
 
         Vector3 movementDirection = (cameraForward * ctx.InputVector.y + cameraRight * ctx.InputVector.x).normalized;
         ctx.MoveComponent.UpdateMovement(movementDirection, false);
-        ctx.AnimComponent.SetMovementParameter(ctx.MoveComponent.IsMoving, ctx.MoveComponent.SpeedPercentage);
+        ctx.AnimComponent.ApplyAnimation();
     }
 
     private void OnMove(InputAction.CallbackContext context)
@@ -61,5 +62,11 @@ public class PlayerMoveState : PlayerStateCapable
     {
         ctx.DodgeDirection = DodgeDirection.Left;
         moveFSM.ChangeState<PlayerDodgeState>();
+    }
+
+    private void UpdateAnimation(Animator animator)
+    {
+        animator.SetBool("IsRunning", ctx.MoveComponent.IsMoving);
+        animator.SetFloat("MovementBlend", ctx.MoveComponent.SpeedPercentage);
     }
 }

@@ -1,24 +1,20 @@
 using UnityEngine;
 
-public class FollowState : IMobState
+public class MobFollowState : IMobState
 {
-    private MobContext ctx;
+    private readonly MobContext ctx;
     private readonly MobStateMachine fsm;
 
-    public FollowState(MobContext context, MobStateMachine stateMachine)
+    public MobFollowState(MobContext context, MobStateMachine stateMachine)
     {
         ctx = context;
         fsm = stateMachine;
     }
 
-    public void Enter(MobContext newContext = null) 
+    public void Enter()
     {
-        if (newContext != null)
-        {
-            ctx = newContext;
-        }
-
         ctx.ChaseIntensity = 1;
+        ctx.AnimComponent.SetAnimUpdateCallback(UpdateAnimation);
     }
 
     public void Update()
@@ -30,11 +26,16 @@ public class FollowState : IMobState
         ctx.MoveComponent.UpdateMovement(ctx.Heading.normalized * ctx.ChaseIntensity * scaledIntensity, false);
         ctx.MoveComponent.UpdateLookDirection(ctx.Heading);
         ctx.DetectionComponent.UpdateComponent();
-        ctx.AnimComponent.SetMovementParameter(ctx.MoveComponent.IsMoving, ctx.MoveComponent.SpeedPercentage);
-
+        ctx.AnimComponent.ApplyAnimation();
         if (dist <= ctx.StoppingDistance && ctx.MeleeComponent.CanAttack)
-            fsm.ChangeState<AimState>();
+            fsm.ChangeState<MobAnticipateState>();
     }
 
     public void Exit() { }
+
+    private void UpdateAnimation(Animator animator)
+    {
+        animator.SetBool("IsRunning", ctx.MoveComponent.IsMoving);
+        animator.SetFloat("MovementBlend", ctx.MoveComponent.SpeedPercentage);
+    }
 }
