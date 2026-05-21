@@ -6,6 +6,7 @@ public enum WeaponName
     BLASTER,
     WAVE_BEAM,
     POWER_BOMB,
+    SCATTER_SHOT,
     ICE_MISSLES,
     CHARGE_BLASTER
 }
