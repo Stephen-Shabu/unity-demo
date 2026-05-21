@@ -7,8 +7,10 @@ public enum WeaponName
     WAVE_BEAM,
     POWER_BOMB,
     SCATTER_SHOT,
-    ICE_MISSLES,
-    CHARGE_BLASTER
+    MISSLIE_LAUNCHER,
+    CHARGE_BLASTER,
+    TRACE_GUN,
+    PRESSURE_BEAM
 }
 
 [System.Serializable]
