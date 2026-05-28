@@ -11,6 +11,8 @@ public class ProjectileComponent : MonoBehaviour
     private bool isPoolInitialized;
     private float timeSinceLastshot;
     private bool canFire;
+    private int currentProjectileIndex;
+    private Chargeable chargeableProjectile;
 
     public void ChangeWeapon(WeaponName name)
     {
@@ -34,40 +36,8 @@ public class ProjectileComponent : MonoBehaviour
 
                     CreateProjectile();
 
-                    GameEventsEmitter.EmitEvent(EventType.ChangeWeapon, new WeaponChangeEventData { Type = EventType.ChangeWeapon, Name = name });
+                    GameEventsEmitter.EmitEvent(EventType.ChangeWeapon, new WeaponChangeEventData { Type = EventType.ChangeWeapon, Name = name, Schema = activeWeapon });
                 }
-            }
-        }
-    }
-
-    public void Fire(bool canFire)
-    {
-        this.canFire = canFire;
-    }
-
-    public void UpdateComponent()
-    {
-        if (canFire && Time.time > activeWeapon.Data.FireRate + timeSinceLastshot)
-        {
-            var bulletIdx = projectiles.FindIndex(x => !x.HasFired());
-            var bullet = projectiles[bulletIdx];
-            var muzzlePosition = transform.position + (transform.forward * .9f);
-            var muzzleForward = muzzlePosition - transform.position;
-            muzzleForward.y = 0;
-
-            if (bullet != null)
-            {
-                bullet.SetProjectile(muzzlePosition, muzzleForward.normalized);
-            }
-
-            timeSinceLastshot = Time.time;
-        }
-
-        if (isPoolInitialized)
-        {
-            for (int i = 0, range = projectiles.Count; i < range; i++)
-            {
-                projectiles[i].UpdatePosition();
             }
         }
     }
@@ -87,5 +57,81 @@ public class ProjectileComponent : MonoBehaviour
         }
 
         isPoolInitialized = true;
+    }
+
+    public int SetProjectileIndex()
+    {
+        var bulletIdx = projectiles.FindIndex(x => !x.HasFired());
+        currentProjectileIndex = bulletIdx;
+        return bulletIdx;
+    }
+
+    public void StartCharge()
+    {
+        var bullet = projectiles[currentProjectileIndex];
+
+        if (bullet != null)
+        {
+            chargeableProjectile = bullet as Chargeable;
+            if (chargeableProjectile != null)
+            {
+                var muzzlePosition = transform.position + (transform.forward * .9f);
+                var muzzleForward = muzzlePosition - transform.position;
+                chargeableProjectile.StartCharge(muzzlePosition, muzzleForward.normalized);
+            }
+        }
+    }
+
+    public void Fire(bool canFire)
+    {
+        this.canFire = canFire;
+
+        if (canFire && Time.time > activeWeapon.Data.FireRate + timeSinceLastshot)
+        {
+            if (currentProjectileIndex > -1)
+            {
+                var bullet = projectiles[currentProjectileIndex];
+                var muzzlePosition = transform.position + (transform.forward * .9f);
+                var muzzleForward = muzzlePosition - transform.position;
+                muzzleForward.y = 0;
+
+                if (bullet != null)
+                {
+                    bullet.SetProjectile(muzzlePosition, muzzleForward.normalized);
+                }
+            }
+
+            timeSinceLastshot = Time.time;
+            chargeableProjectile = null;
+        }
+    }
+
+    public void UpdateComponent()
+    {
+        if (isPoolInitialized)
+        {
+            for (int i = 0, range = projectiles.Count; i < range; i++)
+            {
+                projectiles[i].UpdatePosition();
+            }
+        }
+    }
+
+    public void UpdateComponent(float chargeTimer)
+    {
+        if (isPoolInitialized)
+        {
+            for (int i = 0, range = projectiles.Count; i < range; i++)
+            {
+                if (chargeableProjectile != null)
+                {
+                    var muzzlePosition = transform.position + (transform.forward * .9f);
+                    var muzzleForward = muzzlePosition - transform.position;
+                    chargeableProjectile.UpdateCharge(chargeTimer, muzzlePosition, muzzleForward.normalized);
+                }
+
+                projectiles[i].UpdatePosition();
+            }
+        }
     }
 }

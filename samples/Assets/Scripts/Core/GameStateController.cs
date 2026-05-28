@@ -46,6 +46,7 @@ public struct WeaponChangeEventData : EventData
     public EventType Type { get; set; }
 
     public WeaponName Name { get; set; }
+    public WeaponSchema Schema { get; set; }
 }
 
 public struct ControlSchemeEventData : EventData

@@ -15,17 +15,25 @@ MonoBehaviour:
   weapons:
   - name: 0
     data: {fileID: 11400000, guid: 87395466f4d65ed4887d560bc8ea42aa, type: 2}
+    chargeableFlag: 0
   - name: 1
     data: {fileID: 11400000, guid: 7248c3f9b7a4bdd4f99e7567fbecfeea, type: 2}
+    chargeableFlag: 0
   - name: 2
     data: {fileID: 11400000, guid: cff31f33d3f78cc4e819a1aaa6f5c47b, type: 2}
+    chargeableFlag: 0
   - name: 3
     data: {fileID: 11400000, guid: 1dd96c07122691547840b5587fea92c1, type: 2}
+    chargeableFlag: 0
   - name: 4
     data: {fileID: 11400000, guid: 18b29800050656f4381853b8030fecb0, type: 2}
+    chargeableFlag: 0
   - name: 5
     data: {fileID: 11400000, guid: 943d9a5315377a84c82c30662fbca0cc, type: 2}
+    chargeableFlag: 1
   - name: 6
     data: {fileID: 11400000, guid: 09d3e92eb27008f499104840f7fce4e9, type: 2}
+    chargeableFlag: 0
   - name: 7
     data: {fileID: 11400000, guid: 5025ac367835d5e4ea6cd36c743dc561, type: 2}
+    chargeableFlag: 0

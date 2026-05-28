@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bd1777a1852c044eb59137b01a0bdde, type: 3}
   m_Name: ChargeBlaster
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  projectilePrefab: {fileID: 0}
-  hitVfxPrefab: {fileID: 0}
-  fireRate: 0
-  projectileSFX: {fileID: 0}
+  projectilePrefab: {fileID: 8702952720462064359, guid: df805173bcb3a7e4b8ae5b5e7cfd1d62, type: 3}
+  hitVfxPrefab: {fileID: 5804425956868286400, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
+  fireRate: 0.2
+  projectileSFX: {fileID: 8300000, guid: 4bc6e3b05139fe4409d091467020bf3a, type: 3}

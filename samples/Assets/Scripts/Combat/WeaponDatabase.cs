@@ -18,9 +18,11 @@ public class WeaponSchema
 {
     public WeaponName Name => name;
     public WeaponData Data => data;
+    public bool IsChargeable => chargeableFlag;
 
     [SerializeField] private WeaponName name;
     [SerializeField] private WeaponData data;
+    [SerializeField] private bool chargeableFlag = false;
 }
 
 [CreateAssetMenu(fileName = "WeaponDatabase", menuName = "Game Config/ Weapon Database", order = 3)]

@@ -50,11 +50,6 @@ public class SweepcastProjectile : MonoBehaviour, Projectible
         OnFired?.Invoke(start, direction);
     }
 
-    private void Update()
-    {
-        UpdatePosition();
-    }
-
     public void UpdatePosition()
     {
         if (hasFired)

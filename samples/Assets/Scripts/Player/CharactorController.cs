@@ -33,7 +33,6 @@ namespace Samples
             playerInput = input;
             cameraComponent = camera;
             moveComponent.Intialise();
-            projectileComponent.ChangeWeapon(WeaponName.BLASTER);
             healthComponent.Initialise();
             healthFxComponent.Initialise();
 
@@ -60,6 +59,7 @@ namespace Samples
             actionFSM = new PlayerActionStateMachine(playerContext);
             actionFSM.AddState(new PlayerIdleActionState(playerContext, actionFSM));
             actionFSM.AddState(new PlayerRangedActionState(playerContext, actionFSM));
+            actionFSM.AddState(new PlayerRangedChargeActionState(playerContext, actionFSM));
             actionFSM.AddState(new PlayerMeleeActionState(playerContext, actionFSM));
             actionFSM.ChangeState<PlayerIdleActionState>();
 
@@ -67,7 +67,9 @@ namespace Samples
             conditionFSM.AddState(new PlayerNormalState(playerContext, conditionFSM));
             conditionFSM.AddState(new PlayerHitReactState(playerContext, conditionFSM));
             conditionFSM.AddState(new PlayerDeadState(playerContext, conditionFSM));
-            conditionFSM.ChangeState<PlayerNormalState>();    
+            conditionFSM.ChangeState<PlayerNormalState>();
+
+            projectileComponent.ChangeWeapon(WeaponName.CHARGE_BLASTER);
         }
 
         public void UpdateController()

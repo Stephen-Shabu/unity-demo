@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bd1777a1852c044eb59137b01a0bdde, type: 3}
   m_Name: MissileLauncher
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  projectilePrefab: {fileID: 0}
-  hitVfxPrefab: {fileID: 0}
-  fireRate: 0
+  projectilePrefab: {fileID: 6556206709917101331, guid: 40a48e9f7b3c4a44dba1725c9b6e8b03, type: 3}
+  hitVfxPrefab: {fileID: 5804425956868286400, guid: ac9f42fedfc59f241adee52330707af0, type: 3}
+  fireRate: 2
   projectileSFX: {fileID: 0}
